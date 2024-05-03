@@ -71,16 +71,10 @@
   ],
   "author": "Mark Sun",
   "license": "MIT",
-  "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown"
-  },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.6",
     "express": "^4.19.2",
-    "husky": "^9.0.11",
     "jsdom": "^24.0.0",
-    "lint-staged": "^15.2.2",
-    "prettier": "3.2.5",
     "rollup": "^4.14.1",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-dts": "^6.1.0",
