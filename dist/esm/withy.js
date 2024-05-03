@@ -45,40 +45,45 @@ const ASSIGN = Symbol();
  * @returns
  */
 function With(obj) {
-  const target = Object.assign(
-    (...args) => {
-      if (!args.length) return obj;
-      for (let arg of args) if (arg instanceof Function) arg(obj);
-      return proxy;
-    },
-    { obj },
-  );
-  const proxy = new Proxy(target, trap);
-  target.proxy = proxy;
-  return proxy;
+    const target = Object.assign((...args) => {
+        if (!args.length)
+            return obj;
+        for (let arg of args)
+            if (arg instanceof Function)
+                arg(obj);
+        return proxy;
+    }, { obj });
+    const proxy = new Proxy(target, trap);
+    target.proxy = proxy;
+    return proxy;
 }
 const trap = {
-  get(target, p) {
-    if (p === ASSIGN) {
-      return (...objs) => {
-        Object.assign(target.obj, ...objs);
-        return target.proxy;
-      };
-    } else if (p === SET) {
-      return (arg) => {
-        for (let [k, v] of Object.entries(arg)) target.obj[k] = v;
-      };
-    } else if (p === WITH) {
-      return (arg) => {
-        for (let [k, v] of Object.entries(arg)) v(target.obj[k]);
-      };
-    } else {
-      return (...args) => {
-        target.obj[p](...args);
-        return target.proxy;
-      };
-    }
-  },
+    get(target, p) {
+        if (p === ASSIGN) {
+            return (...objs) => {
+                Object.assign(target.obj, ...objs);
+                return target.proxy;
+            };
+        }
+        else if (p === SET) {
+            return (arg) => {
+                for (let [k, v] of Object.entries(arg))
+                    target.obj[k] = v;
+            };
+        }
+        else if (p === WITH) {
+            return (arg) => {
+                for (let [k, v] of Object.entries(arg))
+                    v(target.obj[k]);
+            };
+        }
+        else {
+            return (...args) => {
+                target.obj[p](...args);
+                return target.proxy;
+            };
+        }
+    },
 };
 // const el1 = With(document.createElement('div')).append('').append()[SET]({className: 'cls1', textContent: 'Wow!'}).append('abc').append()();
 // const el2 = With(document.createElement('div')).append().append()[WITH]({style: st => st[SET]({})});

@@ -151,8 +151,9 @@ describe("Actribute.process", () => {
     const comp = (node, b, e, bn, abn) =>
       comps.push([node.tagName, b, e, bn, abn]);
     act.register("comp", comp);
+    const propSep = ', ';
 
-    act.process(body, props, ",");
+    act.process(body, props, propSep);
 
     assert.equal(comps.length, 1);
     assert.equal(comps[0][0], "SECTION");

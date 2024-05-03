@@ -110,7 +110,6 @@ export class Actribute {
    */
   process(element: Element, props?: any, propSep?: string): Actribute {
     if (!props) props = {};
-    console.log(`p-${propSep}`);
     if (propSep === undefined) {
       propSep = " ";
     }
@@ -121,7 +120,6 @@ export class Actribute {
       propVal: any,
       processed = false;
 
-    console.log(props);
     for (let { name, value } of Array.from(element.attributes)) {
       if (name.startsWith(this.attrPrefix)) {
         processed = true;
@@ -130,8 +128,6 @@ export class Actribute {
           compProps = [];
           value = value.trim();
           if (value) {
-            console.log(propSep);
-            console.log(value.split(propSep));
             for (propKey of value.split(propSep)) {
               propKey = propKey.trim();
               if (propKey === "") continue; // just too much space between prop names/keys.
@@ -155,7 +151,7 @@ export class Actribute {
 
     if (!processed) {
       for (let child of Array.from(element.children)) {
-        this.process(child, props);
+        this.process(child, props, propSep);
       }
     }
     return this;

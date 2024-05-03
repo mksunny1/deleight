@@ -20,32 +20,34 @@ export const I = Symbol();
  * @returns
  */
 export function With(obj) {
-  const target = Object.assign(() => obj, { obj });
-  const proxy = new Proxy(target, trap);
-  target.proxy = proxy;
-  return proxy;
+    const target = Object.assign(() => obj, { obj });
+    const proxy = new Proxy(target, trap);
+    target.proxy = proxy;
+    return proxy;
 }
 const trap = {
-  get(target, p) {
-    if (p === assign) {
-      return (...objs) => {
-        Object.assign(target.obj, ...objs);
-        return target.proxy;
-      };
-    } else if (p === I) {
-      return new Proxy(target.obj, propTrap);
-    } else {
-      return (...args) => {
-        target.obj[p](...args);
-        return target.proxy;
-      };
-    }
-  },
+    get(target, p) {
+        if (p === assign) {
+            return (...objs) => {
+                Object.assign(target.obj, ...objs);
+                return target.proxy;
+            };
+        }
+        else if (p === I) {
+            return new Proxy(target.obj, propTrap);
+        }
+        else {
+            return (...args) => {
+                target.obj[p](...args);
+                return target.proxy;
+            };
+        }
+    },
 };
 const propTrap = {
-  get(target, p) {
-    return With(target[p]);
-  },
+    get(target, p) {
+        return With(target[p]);
+    },
 };
 /**
  * Used to set properties when using `With`:
@@ -53,15 +55,13 @@ const propTrap = {
  */
 export const assign = Symbol();
 const el1 = With(document.createElement("div"))
-  .append()
-  .append()
-  [assign]({ a: 1, b: 2 })
-  .append("abc")
-  .append()()
-  .append();
+    .append()
+    .append()[assign]({ a: 1, b: 2 })
+    .append("abc")
+    .append()()
+    .append();
 const el2 = With(document.createElement("div"))
-  .append()
-  .append()
-  [I].style[assign]({ left: "24px" })()
-  .animationDelay()
-  .charAt(3);
+    .append()
+    .append()[I].style[assign]({ left: "24px" })()
+    .animationDelay()
+    .charAt(3);
