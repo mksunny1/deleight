@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="stylesheet" href="./pico.min.css" />
+    <title>Account|MySite</title>
+    <script type="module" src="./account.js"></script>
+    <script id="data">
+      window.page = Math.round(Math.random()) ? { username: "Hanoi" } : {};
+    </script>
+    <style>
+      h1 {
+        text-align: center;
+      }
+      main {
+        min-height: 500px;
+      }
+      footer {
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <a href="/" title="Visit Homepage" rel="opener" target="_blank" c-listLink
+        >Af</a
+      >
+    </header>
+    <h1>Account</h1>
+    <main aria-live="assertive" aria-atomic="true">
+      <template id="loginTemplate">
+        <div>
+          <link rel="stylesheet" href="./pico.min.css" />
+          <style>
+            /* styles local to login. the styles are only ever adopted by the form when rendered. they never go in they never 
+          apply to the entire document. */
+            form {
+              /* center the form on the screen */
+              margin: auto;
+              position: absolute;
+            }
+
+            p {
+              text-align: center;
+            }
+          </style>
+          <form id="loginForm">
+            <p>
+              Simply enter your unique username to log into your account. If
+              this is your first time, a new account will be created for you.
+            </p>
+            <p>
+              <input
+                type="text"
+                autocomplete="username"
+                name="username"
+                aria-label="Enter your username "
+                placeholder="username"
+              />
+            </p>
+            <p>
+              <button id="loginButton" type="button">LOGIN</button>
+            </p>
+            <p
+              id="loginErrorBox"
+              title="Login Error Box"
+              role="alert"
+              aria-live="assertive"
+              aria-atomic="true"
+            ></p>
+          </form>
+        </div>
+      </template>
+
+      <template id="profileTemplate">
+        <div id="profileBox">
+          <link rel="stylesheet" href="./pico.min.css" />
+          <style>
+            /* styles local to profile. */
+            p {
+              border: dotted purple;
+              padding: 1em;
+              text-align: end;
+            }
+          </style>
+          <!-- main profile content-->
+          <h2 id="userHeading"></h2>
+
+          <p id="logoutBox">
+            <button id="logoutButton">LOGOUT</button>
+          </p>
+        </div>
+      </template>
+    </main>
+    <footer>
+      <p>Copyright 2024</p>
+    </footer>
+  </body>
+</html>

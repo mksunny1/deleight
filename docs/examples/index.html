@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Examples</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./pico.min.css" />
+    <link rel="stylesheet" href="./index.css" />
+    <style>
+      #benchmarks {
+        overflow: scroll;
+        border: dotted lightcoral;
+        padding: 1em;
+      }
+      #benchmarks > ul {
+        display: flex;
+        flex-flow: row;
+        flex-wrap: nowrap;
+        gap: 1em;
+        width: 300%;
+        padding: 0;
+        list-style: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Examples</h1>
+    <p>
+      This page contains links to the current examples that demonstrate the
+      features of Deleight
+    </p>
+    <main>
+      <section>
+        <h2>Benchmarks</h2>
+        <p>
+          These examples show differnt implementations of the kausest JavaScript
+          benchmarks which has been used for testing and improving the code.
+          There are 3 implementations:
+        </p>
+        <div id="benchmarks">
+          <ul>
+            <li>
+              <h3>Benchmark</h3>
+              <p>
+                This is a stateless implementation where everything exists in
+                the DOM. Deleight is used here as a convenient way to build and
+                manipulate the DOM.
+              </p>
+              <a href="./benchmark.html">Link to Benchmark</a>
+            </li>
+            <li>
+              <h3>Keyed</h3>
+              <p>
+                This corresponds to the required keyed implementation of the
+                benchmarks where new DOM trees are rebuilt when the data (stored
+                in JavaScript memory) are rebuilt.
+              </p>
+              <a href="./keyed.html">Link to Keyed</a>
+            </li>
+            <li>
+              <h3>Non-keyed</h3>
+              <p>
+                This corresponds to the required non-keyed implementation of the
+                benchmarks where existing DOM trees are reused when the data
+                (stored in JavaScript memory) are rebuilt.
+              </p>
+              <a href="./non-keyed.html">Link to Non-keyed</a>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <section>
+        <h2>Account</h2>
+        <p>
+          This is an example taken from the 'account' of a discussion site. The
+          page will display a profile view if the user is not logged in and it
+          will display a login/signup form otherwise.
+        </p>
+        <a href="./account.html">Link to Account</a>
+      </section>
+      <section>
+        <h2>Tic-Tac-Toe</h2>
+        <p>Here is the game of tic-tac-toe implemented with deleight.</p>
+        <a href="./tictactoe.html">Link to tic-tac-toe</a>
+      </section>
+      <section>
+        <h2>Track-Cycling Game</h2>
+        <p>
+          The track-cycling race implemented as a computer game. It can be
+          played by any number of players. You may choose between random and
+          strategic modes. This game is fun.
+        </p>
+        <a href="./trackcycling.html">Link to track-cycling</a>
+      </section>
+      <section>
+        <h2>TODO List</h2>
+        <p>
+          No 'framework' is truly complete without showing an implementation of
+          the famous TODO list application. Our implementation also includes a
+          <b>counter</b> for number of items.
+        </p>
+        <a href="./todos.html">Link to TODO</a>
+      </section>
+      <section>
+        <h2>Themes</h2>
+        <p>Here is the index page again with multiple themes to choose from</p>
+        <a href="./theme.html">Link to Themes</a>
+      </section>
+    </main>
+  </body>
+</html>
