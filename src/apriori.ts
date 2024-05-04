@@ -128,11 +128,7 @@ export function arrayTemplate(
     "arr",
     ...argNames,
     `
-        const result = [];
-        for (let ${itemName} of arr) {
-            result.push(\`${templateStr}\`);
-        }
-        return result.join('${itemSep}')
+        return arr.map(${itemName} => \`${templateStr}\`).join('${itemSep}');
     `,
   ) as ArrayTemplate;
 }
@@ -184,10 +180,7 @@ export function asyncArrayTemplate(
     "arr",
     ...argNames,
     `
-        const result = [];
-        for (let ${itemName} of arr) {
-            result.push(${tagName}\`${templateStr}\`);
-        }
+        const result = arr.map(${itemName} => ${tagName}\`${templateStr}\`);
         return Promise.all(result).then(resolved => resolved.join('${itemSep}'));
     `,
   );

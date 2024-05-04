@@ -10,7 +10,6 @@ const markup = `
 `;
 
 describe("apriori.get", () => {
-
     async function mFetch(url, options) {
         if (url === './get.html') return new Response(markup);
         else throw new Error('Could not fetch the resource at ' + url);

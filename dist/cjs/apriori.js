@@ -93,11 +93,7 @@ function arrayTemplate(templateStr, argNames, itemName, itemSep) {
     if (!itemSep)
         itemSep = "";
     return Function("arr", ...argNames, `
-        const result = [];
-        for (let ${itemName} of arr) {
-            result.push(\`${templateStr}\`);
-        }
-        return result.join('${itemSep}')
+        return arr.map(${itemName} => \`${templateStr}\`).join('${itemSep}');
     `);
 }
 /**
@@ -139,10 +135,7 @@ function asyncArrayTemplate(templateStr, argNames, itemName, itemSep, tagName) {
         Please change the tag name or the argument name to resolve this.`);
     }
     const f = Function(tagName, "arr", ...argNames, `
-        const result = [];
-        for (let ${itemName} of arr) {
-            result.push(${tagName}\`${templateStr}\`);
-        }
+        const result = arr.map(${itemName} => ${tagName}\`${templateStr}\`);
         return Promise.all(result).then(resolved => resolved.join('${itemSep}'));
     `);
     return (arr, ...args) => f(tag, arr, ...args);

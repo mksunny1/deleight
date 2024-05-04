@@ -590,6 +590,14 @@ declare function range(start: number, end?: number, step?: number): Generator<nu
  */
 declare function items(arrayLike: any, index: Iterable<number>): Generator<any, void, unknown>;
 /**
+ * Returns a generator that yields first argument (what) the number of
+ * times specified by the second argument (times).
+ *
+ * @param {any} what
+ * @param {number} times
+ */
+declare function repeat(what: any, times: number): Generator<any, void, unknown>;
+/**
  * Call to get the length of an object. The object must either
  * have a length property of be previously passed in a call to`setLength`.
  *
@@ -999,4 +1007,4 @@ type Recursive<T> = {
  */
 declare function With<T>(obj: T): Recursive<T>;
 
-export { ASSIGN, Actribute, type ApplyMap, type Args, type ArrayTemplate, type AsyncArrayTemplate, END, EventListener, type Inserter, Listener, type MatchEventTarget, MatchListener, type Matcher, One, type OneConstructor, type Recursive, type RecursiveProp, type RecursiveSetProp, SET, type SetMap, Sophistry, StyleSheet, WITH, With, apply, applyTo, arrayTemplate, asyncArrayTemplate, asyncTemplate, createFragment, eventListener, flat, get, getLength, ignoreContext, insert, inserter, items, iterLengths, keys, matchListener, next, onEnter, onKey, one, parentSelector, preventDefault, range, remove, ruleSelector, ruleSelectorAll, set, setLength, stopPropagation, tag, template, uItems, unWrap, update };
+export { ASSIGN, Actribute, type ApplyMap, type Args, type ArrayTemplate, type AsyncArrayTemplate, END, EventListener, type Inserter, Listener, type MatchEventTarget, MatchListener, type Matcher, One, type OneConstructor, type Recursive, type RecursiveProp, type RecursiveSetProp, SET, type SetMap, Sophistry, StyleSheet, WITH, With, apply, applyTo, arrayTemplate, asyncArrayTemplate, asyncTemplate, createFragment, eventListener, flat, get, getLength, ignoreContext, insert, inserter, items, iterLengths, keys, matchListener, next, onEnter, onKey, one, parentSelector, preventDefault, range, remove, repeat, ruleSelector, ruleSelectorAll, set, setLength, stopPropagation, tag, template, uItems, unWrap, update };

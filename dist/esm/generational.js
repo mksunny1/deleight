@@ -35,6 +35,17 @@ function* items(arrayLike, index) {
         yield arrayLike[i];
 }
 /**
+ * Returns a generator that yields first argument (what) the number of
+ * times specified by the second argument (times).
+ *
+ * @param {any} what
+ * @param {number} times
+ */
+function* repeat(what, times) {
+    for (let i = 0; i < times; i++)
+        yield what;
+}
+/**
  * Call to get the length of an object. The object must either
  * have a length property of be previously passed in a call to`setLength`.
  *
@@ -124,4 +135,4 @@ function* uItems(array) {
     }
 }
 
-export { flat, getLength, items, iterLengths, next, range, setLength, uItems };
+export { flat, getLength, items, iterLengths, next, range, repeat, setLength, uItems };
