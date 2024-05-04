@@ -209,6 +209,7 @@ declare function applyTo(elements: (Element | CSSRule)[] | (Element | CSSRule), 
  * @returns {Promise<string>}
  */
 declare function tag(strings: Array<string>, ...expressions: any[]): Promise<string>;
+type Args<T> = T[keyof T];
 /**
  * Effectively creates a template literal out of an existing template string and wraps it in a function
  * which can be called multiple times to 'render' the template with the given arguments.
@@ -218,10 +219,10 @@ declare function tag(strings: Array<string>, ...expressions: any[]): Promise<str
  * // t === 'I will render this guy immediately!!!'
  *
  * @param {string} templateStr the template string
- * @param {Array<string>} argNames tThe names of the parameters of the returned function (which can be 'seen' inside the template string)
+ * @param {string[]} argNames tThe names of the parameters of the returned function (which can be 'seen' inside the template string)
  * @returns {(...any): string}
  */
-declare function template(templateStr: string, argNames?: Array<string>): (...any: any[]) => string;
+declare function template(templateStr: string, argNames?: string[]): (...args: any[]) => string;
 /**
  * Similar to template but the built template is also 'promise-aware' and will allow them to resolve to string values
  * before interpolating them.
@@ -235,14 +236,20 @@ declare function template(templateStr: string, argNames?: Array<string>): (...an
  * @param {Array<string>} argNames The names of the parameters of the returned function (which can be 'seen' inside the template string)
  * @param {string} tagName Supply a tagName argument to change the name of the tag function inside the template string if
  * the default name (T) is present in  argNames.
- * @returns {(...any): string}
+ * @returns {(...any): Promise<string>}
  */
-declare function asyncTemplate(templateStr: string, argNames: Array<string>, tagName: string): (...any: any[]) => string;
+declare function asyncTemplate(templateStr: string, argNames: Array<string>, tagName: string): (...any: any[]) => Promise<string>;
 /**
  * The return value of a call to arrayTemplate.
  */
 interface ArrayTemplate {
     (arr: Iterable<any>, ...args: any[]): string;
+}
+/**
+ * The return value of a call to asyncArrayTemplate.
+ */
+interface AsyncArrayTemplate {
+    (arr: Iterable<any>, ...args: any[]): Promise<string>;
 }
 /**
  * Similar to template, but will render an iterable (such as array) of items together instead
@@ -280,9 +287,9 @@ declare function arrayTemplate(templateStr: string, argNames: Array<string>, ite
  * Defaults to the empty string.
  * @param {string} tagName Supply a tagName argument to change the name of the tag function inside the template string if
  * the default name (T) is present in  argNames.
- * @returns {ArrayTemplate}
+ * @returns {AsyncArrayTemplate}
  */
-declare function asyncArrayTemplate(templateStr: string, argNames: Array<string>, itemName: string, itemSep: string, tagName: string): ArrayTemplate;
+declare function asyncArrayTemplate(templateStr: string, argNames: Array<string>, itemName: string, itemSep: string, tagName: string): AsyncArrayTemplate;
 /**
  * Fetches text (typically markup) from the url. This is only a shorthand
  * for using `fetch`.
@@ -992,4 +999,4 @@ type Recursive<T> = {
  */
 declare function With<T>(obj: T): Recursive<T>;
 
-export { ASSIGN, Actribute, type ApplyMap, type ArrayTemplate, END, EventListener, type Inserter, Listener, type MatchEventTarget, MatchListener, type Matcher, One, type OneConstructor, type Recursive, type RecursiveProp, type RecursiveSetProp, SET, type SetMap, Sophistry, StyleSheet, WITH, With, apply, applyTo, arrayTemplate, asyncArrayTemplate, asyncTemplate, createFragment, eventListener, flat, get, getLength, ignoreContext, insert, inserter, items, iterLengths, keys, matchListener, next, onEnter, onKey, one, parentSelector, preventDefault, range, remove, ruleSelector, ruleSelectorAll, set, setLength, stopPropagation, tag, template, uItems, unWrap, update };
+export { ASSIGN, Actribute, type ApplyMap, type Args, type ArrayTemplate, type AsyncArrayTemplate, END, EventListener, type Inserter, Listener, type MatchEventTarget, MatchListener, type Matcher, One, type OneConstructor, type Recursive, type RecursiveProp, type RecursiveSetProp, SET, type SetMap, Sophistry, StyleSheet, WITH, With, apply, applyTo, arrayTemplate, asyncArrayTemplate, asyncTemplate, createFragment, eventListener, flat, get, getLength, ignoreContext, insert, inserter, items, iterLengths, keys, matchListener, next, onEnter, onKey, one, parentSelector, preventDefault, range, remove, ruleSelector, ruleSelectorAll, set, setLength, stopPropagation, tag, template, uItems, unWrap, update };

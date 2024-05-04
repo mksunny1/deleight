@@ -32,7 +32,7 @@ export async function tag(strings, ...expressions) {
  * // t === 'I will render this guy immediately!!!'
  *
  * @param {string} templateStr the template string
- * @param {Array<string>} argNames tThe names of the parameters of the returned function (which can be 'seen' inside the template string)
+ * @param {string[]} argNames tThe names of the parameters of the returned function (which can be 'seen' inside the template string)
  * @returns {(...any): string}
  */
 export function template(templateStr, argNames) {
@@ -53,7 +53,7 @@ export function template(templateStr, argNames) {
  * @param {Array<string>} argNames The names of the parameters of the returned function (which can be 'seen' inside the template string)
  * @param {string} tagName Supply a tagName argument to change the name of the tag function inside the template string if
  * the default name (T) is present in  argNames.
- * @returns {(...any): string}
+ * @returns {(...any): Promise<string>}
  */
 export function asyncTemplate(templateStr, argNames, tagName) {
     if (!argNames)
@@ -117,7 +117,7 @@ export function arrayTemplate(templateStr, argNames, itemName, itemSep) {
  * Defaults to the empty string.
  * @param {string} tagName Supply a tagName argument to change the name of the tag function inside the template string if
  * the default name (T) is present in  argNames.
- * @returns {ArrayTemplate}
+ * @returns {AsyncArrayTemplate}
  */
 export function asyncArrayTemplate(templateStr, argNames, itemName, itemSep, tagName) {
     if (!argNames)

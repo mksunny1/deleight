@@ -2,7 +2,7 @@ import { test, describe, it } from "node:test";
 import { strict as assert } from "node:assert";
 import { Actribute } from "../../src/actribute.js";
 
-describe("Actribute.registry", () => {
+describe("actribute.registry", () => {
   it("Should correctly unregister a funtion", (t) => {
     const act = new Actribute();
     const comp1 = (node, ...args) => {};

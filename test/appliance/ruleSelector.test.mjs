@@ -5,7 +5,7 @@ import { strict as assert } from "node:assert";
 import { ruleSelector } from "../../src/appliance.js";
 import { JSDOM } from "jsdom";
 
-describe("Appliance.ruleSelector", () => {
+describe("appliance.ruleSelector", () => {
   const window = new JSDOM(`<!DOCTYPE html><body></body>`).window;
   const document = window.document;
   const body = document.body;

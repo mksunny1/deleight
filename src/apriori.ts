@@ -29,6 +29,8 @@ export async function tag(
   );
 }
 
+export type Args<T> = T[keyof T]
+
 /**
  * Effectively creates a template literal out of an existing template string and wraps it in a function
  * which can be called multiple times to 'render' the template with the given arguments.
@@ -38,17 +40,15 @@ export async function tag(
  * // t === 'I will render this guy immediately!!!'
  *
  * @param {string} templateStr the template string
- * @param {Array<string>} argNames tThe names of the parameters of the returned function (which can be 'seen' inside the template string)
+ * @param {string[]} argNames tThe names of the parameters of the returned function (which can be 'seen' inside the template string)
  * @returns {(...any): string}
  */
 export function template(
   templateStr: string,
-  argNames?: Array<string>,
-): (...any) => string {
+  argNames?: string[],
+): (...args: any[]) => string {
   if (!argNames) argNames = [];
-  return Function(...argNames, `return \`${templateStr}\`;`) as (
-    ...any
-  ) => string;
+  return Function(...argNames, `return \`${templateStr}\`;`) as (...args: any[]) => string;
 }
 /**
  * Similar to template but the built template is also 'promise-aware' and will allow them to resolve to string values
@@ -63,13 +63,13 @@ export function template(
  * @param {Array<string>} argNames The names of the parameters of the returned function (which can be 'seen' inside the template string)
  * @param {string} tagName Supply a tagName argument to change the name of the tag function inside the template string if
  * the default name (T) is present in  argNames.
- * @returns {(...any): string}
+ * @returns {(...any): Promise<string>}
  */
 export function asyncTemplate(
   templateStr: string,
   argNames: Array<string>,
   tagName: string,
-): (...any) => string {
+): (...any) => Promise<string> {
   if (!argNames) argNames = [];
   if (!tagName) tagName = "T";
   if (argNames.includes(tagName)) {
@@ -89,6 +89,13 @@ export function asyncTemplate(
  */
 export interface ArrayTemplate {
   (arr: Iterable<any>, ...args: any[]): string;
+}
+
+/**
+ * The return value of a call to asyncArrayTemplate.
+ */
+export interface AsyncArrayTemplate {
+  (arr: Iterable<any>, ...args: any[]): Promise<string>;
 }
 
 /**
@@ -149,7 +156,7 @@ export function arrayTemplate(
  * Defaults to the empty string.
  * @param {string} tagName Supply a tagName argument to change the name of the tag function inside the template string if
  * the default name (T) is present in  argNames.
- * @returns {ArrayTemplate}
+ * @returns {AsyncArrayTemplate}
  */
 export function asyncArrayTemplate(
   templateStr: string,
@@ -157,7 +164,7 @@ export function asyncArrayTemplate(
   itemName: string,
   itemSep: string,
   tagName: string,
-): ArrayTemplate {
+): AsyncArrayTemplate {
   if (!argNames) argNames = [];
   if (!itemName) itemName = "item";
   if (!itemSep) itemSep = "";

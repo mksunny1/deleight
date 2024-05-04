@@ -3,7 +3,7 @@ import { strict as assert } from "node:assert";
 import { applyTo } from "../../src/appliance.js";
 import { JSDOM } from "jsdom";
 
-describe("Appliance.applyTo", () => {
+describe("appliance.applyTo", () => {
   const window = new JSDOM(`<!DOCTYPE html><body></body>`).window;
   const document = window.document;
   const body = document.body;

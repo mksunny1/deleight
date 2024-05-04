@@ -3,7 +3,7 @@ import { strict as assert } from "node:assert";
 import { Actribute } from "../../src/actribute.js";
 import { JSDOM } from "jsdom";
 
-describe("Actribute.process", () => {
+describe("actribute.process", () => {
   const document = new JSDOM(`<!DOCTYPE html><body></body>`).window.document;
   const body = document.body;
 

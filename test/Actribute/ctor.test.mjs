@@ -2,7 +2,7 @@ import { test, describe, it } from "node:test";
 import { strict as assert } from "node:assert";
 import { Actribute } from "../../src/actribute.js";
 
-describe("Actribute.constructor", () => {
+describe("actribute.constructor", () => {
   it("Should create default instance without args", (t) => {
     const act = new Actribute();
     assert.deepEqual(act.props, {});

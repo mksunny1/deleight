@@ -3,7 +3,7 @@ import { strict as assert } from "node:assert";
 import { parentSelector } from "../../src/appliance.js";
 import { JSDOM } from "jsdom";
 
-describe("Appliance.parentSelector", () => {
+describe("appliance.parentSelector", () => {
   
   const window = new JSDOM(`<!DOCTYPE html><body></body>`).window;
   const document = window.document;
