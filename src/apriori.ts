@@ -16,21 +16,21 @@
  * @returns {Promise<string>}
  */
 export async function tag(
-  strings: Array<string>,
-  ...expressions: any[]
+    strings: Array<string>,
+    ...expressions: any[]
 ): Promise<string> {
-  const promiseExpressions: unknown[] = [];
+    const promiseExpressions: unknown[] = [];
 
-  for (let [i, exp] of Array.from(expressions.entries())) {
-    if (exp instanceof Promise) promiseExpressions.push(exp);
-    else promiseExpressions.push(Promise.resolve(exp));
-  }
+    for (let [i, exp] of Array.from(expressions.entries())) {
+        if (exp instanceof Promise) promiseExpressions.push(exp);
+        else promiseExpressions.push(Promise.resolve(exp));
+    }
 
-  const resolvedExpressions = await Promise.all(promiseExpressions);
-  return (
-    resolvedExpressions.map((exp, i) => `${strings[i]}${exp}`).join("") +
-    strings[resolvedExpressions.length]
-  );
+    const resolvedExpressions = await Promise.all(promiseExpressions);
+    return (
+        resolvedExpressions.map((exp, i) => `${strings[i]}${exp}`).join("") +
+        strings[resolvedExpressions.length]
+    );
 }
 
 export type Args<T> = T[keyof T]
@@ -48,11 +48,11 @@ export type Args<T> = T[keyof T]
  * @returns {(...any): string}
  */
 export function template(
-  templateStr: string,
-  argNames?: string[],
+    templateStr: string,
+    argNames?: string[],
 ): (...args: any[]) => string {
-  if (!argNames) argNames = [];
-  return Function(...argNames, `return \`${templateStr}\`;`) as (...args: any[]) => string;
+    if (!argNames) argNames = [];
+    return Function(...argNames, `return \`${templateStr}\`;`) as (...args: any[]) => string;
 }
 /**
  * Similar to template but the built template is also 'promise-aware' and will allow them to resolve to string values
@@ -70,75 +70,73 @@ export function template(
  * @returns {(...any): Promise<string>}
  */
 export function asyncTemplate(
-  templateStr: string,
-  argNames: Array<string>,
-  tagName: string,
+    templateStr: string,
+    argNames: Array<string>,
+    tagName: string,
 ): (...any) => Promise<string> {
-  if (!argNames) argNames = [];
-  if (!tagName) tagName = "T";
-  if (argNames.includes(tagName)) {
-    throw new Error(`The tag name ${tagName} clashes with the name of one of the arguments. 
+    if (!argNames) argNames = [];
+    if (!tagName) tagName = "T";
+    if (argNames.includes(tagName)) {
+        throw new Error(`The tag name ${tagName} clashes with the name of one of the arguments. 
         Please change the tag name or the argument name to resolve this.`);
-  }
-  const f = Function(
-    tagName,
-    ...argNames,
-    `return ${tagName}\`${templateStr}\`;`,
-  );
-  return (...args) => f(tag, ...args);
+    }
+    const f = Function(
+        tagName,
+        ...argNames,
+        `return ${tagName}\`${templateStr}\`;`,
+    );
+    return (...args) => f(tag, ...args);
 }
 
 /**
  * The return value of a call to arrayTemplate.
  */
 export interface ArrayTemplate {
-  (arr: Iterable<any>, ...args: any[]): string;
+    (arr: Iterable<any>, ...args: any[]): string[];
 }
 
 /**
  * The return value of a call to asyncArrayTemplate.
  */
 export interface AsyncArrayTemplate {
-  (arr: Iterable<any>, ...args: any[]): Promise<string>;
+    (arr: Iterable<any>, ...args: any[]): Promise<string[]>;
 }
 
 /**
  * Similar to template, but will render an iterable (such as array) of items together instead
- * of rendering each item individually. It improves efficiency in these scenarios.
+ * of rendering each item individually. It improves efficiency in these scenarios because only 1 rendering 
+ * function is called.
  *
  * @example
- * const t = arrayTemplate('I will render this ${it}/${other} immediately!!!', ['other'], 'it', ' & ')([1, 2, 3, 4, 5], '(shared)');
+ * const t = arrayTemplate('I will render this ${it}/${other} immediately!!!', ['other'], 'it')([1, 2, 3, 4, 5], '(shared)').join(' & ');
  * // t === 'I will render this 1/(shared) immediately!!! & I will render this 2/(shared) immediately!!! & I will render this 3/(shared) immediately!!! & I will render this 4/(shared) immediately!!! & I will render this 5/(shared) immediately!!!'
  *
  * @param {string} templateStr The template string
  * @param {Array<string>} argNames The names of the parameters (after the iterable) of the returned function (which can be 'seen' inside the template string)
  * @param {string} itemName The name of the current item of the iterable as seen inside the template string. Defaults
  * to 'item'
- * @param {string} itemSep The text that goes between the rendered items.
  * Defaults to the empty string.
  * @returns {ArrayTemplate}
  */
 export function arrayTemplate(
-  templateStr: string,
-  argNames: Array<string>,
-  itemName: string,
-  itemSep: string,
+    templateStr: string,
+    argNames: Array<string>,
+    itemName: string
 ): ArrayTemplate {
-  if (!argNames) argNames = [];
-  if (!itemName) itemName = "item";
-  if (!itemSep) itemSep = "";
+    if (!argNames) argNames = [];
+    if (!itemName) itemName = "item";
 
-  return Function(
-    "arr",
-    ...argNames,
-    `
+    return Function(
+        "arr",
+        ...argNames,
+        `
         const result = [];
         for (let ${itemName} of arr) {
             result.push(\`${templateStr}\`);
         }
-        return result.join('${itemSep}');
+        return result;
     `,
-  ) as ArrayTemplate;
+    ) as ArrayTemplate;
 }
 
 /**
@@ -149,53 +147,49 @@ export function arrayTemplate(
  * @example
  * let t = asyncArrayTemplate('I will async render this ${item}')([1, 2, 3, 4, 5].map(i => Promise.resolve(i)));
  * console.log(t instanceof Promise);   // true
- * t = await t
- * // t === 'I will async render this 1I will async render this 2I will async render this 3I will async render this 4I will async render this 5'
+ * t = (await t).join(' ')
+ * // t === 'I will async render this 1 I will async render this 2 I will async render this 3 I will async render this 4 I will async render this 5'
  *
  * @param {string} templateStr The template string
  * @param {Array<string>} argNames The names of the parameters (after the iterable) of the returned function (which can be 'seen' inside the template string)
  * @param {string} itemName The name of the current item of the iterable as seen inside the template string. Defaults
  * to 'item'
- * @param {string} itemSep The text that goes between the rendered items.
- * Defaults to the empty string.
  * @param {string} tagName Supply a tagName argument to change the name of the tag function inside the template string if
  * the default name (T) is present in  argNames.
  * @returns {AsyncArrayTemplate}
  */
 export function asyncArrayTemplate(
-  templateStr: string,
-  argNames: Array<string>,
-  itemName: string,
-  itemSep: string,
-  tagName: string,
+    templateStr: string,
+    argNames: Array<string>,
+    itemName: string,
+    tagName: string,
 ): AsyncArrayTemplate {
-  if (!argNames) argNames = [];
-  if (!itemName) itemName = "item";
-  if (!itemSep) itemSep = "";
-  if (!tagName) tagName = "T";
+    if (!argNames) argNames = [];
+    if (!itemName) itemName = "item";
+    if (!tagName) tagName = "T";
 
-  if (itemName === tagName) {
-    throw new Error(`The tag name ${tagName} is the same as the item name. 
+    if (itemName === tagName) {
+        throw new Error(`The tag name ${tagName} is the same as the item name. 
         Please change the tag name or the item name to resolve this.`);
-  }
-  if (argNames.includes(tagName)) {
-    throw new Error(`The tag name ${tagName} clashes with the name of one of the arguments. 
+    }
+    if (argNames.includes(tagName)) {
+        throw new Error(`The tag name ${tagName} clashes with the name of one of the arguments. 
         Please change the tag name or the argument name to resolve this.`);
-  }
+    }
 
-  const f = Function(
-    tagName,
-    "arr",
-    ...argNames,
-    `
+    const f = Function(
+        tagName,
+        "arr",
+        ...argNames,
+        `
         const result = [];
         for (let ${itemName} of arr) {
             result.push(${tagName}\`${templateStr}\`);
         }
-        return Promise.all(result).then(resolved => resolved.join('${itemSep}'));
+        return Promise.all(result).then(resolved => resolved);
     `,
-  );
-  return (arr, ...args) => f(tag, arr, ...args);
+    );
+    return (arr, ...args) => f(tag, arr, ...args);
 }
 
 /**
@@ -212,13 +206,13 @@ export function asyncArrayTemplate(
  * @returns {Promise<string>}
  */
 export async function get(
-  url: string,
-  suppressErrors?: boolean,
-  init?: RequestInit,
+    url: string,
+    suppressErrors?: boolean,
+    init?: RequestInit,
 ): Promise<string> {
-  let result = fetch(url, init).then((r) => r.text());
-  if (suppressErrors) result = result.catch((r) => "");
-  return result;
+    let result = fetch(url, init).then((r) => r.text());
+    if (suppressErrors) result = result.catch((r) => "");
+    return result;
 }
 
 /**
@@ -237,11 +231,11 @@ export async function get(
  * @returns {Node}
  */
 export const createFragment = function (
-  markup: string,
+    markup: string,
 ): DocumentFragment | Element {
-  const temp = document.createElement("template");
-  temp.innerHTML = markup;
-  let result = temp.content;
-  if (result.children.length === 1) return result.children[0] as Element;
-  return result as DocumentFragment;
+    const temp = document.createElement("template");
+    temp.innerHTML = markup;
+    let result = temp.content;
+    if (result.children.length === 1) return result.children[0] as Element;
+    return result as DocumentFragment;
 };

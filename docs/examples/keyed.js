@@ -1,4 +1,3 @@
-import "../../src/browser.js";
 import { arrayTemplate, createFragment } from "../../src/apriori.js";
 import { apply, parentSelector } from "../../src/appliance.js";
 import { set, update } from "../../src/domitory.js";
@@ -155,7 +154,7 @@ function view(table) {
         context.indices,
         context.data,
       );
-      table.append(createFragment(renderedItems));
+      table.append(createFragment(renderedItems.join('')));
     },
     update(context) {
       apply(

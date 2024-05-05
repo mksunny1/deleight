@@ -12,17 +12,17 @@ describe("apriori.template", () => {
   
     it("Should render correctly", (t) => {
         const templateFunction = arrayTemplate(markup, ['arg'], 'it');
-        assert.equal(templateFunction(['first', 'second'], 'thing').trim(), renderedMarkup); 
+        assert.equal(templateFunction(['first', 'second'], 'thing').join('').trim(), renderedMarkup); 
     });
 
     it("Should rnot ender correctly", (t) => {
         const templateFunction = arrayTemplate(markup, ['arg'], 'it');
-        assert.notEqual(templateFunction(['first', Promise.resolve('second')], 'thing').trim(), renderedMarkup); 
+        assert.notEqual(templateFunction(['first', Promise.resolve('second')], 'thing').join('').trim(), renderedMarkup); 
     });
 
     it("Should use the correct item separator", (t) => {
-        const templateFunction = arrayTemplate(markup, ['arg'], 'it', '&');
-        assert.equal(templateFunction(['first', 'second'], 'thing').trim(), renderedMarkup2); 
+        const templateFunction = arrayTemplate(markup, ['arg'], 'it');
+        assert.equal(templateFunction(['first', 'second'], 'thing').join('&').trim(), renderedMarkup2); 
     });
 
 });

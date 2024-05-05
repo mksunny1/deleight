@@ -13,17 +13,17 @@ describe("apriori.template", () => {
   
     it("Should render correctly", async (t) => {
         const templateFunction = asyncArrayTemplate(markup, ['arg'], 'it');
-        assert.equal((await templateFunction(['first', 'second'], 'thing')).trim(), renderedMarkup); 
+        assert.equal((await templateFunction(['first', 'second'], 'thing')).join('').trim(), renderedMarkup); 
     });
 
     it("Should also render correctly", async (t) => {
         const templateFunction = asyncArrayTemplate(markup, ['arg'], 'it');
-        assert.equal((await templateFunction(['first', Promise.resolve('second')], 'thing')).trim(), renderedMarkup); 
+        assert.equal((await templateFunction(['first', Promise.resolve('second')], 'thing')).join('').trim(), renderedMarkup); 
     });
 
     it("Should use the correct item separator", async (t) => {
-        const templateFunction = asyncArrayTemplate(markup, ['arg'], 'it', '&');
-        assert.equal((await templateFunction(['first', 'second'], 'thing')).trim(), renderedMarkup2); 
+        const templateFunction = asyncArrayTemplate(markup, ['arg'], 'it');
+        assert.equal((await templateFunction(['first', 'second'], 'thing')).join('&').trim(), renderedMarkup2); 
     });
 
     it("Should throw if the tag name is present among the arg names",  (t) => {
@@ -35,8 +35,8 @@ describe("apriori.template", () => {
     });
 
     it("Should not throw if the tag name is absent in the arg names", async (t) => {
-        const templateFunction = asyncArrayTemplate(markup2, ['T'], 'it', '', 'A');
-        assert.equal((await templateFunction(['first', Promise.resolve('second')], 'thing')).trim(), renderedMarkup); 
+        const templateFunction = asyncArrayTemplate(markup2, ['T'], 'it', 'A');
+        assert.equal((await templateFunction(['first', Promise.resolve('second')], 'thing')).join('').trim(), renderedMarkup); 
     });
 
 });

@@ -1,4 +1,3 @@
-import "../../src/browser.js";
 import { createFragment } from "../../src/apriori.js";
 import { apply, parentSelector } from "../../src/appliance.js";
 import { set } from "../../src/domitory.js";

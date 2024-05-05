@@ -74,33 +74,31 @@ function asyncTemplate(templateStr, argNames, tagName) {
 }
 /**
  * Similar to template, but will render an iterable (such as array) of items together instead
- * of rendering each item individually. It improves efficiency in these scenarios.
+ * of rendering each item individually. It improves efficiency in these scenarios because only 1 rendering
+ * function is called.
  *
  * @example
- * const t = arrayTemplate('I will render this ${it}/${other} immediately!!!', ['other'], 'it', ' & ')([1, 2, 3, 4, 5], '(shared)');
+ * const t = arrayTemplate('I will render this ${it}/${other} immediately!!!', ['other'], 'it')([1, 2, 3, 4, 5], '(shared)').join(' & ');
  * // t === 'I will render this 1/(shared) immediately!!! & I will render this 2/(shared) immediately!!! & I will render this 3/(shared) immediately!!! & I will render this 4/(shared) immediately!!! & I will render this 5/(shared) immediately!!!'
  *
  * @param {string} templateStr The template string
  * @param {Array<string>} argNames The names of the parameters (after the iterable) of the returned function (which can be 'seen' inside the template string)
  * @param {string} itemName The name of the current item of the iterable as seen inside the template string. Defaults
  * to 'item'
- * @param {string} itemSep The text that goes between the rendered items.
  * Defaults to the empty string.
  * @returns {ArrayTemplate}
  */
-function arrayTemplate(templateStr, argNames, itemName, itemSep) {
+function arrayTemplate(templateStr, argNames, itemName) {
     if (!argNames)
         argNames = [];
     if (!itemName)
         itemName = "item";
-    if (!itemSep)
-        itemSep = "";
     return Function("arr", ...argNames, `
         const result = [];
         for (let ${itemName} of arr) {
             result.push(\`${templateStr}\`);
         }
-        return result.join('${itemSep}');
+        return result;
     `);
 }
 /**
@@ -111,26 +109,22 @@ function arrayTemplate(templateStr, argNames, itemName, itemSep) {
  * @example
  * let t = asyncArrayTemplate('I will async render this ${item}')([1, 2, 3, 4, 5].map(i => Promise.resolve(i)));
  * console.log(t instanceof Promise);   // true
- * t = await t
- * // t === 'I will async render this 1I will async render this 2I will async render this 3I will async render this 4I will async render this 5'
+ * t = (await t).join(' ')
+ * // t === 'I will async render this 1 I will async render this 2 I will async render this 3 I will async render this 4 I will async render this 5'
  *
  * @param {string} templateStr The template string
  * @param {Array<string>} argNames The names of the parameters (after the iterable) of the returned function (which can be 'seen' inside the template string)
  * @param {string} itemName The name of the current item of the iterable as seen inside the template string. Defaults
  * to 'item'
- * @param {string} itemSep The text that goes between the rendered items.
- * Defaults to the empty string.
  * @param {string} tagName Supply a tagName argument to change the name of the tag function inside the template string if
  * the default name (T) is present in  argNames.
  * @returns {AsyncArrayTemplate}
  */
-function asyncArrayTemplate(templateStr, argNames, itemName, itemSep, tagName) {
+function asyncArrayTemplate(templateStr, argNames, itemName, tagName) {
     if (!argNames)
         argNames = [];
     if (!itemName)
         itemName = "item";
-    if (!itemSep)
-        itemSep = "";
     if (!tagName)
         tagName = "T";
     if (itemName === tagName) {
@@ -146,7 +140,7 @@ function asyncArrayTemplate(templateStr, argNames, itemName, itemSep, tagName) {
         for (let ${itemName} of arr) {
             result.push(${tagName}\`${templateStr}\`);
         }
-        return Promise.all(result).then(resolved => resolved.join('${itemSep}'));
+        return Promise.all(result).then(resolved => resolved);
     `);
     return (arr, ...args) => f(tag, arr, ...args);
 }
