@@ -178,12 +178,12 @@ We are bringing the `with` functionality back to JavaScript with the help of Pro
 because of performance, code comprehension and readbility issues. Once we have an implementation without these limitations, 
 we can benefit from the improved concision and structure of our code. 
 
-*NB: Fully tested*
-
 ```js
 import { With, SET } from "deleight/withy";
 With(document.createElement('div'))[SET]({textContent: 'Yeah'})(div => document.body.append(div));
 ```
+
+*NB: Fully tested*
 
 
 ## Installation
