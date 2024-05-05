@@ -2,19 +2,19 @@
  * Base class for EventListener and MatchListener
  */
 export class Listener {
-  listener: EventListenerOrEventListenerObject;
-  listen(
-    eventName: string,
-    elements: EventTarget[],
-    options?: boolean | AddEventListenerOptions,
-  ) {
-    for (let element of elements)
-      element.addEventListener(eventName, this.listener, options);
-  }
-  remove(eventName: string, ...elements: EventTarget[]) {
-    for (let element of elements)
-      element.removeEventListener(eventName, this.listener);
-  }
+    listener: EventListenerOrEventListenerObject;
+    listen(
+        eventName: string,
+        elements: EventTarget[],
+        options?: boolean | AddEventListenerOptions,
+    ) {
+        for (let element of elements)
+            element.addEventListener(eventName, this.listener, options);
+    }
+    remove(eventName: string, ...elements: EventTarget[]) {
+        for (let element of elements)
+            element.removeEventListener(eventName, this.listener);
+    }
 }
 
 /**
@@ -24,7 +24,7 @@ export class Listener {
  *
  */
 export interface Matcher {
-  [key: string]: Function | Function[];
+    [key: string]: Function | Function[];
 }
 
 const defaultRunContext = { running: false };
@@ -64,21 +64,24 @@ const defaultRunContext = { running: false };
  * @returns
  */
 export function eventListener(ops: Function[] | Function, runContext?: any) {
-  if (!runContext) runContext = defaultRunContext;
-  if (!(ops instanceof Array)) ops = [ops];
-  let op: Function;
-  async function listener(e: any) {
-    if (runContext.running) return;
-    runContext.running = true;
-    let result: any;
-    for (op of ops as Function[]) {
-      result = await op(e, runContext);
-      if (result === END) break;
+    if (!runContext) runContext = defaultRunContext;
+    if (!(ops instanceof Array)) ops = [ops];
+    let op: Function;
+    function listener(e: any) {
+        if (runContext.running) return;
+        runContext.running = true;
+        let result: any;
+        for (op of ops as Function[]) {
+            result = op(e, runContext);      // might be a promise. up to the next op whether or not to await it.
+            runContext.result = result;
+            if (result === END) break;
+        }
+        // we only await a final promise:
+        if (result instanceof Promise) result.then(() => runContext.running = false, err => { throw err });
+        else runContext.running = false;
+        return result;
     }
-    runContext.running = false;
-    return result;
-  }
-  return listener;
+    return listener;
 }
 
 /**
@@ -89,10 +92,10 @@ export function eventListener(ops: Function[] | Function, runContext?: any) {
  * (good practice).
  */
 export class EventListener extends Listener {
-  constructor(ops: Function[] | Function, runContext?: any) {
-    super();
-    this.listener = eventListener(ops, runContext);
-  }
+    constructor(ops: Function[] | Function, runContext?: any) {
+        super();
+        this.listener = eventListener(ops, runContext);
+    }
 }
 
 /**
@@ -119,31 +122,31 @@ export const END = Symbol();
  * @param {boolean} wrapListeners Whether to werap the matcher functions with `eventListener`.
  */
 export function matchListener(matcher: Matcher, wrapListeners?: boolean) {
-  const listenerMap: { [key: string]: Function } = {};
-  for (let [selector, args] of Object.entries(matcher)) {
-    if (wrapListeners || args instanceof Array) {
-      let args2;
-      if (!(args instanceof Array) || typeof args.at(-1) === "function") {
-        args2 = [args, null];
-      }
-      listenerMap[selector] = args2
-        ? eventListener(args2[0], args2[1])
-        : eventListener(args[0], args[1]);
-    } else listenerMap[selector] = args;
-  }
-  function listener(e: { target: MatchEventTarget }) {
-    for (let [selector, fn] of Object.entries(listenerMap)) {
-      if (e.target.matches && e.target.matches(selector)) return fn(e);
+    const listenerMap: { [key: string]: Function } = {};
+    for (let [selector, args] of Object.entries(matcher)) {
+        if (wrapListeners || args instanceof Array) {
+            let args2: [Function | Function[], any];
+            if (!(args instanceof Array) || typeof args.at(-1) === "function") {
+                args2 = [args, null];
+            }
+            listenerMap[selector] = args2
+                ? eventListener(args2[0], args2[1])
+                : eventListener(args[0], args[1]);
+        } else listenerMap[selector] = args;
     }
-  }
-  return listener;
+    function listener(e: { target: MatchEventTarget }) {
+        for (let [selector, fn] of Object.entries(listenerMap)) {
+            if (e.target.matches && e.target.matches(selector)) return fn(e);
+        }
+    }
+    return listener;
 }
 
 /**
  * An event target which may have a 'matches' method.
  */
 export interface MatchEventTarget extends EventTarget {
-  matches?: (arg0: string) => any;
+    matches?: (arg0: string) => any;
 }
 
 /**
@@ -154,10 +157,10 @@ export interface MatchEventTarget extends EventTarget {
  * (good practice).
  */
 export class MatchListener extends Listener {
-  constructor(matcher: Matcher, wrapListeners?: boolean) {
-    super();
-    this.listener = matchListener(matcher, wrapListeners);
-  }
+    constructor(matcher: Matcher, wrapListeners?: boolean) {
+        super();
+        this.listener = matchListener(matcher, wrapListeners);
+    }
 }
 
 /**
@@ -168,7 +171,7 @@ export class MatchListener extends Listener {
  * @returns
  */
 export const stopPropagation = (e: { stopPropagation: () => any }) =>
-  e.stopPropagation();
+    e.stopPropagation();
 
 /**
  * Simply calls `preventDefault` on the event. Useful for creating one-liner
@@ -178,7 +181,7 @@ export const stopPropagation = (e: { stopPropagation: () => any }) =>
  * @returns
  */
 export const preventDefault = (e: { preventDefault: () => any }) =>
-  e.preventDefault();
+    e.preventDefault();
 
 /**
  * This returns a function which will stop an event handler run (typically for keyup,
@@ -192,7 +195,7 @@ export const preventDefault = (e: { preventDefault: () => any }) =>
  * @returns {Function}
  */
 export const onKey = (key: string) => (e: KeyboardEvent) =>
-  e.key !== key ? END : "";
+    e.key !== key ? END : "";
 export const keys = { enter: "Enter" };
 
 /**

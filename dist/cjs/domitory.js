@@ -16,10 +16,12 @@
  * @param {Inserter} [insertWith] The insertion function
  */
 function insert(elements, values, insertWith) {
+    if (!(values instanceof Array))
+        values = Array.from(values);
+    if (elements instanceof HTMLCollection || elements instanceof NodeList)
+        elements = Array.from(elements);
     if (elements instanceof Array)
         elements = elements.values();
-    if (values instanceof HTMLCollection || values instanceof NodeList)
-        values = Array.from(values);
     if (!insertWith)
         insertWith = inserter.append; // the default inserter
     for (let value of values)
@@ -63,20 +65,17 @@ const inserter = {
  * @param {SetMap} values
  */
 function set(elements, values) {
-    const localMemberValues = new Set();
-    for (let memberValues of Object.values(values)) {
-        if (!(memberValues instanceof Array) &&
-            localMemberValues.has(memberValues)) {
-            throw new Error('set: You have passed the same generator multiple times in "values". Your intention is not clear. Aborting.');
-        }
-        else if (!(memberValues instanceof Array))
-            localMemberValues.add(memberValues);
+    const localMemberValues = {};
+    for (let [key, memberValues] of Object.entries(values)) {
+        if (!(memberValues instanceof Array))
+            memberValues = Array.from(memberValues);
+        localMemberValues[key] = memberValues;
     }
     if (!(elements instanceof Array))
         elements = Array.from(elements);
     // we must materialize this first.
     let i = 0, memberValue;
-    for (let [member, memberValues] of Object.entries(values)) {
+    for (let [member, memberValues] of Object.entries(localMemberValues)) {
         i = 0;
         if (member.startsWith("_")) {
             member = member.slice(1);
@@ -109,7 +108,9 @@ function update(elements, values) {
     let parentNode, tempNode;
     const template = document.createComment(""); // document.createElement('template');
     const temps = [];
-    if (values instanceof HTMLCollection || values instanceof NodeList)
+    if (!(elements instanceof Array))
+        elements = Array.from(elements);
+    if (!(values instanceof Array))
         values = Array.from(values);
     for (let element of elements) {
         parentNode = element.parentNode;
@@ -134,9 +135,10 @@ function update(elements, values) {
  * @param {Iterable<Node>} elements
  */
 function remove(elements) {
-    for (let element of elements) {
+    if (!(elements instanceof Array))
+        elements = Array.from(elements);
+    for (let element of elements)
         element.parentNode?.removeChild(element);
-    }
 }
 
 exports.insert = insert;

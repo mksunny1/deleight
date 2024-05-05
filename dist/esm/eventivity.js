@@ -53,17 +53,22 @@ function eventListener(ops, runContext) {
     if (!(ops instanceof Array))
         ops = [ops];
     let op;
-    async function listener(e) {
+    function listener(e) {
         if (runContext.running)
             return;
         runContext.running = true;
         let result;
         for (op of ops) {
-            result = await op(e, runContext);
+            result = op(e, runContext); // might be a promise. up to the next op whether or not to await it.
+            runContext.result = result;
             if (result === END)
                 break;
         }
-        runContext.running = false;
+        // we only await a final promise:
+        if (result instanceof Promise)
+            result.then(() => runContext.running = false, err => { throw err; });
+        else
+            runContext.running = false;
         return result;
     }
     return listener;

@@ -472,7 +472,7 @@ interface Matcher {
  * @param {any} [runContext] The optional run context.
  * @returns
  */
-declare function eventListener(ops: Function[] | Function, runContext?: any): (e: any) => Promise<any>;
+declare function eventListener(ops: Function[] | Function, runContext?: any): (e: any) => any;
 /**
  * Similar to eventListener function but has methods for attaching
  * and removing itself from multiple elements at the same time.
