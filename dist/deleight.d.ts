@@ -828,12 +828,10 @@ declare class One {
      * @param {any[]} args The function or method arguments
      * @param {string | number | symbol} [method] The name of a method to call.
      * A function call is assumed if not specified.
-     * @param {boolean} [ignoreContext] Set this to a truthy value to prevent the
-     * shared context from getting passed in this call.
      *
      * @returns {any[]}
      */
-    call(args?: any[], method?: string | number | symbol, ignoreContext?: boolean): any[];
+    call(args?: any[], method?: string | number | symbol): any[];
 }
 /**
  * Pass this as the first arg in a One call to prevent it from injecting

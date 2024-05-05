@@ -1,6 +1,6 @@
 {
   "name": "deleight",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A group of 8 libraries for writing accessible and joyfully interactive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
   "types": "./dist/deleight.d.ts",

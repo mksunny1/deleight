@@ -215,13 +215,11 @@ class One {
      * @param {any[]} args The function or method arguments
      * @param {string | number | symbol} [method] The name of a method to call.
      * A function call is assumed if not specified.
-     * @param {boolean} [ignoreContext] Set this to a truthy value to prevent the
-     * shared context from getting passed in this call.
      *
      * @returns {any[]}
      */
-    call(args, method, ignoreContext) {
-        if (args === undefined)
+    call(args, method) {
+        if (args === undefined || !args.length)
             args = [[]];
         const results = [];
         const length = this.many.length;

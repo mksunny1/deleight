@@ -101,7 +101,7 @@ wrappedOneArray.push([6], ["e"]);
 // wrapping enables shorthand syntax like this.
 ```
 
-*NB: Partially tested*
+*NB: Fully tested*
 
 
 ## Apriori
