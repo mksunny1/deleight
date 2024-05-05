@@ -232,3 +232,10 @@ Thank you for contributing.
 
 - Improving test coverage.
 - Adding and completing examples
+
+
+## Ideas
+
+- Progressive Web Apps
+- Efficient navigation
+

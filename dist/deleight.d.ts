@@ -972,7 +972,7 @@ interface AnyFunction {
  * to increase the concision even further.
  *
  * @example
- *
+ *With(obj)[WITH]({o1: o1 => {assert.equal(o1.c, 1);}, o2: o2 => {assert.equal(o2.c, 2);}})
  */
 declare const WITH: unique symbol;
 /**
@@ -986,11 +986,13 @@ declare const SET: unique symbol;
  * Used to set any properties on the wrapped object and return the same object.
  *
  * @example
- * With(obj).set({a:1, b:2}).method1().method2('...')()  // final call unwraps the object.
+ * With(obj)[SET]({prop3: 5, prop4: 6}).inc().prop2
  */
 declare const ASSIGN: unique symbol;
 /**
  * Creates recursive references around properties of a given object.
+ * @example
+ * With(obj)[ASSIGN]({prop1: 5, prop2: 6}).inc().prop2
  */
 type RecursiveProp<T> = {
     [key in keyof T]?: (arg: Recursive<T[key]>) => any;
