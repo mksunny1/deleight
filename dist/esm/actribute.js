@@ -27,6 +27,9 @@
  * // unregister a component:
  * delete act.registry.comp2;
  */
+/**
+ * An Actribute class. Similar to a custom elements registry 'class'.
+ */
 class Actribute {
     /**
      * The object that holds all registered components. The keys are the

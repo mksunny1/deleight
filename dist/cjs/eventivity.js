@@ -1,6 +1,9 @@
 'use strict';
 
 /**
+ * This module exports event handling helpers.
+ */
+/**
  * Base class for EventListener and MatchListener
  */
 class Listener {

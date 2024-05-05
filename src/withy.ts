@@ -1,4 +1,8 @@
 /**
+ * This module exports With function for creating more concise and structured code.
+ */
+
+/**
  * 'with' statement on steroids! This module exports a With function
  * which makes code succint without any of the limitations that led to
  * 'with' getting dropped from the JavaScript standard. In fact it
@@ -12,8 +16,8 @@
 
 //  extends object
 
-interface AnyFunction {
-  (...args: any): any;
+export interface AnyFunction {
+    (...args: any): any;
 }
 
 /**
@@ -46,39 +50,39 @@ export const ASSIGN = Symbol();
  * Creates recursive references around properties of a given object.
  */
 export type RecursiveProp<T> = {
-  [key in keyof T]?: (arg: Recursive<T[key]>) => any;
+    [key in keyof T]?: (arg: Recursive<T[key]>) => any;
 };
 
 /**
  * Sets existing properties on object.
  */
 export type RecursiveSetProp<T> = {
-  [key in keyof T]?: any;
+    [key in keyof T]?: any;
 };
 
 /**
  * An object whose methods returns itself
  */
 export type Recursive<T> = {
-  [key in keyof T]: T[key] extends AnyFunction
+    [key in keyof T]: T[key] extends AnyFunction
     ? (...args: Parameters<T[key]>) => Recursive<T>
     : T[key];
-  // to call methods and return itself (or simply return the prop is it is not a method)
+    // to call methods and return itself (or simply return the prop is it is not a method)
 } & {
-  [WITH]: (arg: RecursiveProp<T>) => Recursive<T>;
-  // to wrap properties automatically
+    [WITH]: (arg: RecursiveProp<T>) => Recursive<T>;
+    // to wrap properties automatically
 
-  [SET]: (arg: RecursiveSetProp<T>) => Recursive<T>;
-  // to set preexisting properties
+    [SET]: (arg: RecursiveSetProp<T>) => Recursive<T>;
+    // to set preexisting properties
 
-  [ASSIGN]: (...objs: any[]) => Recursive<T>;
-  // to assign any properties
+    [ASSIGN]: (...objs: any[]) => Recursive<T>;
+    // to assign any properties
 
-  (arg: any, ...args: any): Recursive<T>;
-  // to perform unrelated operations (or functions which will be called with the wrapped object) inside the chain
+    (arg: any, ...args: any): Recursive<T>;
+    // to perform unrelated operations (or functions which will be called with the wrapped object) inside the chain
 
-  (): T;
-  // to return the wrapped object.
+    (): T;
+    // to return the wrapped object.
 };
 
 /**
@@ -88,47 +92,54 @@ export type Recursive<T> = {
  * concise syntax in some scenarios.
  *
  * @example
- * const el = With(document.createElement('div')).append().append()[assign]().append()().append();
+ * const el = With(document.createElement('div')).append().append()[ASSIGN]().append()().append();
  *
  * @param obj
  * @returns
  */
 export function With<T>(obj: T): Recursive<T> {
-  const target: any = Object.assign(
-    (...args: any) => {
-      if (!args.length) return obj;
-      for (let arg of args) if (arg instanceof Function) arg(obj);
-      return proxy;
-    },
-    { obj },
-  );
-  const proxy = new Proxy<Recursive<T>>(target as any, trap);
-  target.proxy = proxy;
-  return proxy;
+    const target: any = Object.assign(
+        (...args: any) => {
+            if (!args.length) return obj;
+            for (let arg of args) if (arg instanceof Function) arg(proxy);
+            return proxy;
+        },
+        { obj },
+    );
+    const proxy = new Proxy<Recursive<T>>(target as any, trap);
+    target.proxy = proxy;
+    return proxy;
 }
 
 const trap = {
-  get(target: any, p: string | number | symbol) {
-    if (p === ASSIGN) {
-      return (...objs: any[]) => {
-        Object.assign(target.obj, ...objs);
-        return target.proxy;
-      };
-    } else if (p === SET) {
-      return <T extends object>(arg: T) => {
-        for (let [k, v] of Object.entries(arg)) target.obj[k] = v;
-      };
-    } else if (p === WITH) {
-      return <T extends object>(arg: T) => {
-        for (let [k, v] of Object.entries(arg)) v(target.obj[k]);
-      };
-    } else {
-      return (...args: any[]) => {
-        target.obj[p](...args);
-        return target.proxy;
-      };
-    }
-  },
+    get(target: any, p: string | number | symbol) {
+        if (p === ASSIGN) {
+            return (...objs: any[]) => {
+                Object.assign(target.obj, ...objs);
+                return target.proxy;
+            };
+        } else if (p === SET) {
+            return <T extends object>(arg: T) => {
+                for (let [k, v] of Object.entries(arg)) {
+                    if (target.obj.hasOwnProperty(k)) target.obj[k] = v;
+                    else throw new Error(`You cannot assign a new property (${k}) with this method.`)
+                }
+                return target.proxy;
+            };
+        } else if (p === WITH) {
+            return <T extends object>(arg: T) => {
+                for (let [k, v] of Object.entries(arg)) v(With(target.obj[k]));
+                return target.proxy;
+            };
+        } else {
+            const res = target.obj[p];
+            if (!(res instanceof Function)) return res;
+            return (...args: any[]) => {
+                target.obj[p](...args);
+                return target.proxy;
+            };
+        }
+    },
 };
 
 // const el1 = With(document.createElement('div')).append('').append()[SET]({className: 'cls1', textContent: 'Wow!'}).append('abc').append()();

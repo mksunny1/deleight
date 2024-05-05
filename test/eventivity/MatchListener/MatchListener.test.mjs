@@ -2,7 +2,7 @@ import { describe, it } from "node:test";
 import { strict as assert } from "node:assert";
 import { MatchListener } from "../../../src/eventivity.js";
 
-describe("eventivity.MatchListener.constructor", () => {
+describe("eventivity.MatchListener", () => {
     const events = (str1) => ({target: {matches(str2){return str1 === str2}}});
     
     it("Should create a valid match listener", async (t) => {

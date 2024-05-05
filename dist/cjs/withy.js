@@ -1,15 +1,7 @@
 'use strict';
 
 /**
- * 'with' statement on steroids! This module exports a With function
- * which makes code succint without any of the limitations that led to
- * 'with' getting dropped from the JavaScript standard. In fact it
- * leads to much more concision than the original 'with' and does not
- * degrade performance, readability or code comprehension. It is based on Proxy.
- *
- * @example
- * With(document.createElement('button'))[SET]({className: 'main', textContent: 'Wow'}).addEventListener('click', () => console.log('Wow!!'))(btn => document.body.append(btn))()
- *
+ * This module exports With function for creating more concise and structured code.
  */
 /**
  * Used to obtain a context (Recursive object) around a property of
@@ -41,7 +33,7 @@ const ASSIGN = Symbol();
  * concise syntax in some scenarios.
  *
  * @example
- * const el = With(document.createElement('div')).append().append()[assign]().append()().append();
+ * const el = With(document.createElement('div')).append().append()[ASSIGN]().append()().append();
  *
  * @param obj
  * @returns
@@ -52,7 +44,7 @@ function With(obj) {
             return obj;
         for (let arg of args)
             if (arg instanceof Function)
-                arg(obj);
+                arg(proxy);
         return proxy;
     }, { obj });
     const proxy = new Proxy(target, trap);
@@ -69,17 +61,26 @@ const trap = {
         }
         else if (p === SET) {
             return (arg) => {
-                for (let [k, v] of Object.entries(arg))
-                    target.obj[k] = v;
+                for (let [k, v] of Object.entries(arg)) {
+                    if (target.obj.hasOwnProperty(k))
+                        target.obj[k] = v;
+                    else
+                        throw new Error(`You cannot assign a new property (${k}) with this method.`);
+                }
+                return target.proxy;
             };
         }
         else if (p === WITH) {
             return (arg) => {
                 for (let [k, v] of Object.entries(arg))
-                    v(target.obj[k]);
+                    v(With(target.obj[k]));
+                return target.proxy;
             };
         }
         else {
+            const res = target.obj[p];
+            if (!(res instanceof Function))
+                return res;
             return (...args) => {
                 target.obj[p](...args);
                 return target.proxy;

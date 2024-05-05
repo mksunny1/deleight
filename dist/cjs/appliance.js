@@ -1,6 +1,10 @@
 'use strict';
 
 /**
+ * This module exports the `apply` function for selecting and operating on DOM elements. It also exports
+ * new selector functions,
+ */
+/**
  * Functions similarly to querySelectorAll, but for selecting style rules in
  * a CSS stylesheet object. All rules that start with any of the selectors are
  * selected.

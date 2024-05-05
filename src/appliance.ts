@@ -1,4 +1,9 @@
 /**
+ * This module exports the `apply` function for selecting and operating on DOM elements. It also exports 
+ * new selector functions,
+ */
+
+/**
  * An object mapping string keys to values of type function or function[].
  * When used as the `applySec` in a call to `apply`, the keys are used as
  * selectors in calls to `element.querySelectorAll` (or

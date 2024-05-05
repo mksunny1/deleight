@@ -1,4 +1,7 @@
 /**
+ * This module exports primitives for building DOM from text.
+ */
+/**
  * A template tag that will resolve only after all
  * interpolated promises have been resolved, finally returning the
  * intended string.

@@ -1,4 +1,7 @@
 /**
+ * This module exports many useful generators like `range` and `repeat`.
+ */
+/**
  * Fast and 'costless' range function for javascript based on generators.
  *
  * @example
@@ -42,8 +45,10 @@ export function* items(arrayLike, index) {
  * @param {number} times
  */
 export function* repeat(what, times) {
+    let item;
     for (let i = 0; i < times; i++)
-        yield what;
+        for (item of what)
+            yield item;
 }
 /**
  * Call to get the length of an object. The object must either
@@ -98,28 +103,22 @@ export function setLength(iter, length) {
  */
 export function* flat(...args) {
     const count = getLength(args);
-    let j;
-    while (true) {
-        for (let i = 0; i < count; i++) {
-            if (args[i].next().done)
-                yield args[i].next().value;
-            else
-                return;
-        }
+    const args2 = [];
+    let minLength;
+    for (let arg of args) {
+        if (!(arg instanceof Array))
+            arg = Array.from(arg);
+        args2.push(arg);
+        if (!minLength || minLength > arg.length)
+            minLength = arg.length;
     }
-}
-/**
- * Get an iterator over the next 'count' items of the given iterator.
- *
- * @example
- * next([1, 4, 3, 6, 7, 4, 5].values(), 3);  // 1, 4, 3
- *
- * @param iter
- * @param count
- */
-export function* next(iter, count) {
-    while (count-- > 0)
-        yield iter.next().value;
+    let j = 0;
+    while (j < minLength) {
+        for (let i = 0; i < count; i++) {
+            yield args2[i][j];
+        }
+        j++;
+    }
 }
 /**
  * Returns an unordered/random iterator over the input array..
@@ -127,11 +126,11 @@ export function* next(iter, count) {
  * @example
  * const unOrdered = uItems([1, 2, 3, 4]);  // [4, 1, 3, 2]
  *
- * @param {any[]} array
+ * @param {any[]} iter
  */
-export function* uItems(array) {
-    const arr = [...array];
+export function* uItems(iter) {
+    const arr = [...iter];
     for (let i = arr.length - 1; i >= 0; i--) {
-        yield arr.splice(Math.round(Math.random() * i), 1);
+        yield arr.splice(Math.round(Math.random() * i), 1)[0];
     }
 }

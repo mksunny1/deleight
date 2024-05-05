@@ -1,4 +1,8 @@
 /**
+ * This module exports event handling helpers.
+ */
+
+/**
  * Base class for EventListener and MatchListener
  */
 export class Listener {

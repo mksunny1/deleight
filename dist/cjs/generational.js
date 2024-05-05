@@ -1,6 +1,9 @@
 'use strict';
 
 /**
+ * This module exports many useful generators like `range` and `repeat`.
+ */
+/**
  * Fast and 'costless' range function for javascript based on generators.
  *
  * @example
@@ -44,8 +47,10 @@ function* items(arrayLike, index) {
  * @param {number} times
  */
 function* repeat(what, times) {
+    let item;
     for (let i = 0; i < times; i++)
-        yield what;
+        for (item of what)
+            yield item;
 }
 /**
  * Call to get the length of an object. The object must either
@@ -100,27 +105,22 @@ function setLength(iter, length) {
  */
 function* flat(...args) {
     const count = getLength(args);
-    while (true) {
-        for (let i = 0; i < count; i++) {
-            if (args[i].next().done)
-                yield args[i].next().value;
-            else
-                return;
-        }
+    const args2 = [];
+    let minLength;
+    for (let arg of args) {
+        if (!(arg instanceof Array))
+            arg = Array.from(arg);
+        args2.push(arg);
+        if (!minLength || minLength > arg.length)
+            minLength = arg.length;
     }
-}
-/**
- * Get an iterator over the next 'count' items of the given iterator.
- *
- * @example
- * next([1, 4, 3, 6, 7, 4, 5].values(), 3);  // 1, 4, 3
- *
- * @param iter
- * @param count
- */
-function* next(iter, count) {
-    while (count-- > 0)
-        yield iter.next().value;
+    let j = 0;
+    while (j < minLength) {
+        for (let i = 0; i < count; i++) {
+            yield args2[i][j];
+        }
+        j++;
+    }
 }
 /**
  * Returns an unordered/random iterator over the input array..
@@ -128,12 +128,12 @@ function* next(iter, count) {
  * @example
  * const unOrdered = uItems([1, 2, 3, 4]);  // [4, 1, 3, 2]
  *
- * @param {any[]} array
+ * @param {any[]} iter
  */
-function* uItems(array) {
-    const arr = [...array];
+function* uItems(iter) {
+    const arr = [...iter];
     for (let i = arr.length - 1; i >= 0; i--) {
-        yield arr.splice(Math.round(Math.random() * i), 1);
+        yield arr.splice(Math.round(Math.random() * i), 1)[0];
     }
 }
 
@@ -141,7 +141,6 @@ exports.flat = flat;
 exports.getLength = getLength;
 exports.items = items;
 exports.iterLengths = iterLengths;
-exports.next = next;
 exports.range = range;
 exports.repeat = repeat;
 exports.setLength = setLength;

@@ -1,5 +1,10 @@
 /**
- * Insert the values before the elements.
+ * This module exports primitives for 'bulk' manipulating the DOM.
+ */
+/**
+ * Insert the values using the elements as target. The way they are inserted
+ * depend on the inserter. If not provided, the default inserter will append the values
+ * to the corresponding elements.
  *
  * @example
  * // Insert a span into all the children of the first main element:

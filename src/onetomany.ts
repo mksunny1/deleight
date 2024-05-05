@@ -1,4 +1,8 @@
 /**
+ * This module enables reactivity  by exporting primitives for multiplying the effects of single operations.
+ */
+
+/**
  * Creates a One object which transmits a call, method dispatch, property
  * get or set applied to the 'one' object to the 'many' objects.
  *

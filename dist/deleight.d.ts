@@ -27,6 +27,9 @@
  * // unregister a component:
  * delete act.registry.comp2;
  */
+/**
+ * An Actribute class. Similar to a custom elements registry 'class'.
+ */
 declare class Actribute {
     /**
      * The object that holds all registered components. The keys are the
@@ -103,6 +106,10 @@ declare class Actribute {
     process(element: Element, props?: any, propSep?: string): Actribute;
 }
 
+/**
+ * This module exports the `apply` function for selecting and operating on DOM elements. It also exports
+ * new selector functions,
+ */
 /**
  * An object mapping string keys to values of type function or function[].
  * When used as the `applySec` in a call to `apply`, the keys are used as
@@ -195,6 +202,9 @@ declare function apply(applyMap: ApplyMap, containerElement?: Element, asCompone
  */
 declare function applyTo(elements: (Element | CSSRule)[] | (Element | CSSRule), functions: Function | Function[], asComponent?: boolean | number | undefined): void;
 
+/**
+ * This module exports primitives for building DOM from text.
+ */
 /**
  * A template tag that will resolve only after all
  * interpolated promises have been resolved, finally returning the
@@ -322,6 +332,9 @@ declare function get(url: string, suppressErrors?: boolean, init?: RequestInit):
 declare const createFragment: (markup: string) => DocumentFragment | Element;
 
 /**
+ * This module exports primitives for 'bulk' manipulating the DOM.
+ */
+/**
  * A function used to insert a new node using a target node.
  *
  * @example
@@ -331,7 +344,9 @@ interface Inserter {
     (node: Node, target: Node): void;
 }
 /**
- * Insert the values before the elements.
+ * Insert the values using the elements as target. The way they are inserted
+ * depend on the inserter. If not provided, the default inserter will append the values
+ * to the corresponding elements.
  *
  * @example
  * // Insert a span into all the children of the first main element:
@@ -421,6 +436,9 @@ declare function update(elements: Iterable<Node>, values: Iterable<Node>): void;
  */
 declare function remove(elements: Iterable<Node>): void;
 
+/**
+ * This module exports event handling helpers.
+ */
 /**
  * Base class for EventListener and MatchListener
  */
@@ -566,6 +584,9 @@ declare const keys: {
 declare const onEnter: (e: KeyboardEvent) => "" | typeof END;
 
 /**
+ * This module exports many useful generators like `range` and `repeat`.
+ */
+/**
  * Fast and 'costless' range function for javascript based on generators.
  *
  * @example
@@ -643,27 +664,20 @@ declare function setLength(iter: any, length: number): any;
  *
  * @param  {...Iterator<any>} args
  */
-declare function flat(...args: [Iterator<any>]): Generator<any, void, unknown>;
-/**
- * Get an iterator over the next 'count' items of the given iterator.
- *
- * @example
- * next([1, 4, 3, 6, 7, 4, 5].values(), 3);  // 1, 4, 3
- *
- * @param iter
- * @param count
- */
-declare function next(iter: Iterator<any>, count: number): Generator<any, void, unknown>;
+declare function flat(...args: any[]): Generator<any, void, unknown>;
 /**
  * Returns an unordered/random iterator over the input array..
  *
  * @example
  * const unOrdered = uItems([1, 2, 3, 4]);  // [4, 1, 3, 2]
  *
- * @param {any[]} array
+ * @param {any[]} iter
  */
-declare function uItems(array: any[]): Generator<any[], void, unknown>;
+declare function uItems(iter: any[]): Generator<any, void, unknown>;
 
+/**
+ * This module enables reactivity  by exporting primitives for multiplying the effects of single operations.
+ */
 /**
  * Creates a One object which transmits a call, method dispatch, property
  * get or set applied to the 'one' object to the 'many' objects.
@@ -829,6 +843,9 @@ declare class One {
 declare const ignoreContext: unique symbol;
 
 /**
+ * This module supports CSS loading, caching and 'localised' reuse.
+ */
+/**
  * An instance of Sophistrory can be used to obtain and cache CSS Stylesheets
  * which can be shared by multiple DOM elements.
  *
@@ -933,6 +950,9 @@ declare class StyleSheet {
 }
 
 /**
+ * This module exports With function for creating more concise and structured code.
+ */
+/**
  * 'with' statement on steroids! This module exports a With function
  * which makes code succint without any of the limitations that led to
  * 'with' getting dropped from the JavaScript standard. In fact it
@@ -1000,11 +1020,11 @@ type Recursive<T> = {
  * concise syntax in some scenarios.
  *
  * @example
- * const el = With(document.createElement('div')).append().append()[assign]().append()().append();
+ * const el = With(document.createElement('div')).append().append()[ASSIGN]().append()().append();
  *
  * @param obj
  * @returns
  */
 declare function With<T>(obj: T): Recursive<T>;
 
-export { ASSIGN, Actribute, type ApplyMap, type Args, type ArrayTemplate, type AsyncArrayTemplate, END, EventListener, type Inserter, Listener, type MatchEventTarget, MatchListener, type Matcher, One, type OneConstructor, type Recursive, type RecursiveProp, type RecursiveSetProp, SET, type SetMap, Sophistry, StyleSheet, WITH, With, apply, applyTo, arrayTemplate, asyncArrayTemplate, asyncTemplate, createFragment, eventListener, flat, get, getLength, ignoreContext, insert, inserter, items, iterLengths, keys, matchListener, next, onEnter, onKey, one, parentSelector, preventDefault, range, remove, repeat, ruleSelector, ruleSelectorAll, set, setLength, stopPropagation, tag, template, uItems, unWrap, update };
+export { ASSIGN, Actribute, type AnyFunction, type ApplyMap, type Args, type ArrayTemplate, type AsyncArrayTemplate, END, EventListener, type Inserter, Listener, type MatchEventTarget, MatchListener, type Matcher, One, type OneConstructor, type Recursive, type RecursiveProp, type RecursiveSetProp, SET, type SetMap, Sophistry, StyleSheet, WITH, With, apply, applyTo, arrayTemplate, asyncArrayTemplate, asyncTemplate, createFragment, eventListener, flat, get, getLength, ignoreContext, insert, inserter, items, iterLengths, keys, matchListener, onEnter, onKey, one, parentSelector, preventDefault, range, remove, repeat, ruleSelector, ruleSelectorAll, set, setLength, stopPropagation, tag, template, uItems, unWrap, update };

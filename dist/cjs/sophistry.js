@@ -1,6 +1,9 @@
 'use strict';
 
 /**
+ * This module supports CSS loading, caching and 'localised' reuse.
+ */
+/**
  * An instance of Sophistrory can be used to obtain and cache CSS Stylesheets
  * which can be shared by multiple DOM elements.
  *

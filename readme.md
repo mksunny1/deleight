@@ -2,19 +2,19 @@
 
 ![Logo](https://github.com/mksunny1/deleight/blob/main/docs/assets/logos/small.png?raw=true)
 
-This is a group of 8 tiny abstractions created with the goal of simplifying the development of interactive web frontends using vanilla HTML, CSS and JavasSript. This is an inclusive library which caters to the needs of everyone in web development.
+This is a group of 9 small libraies created to simplify the development of interactive web frontends using vanilla HTML, CSS and JavasSript. This is an inclusive library which caters to the needs of everyone in web development.
 
-- Frontend JavaScript developers can develop apps without worrying about control, modularity or maintainance. Not only is the framework flexible, modular and compact, it also strives to align with all the familiar semantics we know and love. You still retain the convenience of a declarative API.
+- Frontend JavaScript developers can develop apps without worrying about control, modularity or maintainance. Not only is the framework flexible, modular and compact, it also aligns with familiar semantics. You still retain the convenience of a declarative API.
 
-- Distributed teams of frontend developers can work freely in their favourite languages without worrying about complexity. HTML experts can write pure HTML. JavaScript developers can write pure JavaScript. Designers can write pure CSS. Deleight will ensure that everything works well together once everyone follows the project specifications. Data can be injected into HTML in multiple ways and it is not compulsory to have code tags or component specifiers in markup. The same thing also applies to CSS encapsulation.
+- Distributed frontend teams can work freely in their favourite languages without worrying about interop. HTML experts can write pure HTML. JavaScript developers can write pure JavaScript. Designers can write pure CSS. Deleight will ensure that everything plays well together. Data can be injected into HTML in multiple ways and it is not compulsory to have code tags or component specifiers in markup. The same thing also applies to style encapsulation.
 
-- Back-end developers using any technology can stop worrying about front-end complexity. Deleight ships modern ES6 modules which can be loaded directly into webpages. Because the framework is modular and compact, you only load the tiny modules you need into your pages. You can also compose them with your favourite back-end template engines to reduce the number of files to load. Finally, the [API](https://mksunny1.github.io/deleight/docs/api/) is semantic and minimal; it is very easy to pick up in a few hours.
+- Back-end developers using any technology can stop worrying about front-end complexity. Deleight ships modern ES6 modules which can be loaded directly into webpages. Because the framework is modular and compact, you only load the libraries you need into your pages. You can also compose them with your favourite back-end template engines to reduce the number of files to load. Finally, the [API](https://mksunny1.github.io/deleight/docs/api/) is small and natural; it is very easy to pick up in a few hours.
 
-- Ultimately users, which is another name for _all of us_, will benefit the most when all the industry practitioners have the right tools to be more productive and to perform at their best. HTML, JavaScript and CSS are amazinng technologies and we need to emphasize and consolidate this in modern web development.
+- Ultimately users, (that is _all of us_), will benefit the most when all the industry practitioners have the right tools to be more productive. HTML, JavaScript and CSS are *all* amazinng technologies and we need to emphasize and consolidate this in modern web development.
 
 Apart from this brief guide and the [API](https://mksunny1.github.io/deleight/docs/api/) documentation, there are also some examples which can be used to understand how the parts fit together and to develop a feel for using deleight. If you want to see the output of the exmples, you can run the included server with `npm start` and visit the 'examples' site at http://localhost:8000/docs/examples/index.html. The site is also hosted online [here](https://mksunny1.github.io/deleight/docs/examples).
 
-What follows is a brief description of the 8 libraries and how to include them in your projects.
+What follows is a brief description of the libraries and how to include them in your projects.
 
 ## Appliance
 
@@ -33,6 +33,9 @@ function(containingElement) {
 }
 ```
 
+*NB: Fully tested*
+
+
 ## Domitory
 
 This provides a painless SQLesque API for manipulating the DOM. The library exports `insert`, `set`, `update` and `remove` (`delete` is a keyword in JavaScript) functions for bulk manipulation of things on the DOM. It is an efficient, consistent and simple API to use. See the examples and the API docs.
@@ -49,6 +52,9 @@ function(containingElement) {
     }, containingElement);
 }
 ```
+
+*NB: Fully tested*
+
 
 ## Eventivity
 
@@ -73,6 +79,8 @@ export const myEventivity = {
 
 ```
 
+*NB: Fully tested*
+
 ## OneToMany
 
 This is the API for 'reactivity'. OneToMany exports primitives to help us create and manipulate single objects which function as many objects. OneToMany provides methods for getting and setting properties on multiple objects and methods for invoking multiple functions and object methods. The library is simple, concise, explicit and transparent.
@@ -93,6 +101,9 @@ wrappedOneArray.push([6], ["e"]);
 // wrapping enables shorthand syntax like this.
 ```
 
+*NB: Partially tested*
+
+
 ## Apriori
 
 This is a fun library to use if you need to build some or all of your DOM with the help of JavaScript. It includes primitives for template creation, template rendering and document tree building. There are primitives for building the DOM with either in-page resources or dynamically loaded ones. This gives us the flexibility to choose whatever works best for a project.
@@ -101,6 +112,9 @@ This is a fun library to use if you need to build some or all of your DOM with t
 import { get, template } from "deleight/apriori";
 export const myTemplate = template(await get("markup.html"));
 ```
+
+*NB: Fully tested*
+
 
 ## Sophistry
 
@@ -111,6 +125,9 @@ import { Sophistry } from "deleight/sophistry";
 export const mySophistry = new Sophistry();
 mySophistry.import("pStyle.css");
 ```
+
+*NB: Partially tested*
+
 
 ## Generational
 
@@ -125,11 +142,12 @@ const everyHundredthIn1000 = items(everyTenthIn1000, range(0, 100, 10));
 // 0, 100, 200, ...
 ```
 
+*NB: Fully tested*
+
+
 ## Actribute
 
 Actribute aims to provide a more widely supported, flexible and powerful alternative to extending built-in HTML elements, using a similar API.
-
-_Note: This library should be considered less mature than the others, because it has not been tested or used as much. Currently it exists as a Proof of Concept._
 
 ```js
 // initialize:
@@ -151,6 +169,22 @@ act.process(document.body, { prop2: 1, prop3: 2 });
 // unregister a component:
 delete act.registry.comp2;
 ```
+
+*NB: Fully tested*
+
+## Withy
+
+We are bringing the `with` functionality back to JavaScript with the help of Proxies. With was removed from the language 
+because of performance, code comprehension and readbility issues. Once we have an implementation without these limitations, 
+we can benefit from the improved concision and structure of our code. 
+
+*NB: Fully tested*
+
+```js
+import { With, SET } from "deleight/withy";
+With(document.createElement('div'))[SET]({textContent: 'Yeah'})(div => document.body.append(div));
+```
+
 
 ## Installation
 
