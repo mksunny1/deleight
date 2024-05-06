@@ -29,7 +29,7 @@ function getView(name, map) {
   const frag = views[name]();
 
   // apply styles within
-  const styles = accountSophistry.process(frag);
+  const styles = accountSophistry.process(frag)[0];
   const view = Array.from(frag.children);
   apply(map, frag);
 
