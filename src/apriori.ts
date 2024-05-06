@@ -227,3 +227,17 @@ export const createFragment = function (
     if (result.children.length === 1) return result.children[0] as Element;
     return result as DocumentFragment;
 };
+
+
+/**
+ * A generator for elements with the specified tag names.
+ * The names are space-separated just like in a class attribute.
+ * 
+ * @example
+ * const [div, p, span] = elements('div p span');
+ * 
+ * @param {string} tagNames 
+ */
+export function* elements(tagNames: string) {
+    for (let tagName of tagNames.split(' ')) yield document.createElement(tagName.trim());
+}

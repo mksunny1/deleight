@@ -59,14 +59,64 @@ describe("sophistry.StyleSheet", { only: true }, async () => {
 
     global.document = document;
     global.CSSStyleSheet = CSSStyleSheet;
+    global.ShadowRoot = window.ShadowRoot;
+    global.Document = window.Document;
+    global.DocumentFragment = window.DocumentFragment;
     global.HTMLStyleElement = window.HTMLStyleElement;
     global.HTMLLinkElement = window.HTMLLinkElement;
     global.Element = window.Element;
     global.CSSRule = window.CSSRule;
 
-    
-    const styleSheet = new CSSStyleSheet();
-    styleSheet.replaceSync(styles);
-        
+    const css = new CSSStyleSheet();
+    css.replaceSync(styles);
+    const soph = new StyleSheet(css);
+
+    await it('Should correctly initialize the StyleSheet', (t) => {
+        assert.equal(soph.css.cssText, css.cssText);
+    });
+
+    await it('Should correctly style and un-style shadow roots', (t) => {
+        const e1 = document.createElement('div');
+        const s1 = e1.attachShadow({mode: 'open'});
+
+        const e2 = document.createElement('div');
+        const s2 = e2.attachShadow({mode: 'open'});
+
+        const e3 = document.createElement('div');
+        const s3 = e3.attachShadow({mode: 'open'});
+
+        body.append(e1, e2, e3);
+
+        soph.style(s1, s2, s3);
+
+        assert.equal(s1.adoptedStyleSheets.includes(css), true);
+        assert.equal(s2.adoptedStyleSheets.includes(css), true);
+        assert.equal(s3.adoptedStyleSheets.includes(css), true);
+
+        soph.remove(s1, s3);
+
+        assert.equal(s1.adoptedStyleSheets.includes(css), false);
+        assert.equal(s2.adoptedStyleSheets.includes(css), true);
+        assert.equal(s3.adoptedStyleSheets.includes(css), false);
+    });
+
+    await it('Should correctly style and un-style elements', (t) => {
+        const e1 = document.createElement('div');
+        const e2 = document.createElement('div');
+        const e3 = document.createElement('div');
+        body.append(e1, e2, e3);
+        soph.style(e1, e2, e3);
+
+        assert.equal(e1.shadowRoot.adoptedStyleSheets.includes(css), true);
+        assert.equal(e2.shadowRoot.adoptedStyleSheets.includes(css), true);
+        assert.equal(e3.shadowRoot.adoptedStyleSheets.includes(css), true);
+
+        soph.remove(e1, e2);
+
+        assert.equal(e1.shadowRoot.adoptedStyleSheets.includes(css), false);
+        assert.equal(e2.shadowRoot.adoptedStyleSheets.includes(css), false);
+        assert.equal(e3.shadowRoot.adoptedStyleSheets.includes(css), true);
+    });
+
 });
 

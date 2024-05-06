@@ -21,16 +21,16 @@
  * @param {IInserter} [insertWith] The insertion function
  */
 function insert(elements, values, insertWith) {
+    if (!(elements instanceof Array))
+        elements = Array.from(elements);
     if (!(values instanceof Array))
         values = Array.from(values);
-    if (elements instanceof HTMLCollection || elements instanceof NodeList)
-        elements = Array.from(elements);
-    if (elements instanceof Array)
-        elements = elements.values();
     if (!insertWith)
         insertWith = inserter.append; // the default inserter
+    let i = 0;
     for (let value of values)
-        insertWith(value, elements.next().value);
+        insertWith(value, elements[i++]);
+    return [elements, values];
 }
 /**
  * Default inserters for use with `insert`
@@ -95,6 +95,7 @@ function set(elements, values) {
         }
         i++;
     }
+    return [elements, values];
 }
 /**
  * Correctly replace the specified nodes with corresponding values.
@@ -129,6 +130,7 @@ function update(elements, values) {
         [tempNode, parentNode] = temps[i++];
         parentNode?.replaceChild(value, tempNode);
     }
+    return [elements, values]; // we can, eg run cleanups or inits on either of these.
 }
 /**
  * Remove the elements from their parent nodes.
@@ -144,6 +146,7 @@ function remove(elements) {
         elements = Array.from(elements);
     for (let element of elements)
         element.parentNode?.removeChild(element);
+    return elements; // we can, eg run cleanups on these.
 }
 
 exports.insert = insert;

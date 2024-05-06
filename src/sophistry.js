@@ -42,7 +42,7 @@ export class Sophistry {
             root.getAttribute("rel") === "stylesheet") ||
             root instanceof HTMLStyleElement) {
             const name = root.getAttribute("s-ophistry") ||
-                root.getAttribute("href") ||
+                root.getAttribute("href")?.split('.')[0] ||
                 hash(root.outerHTML);
             if (this.styles.hasOwnProperty(name) && !replace)
                 styleSheets.push(this.styles[name]);
@@ -171,7 +171,7 @@ export class StyleSheet {
         let root;
         const allElements = [];
         for (let element of elements) {
-            if (element instanceof DocumentFragment)
+            if (!(element instanceof ShadowRoot) && element instanceof DocumentFragment)
                 allElements.push(...Array.from(element.children));
             else
                 allElements.push(element);
@@ -205,7 +205,7 @@ export class StyleSheet {
         let root;
         const allElements = [];
         for (let element of elements) {
-            if (element instanceof DocumentFragment)
+            if (!(element instanceof ShadowRoot) && element instanceof DocumentFragment)
                 allElements.push(...Array.from(element.children));
             else
                 allElements.push(element);

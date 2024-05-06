@@ -230,7 +230,6 @@ Thank you for contributing.
 
 ## Ongoing work
 
-- Improving test coverage.
 - Adding and completing examples
 
 

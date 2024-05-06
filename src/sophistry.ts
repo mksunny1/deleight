@@ -46,7 +46,7 @@ export class Sophistry {
     ) {
       const name =
         root.getAttribute("s-ophistry") ||
-        root.getAttribute("href") ||
+        root.getAttribute("href")?.split('.')[0] ||
         hash(root.outerHTML as string);
       if (this.styles.hasOwnProperty(name) && !replace)
         styleSheets.push(this.styles[name]);
@@ -175,10 +175,10 @@ export class StyleSheet {
    */
   style<T extends Element | DocumentFragment>(...elements: T[]) {
     let root: Document | ShadowRoot;
-    const allElements: Element[] = [];
+    const allElements: (Element | ShadowRoot)[] = [];
 
     for (let element of elements) {
-      if (element instanceof DocumentFragment)
+      if (!(element instanceof ShadowRoot) && element instanceof DocumentFragment)
         allElements.push(...Array.from(element.children));
       else allElements.push(element);
     }
@@ -208,16 +208,16 @@ export class StyleSheet {
    */
   remove<T extends Element | DocumentFragment>(...elements: T[]) {
     let root: ShadowRoot | Element | Document;
-    const allElements: Element[] = [];
+    const allElements: (Element|ShadowRoot)[] = [];
 
     for (let element of elements) {
-      if (element instanceof DocumentFragment)
+      if (!(element instanceof ShadowRoot) && element instanceof DocumentFragment)
         allElements.push(...Array.from(element.children));
       else allElements.push(element);
     }
 
     for (let element of allElements) {
-      root = element.shadowRoot || element;
+      root = (element as Element).shadowRoot || element;
       if (root instanceof ShadowRoot || root instanceof Document) {
         if (root.adoptedStyleSheets.includes(this.css))
           root.adoptedStyleSheets.splice(

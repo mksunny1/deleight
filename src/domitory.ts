@@ -31,17 +31,16 @@ export interface IInserter {
  * @param {IInserter} [insertWith] The insertion function
  */
 export function insert(
-    elements: Iterator<Node> | Node[],
+    elements: Iterable<Node> ,
     values: Iterable<Node>,
     insertWith?: IInserter,
-) {
-    if (!(values instanceof Array))
-        values = Array.from(values);
-    if (elements instanceof HTMLCollection || elements instanceof NodeList)
-        elements = Array.from(elements);
-    if (elements instanceof Array) elements = elements.values();
+): [Iterable<Node>, Iterable<Node>] {
+    if (!(elements instanceof Array)) elements = Array.from(elements);
+    if (!(values instanceof Array)) values = Array.from(values);
     if (!insertWith) insertWith = inserter.append; // the default inserter
-    for (let value of values) insertWith(value, elements.next().value);
+    let i = 0;
+    for (let value of values) insertWith(value, elements[i++]);
+    return [elements, values];
 }
 
 /**
@@ -102,7 +101,7 @@ export interface ISetMap {
 export function set(
     elements: Iterable<Element | CSSStyleRule>,
     values: ISetMap,
-) {
+): [Iterable<Element | CSSStyleRule>, ISetMap] {
     const localMemberValues: {[key: string]: (Element | CSSStyleRule)[]} = {};
     for (let [key, memberValues] of Object.entries(values)) {
         if (!(memberValues instanceof Array)) memberValues = Array.from(memberValues);
@@ -128,6 +127,7 @@ export function set(
         }
         i++;
     }
+    return [elements, values];
 }
 
 /**
@@ -143,7 +143,7 @@ export function set(
  * @param {Iterable<Node>} elements The nodes to replace.
  * @param {Iterable<Node>} values The replacement nodes.
  */
-export function update(elements: Iterable<Node>, values: Iterable<Node>) {
+export function update(elements: Iterable<Node>, values: Iterable<Node>): [Iterable<Node>, Iterable<Node>] {
     let parentNode: Node | null, tempNode: Node;
     const template = document.createComment(""); // document.createElement('template');
     const temps: [Node, Node | null][] = [];
@@ -164,6 +164,7 @@ export function update(elements: Iterable<Node>, values: Iterable<Node>) {
         [tempNode, parentNode] = temps[i++];
         parentNode?.replaceChild(value, tempNode);
     }
+    return [elements, values];   // we can, eg run cleanups or inits on either of these.
 }
 
 /**
@@ -175,7 +176,8 @@ export function update(elements: Iterable<Node>, values: Iterable<Node>) {
  *
  * @param {Iterable<Node>} elements
  */
-export function remove(elements: Iterable<Node>) {
+export function remove(elements: Iterable<Node>): Iterable<Node> {
     if (!(elements instanceof Array)) elements = Array.from(elements);
     for (let element of elements) element.parentNode?.removeChild(element);
+    return elements;   // we can, eg run cleanups on these.
 }

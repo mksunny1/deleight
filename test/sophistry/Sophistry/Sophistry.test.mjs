@@ -116,22 +116,17 @@ describe("sophistry.Sophistry", { only: true }, async () => {
     const styleElement = tree.querySelector('style')   // used to verify hashes.
     const styleElementHash = hash(styleElement.outerHTML);
     const initialLength = Array.from(tree.querySelectorAll('style, link')).length;
-    console.log(styleElement.outerHTML);
-    console.log(styleElementHash);
-    console.log(initialLength);
-
+    
     await it('Should have the correct styles to begin with', async (t) => {
         assert.equal(initialLength, 5);
     });
 
     const initialStyleCount = [...Object.keys(soph.styles)].length;
-    console.log(initialStyleCount)
 
     const [pStyles, pPromises] = soph.process(tree);
     await Promise.all(pPromises);
 
     const finalStyleCount = [...Object.keys(soph.styles)].length;
-    console.log(finalStyleCount)
 
     await it('Should process correctly without duplication', async (t) => {
         assert.equal(finalStyleCount - initialStyleCount, 3);

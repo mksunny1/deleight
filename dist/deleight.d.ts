@@ -327,6 +327,16 @@ declare function get(url: string, suppressErrors?: boolean, init?: RequestInit):
  * @returns {Node}
  */
 declare const createFragment: (markup: string) => DocumentFragment | Element;
+/**
+ * A generator for elements with the specified tag names.
+ * The names are space-separated just like in a class attribute.
+ *
+ * @example
+ * const [div, p, span] = elements('div p span');
+ *
+ * @param {string} tagNames
+ */
+declare function elements(tagNames: string): Generator<HTMLElement, void, unknown>;
 
 /**
  * This module exports primitives for 'bulk' manipulating the DOM.
@@ -357,7 +367,7 @@ interface IInserter {
  * @param {Iterable<Node>} values The new nodes to insert.
  * @param {IInserter} [insertWith] The insertion function
  */
-declare function insert(elements: Iterator<Node> | Node[], values: Iterable<Node>, insertWith?: IInserter): void;
+declare function insert(elements: Iterable<Node>, values: Iterable<Node>, insertWith?: IInserter): [Iterable<Node>, Iterable<Node>];
 /**
  * Default inserters for use with `insert`
  */
@@ -407,7 +417,7 @@ interface ISetMap {
  * @param {(Element|CSSStyleRule)[]} elements
  * @param {ISetMap} values
  */
-declare function set(elements: Iterable<Element | CSSStyleRule>, values: ISetMap): void;
+declare function set(elements: Iterable<Element | CSSStyleRule>, values: ISetMap): [Iterable<Element | CSSStyleRule>, ISetMap];
 /**
  * Correctly replace the specified nodes with corresponding values.
  *
@@ -421,7 +431,7 @@ declare function set(elements: Iterable<Element | CSSStyleRule>, values: ISetMap
  * @param {Iterable<Node>} elements The nodes to replace.
  * @param {Iterable<Node>} values The replacement nodes.
  */
-declare function update(elements: Iterable<Node>, values: Iterable<Node>): void;
+declare function update(elements: Iterable<Node>, values: Iterable<Node>): [Iterable<Node>, Iterable<Node>];
 /**
  * Remove the elements from their parent nodes.
  *
@@ -431,7 +441,7 @@ declare function update(elements: Iterable<Node>, values: Iterable<Node>): void;
  *
  * @param {Iterable<Node>} elements
  */
-declare function remove(elements: Iterable<Node>): void;
+declare function remove(elements: Iterable<Node>): Iterable<Node>;
 
 /**
  * This module exports event handling helpers.
@@ -1024,4 +1034,4 @@ type IRecursive<T> = {
  */
 declare function With<T>(obj: T): IRecursive<T>;
 
-export { ASSIGN, Actribute, END, EventListener, type IAnyFunction, type IApplyMap, type IAsyncTemplates, type IInserter, type IMatchEventTarget, type IMatcher, type IOneConstructor, type IRecursive, type IRecursiveProp, type IRecursiveSetProp, type ISetMap, type ITemplates, Listener, MatchListener, One, SET, Sophistry, StyleSheet, WITH, With, apply, applyTo, asyncTemplate, asyncTemplates, createFragment, eventListener, flat, get, getLength, ignoreContext, insert, inserter, items, iterLengths, keys, matchListener, onEnter, onKey, one, parentSelector, preventDefault, range, remove, repeat, ruleSelector, ruleSelectorAll, set, setLength, stopPropagation, tag, template, templates, uItems, unWrap, update };
+export { ASSIGN, Actribute, END, EventListener, type IAnyFunction, type IApplyMap, type IAsyncTemplates, type IInserter, type IMatchEventTarget, type IMatcher, type IOneConstructor, type IRecursive, type IRecursiveProp, type IRecursiveSetProp, type ISetMap, type ITemplates, Listener, MatchListener, One, SET, Sophistry, StyleSheet, WITH, With, apply, applyTo, asyncTemplate, asyncTemplates, createFragment, elements, eventListener, flat, get, getLength, ignoreContext, insert, inserter, items, iterLengths, keys, matchListener, onEnter, onKey, one, parentSelector, preventDefault, range, remove, repeat, ruleSelector, ruleSelectorAll, set, setLength, stopPropagation, tag, template, templates, uItems, unWrap, update };

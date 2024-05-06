@@ -180,5 +180,18 @@ const createFragment = function (markup) {
         return result.children[0];
     return result;
 };
+/**
+ * A generator for elements with the specified tag names.
+ * The names are space-separated just like in a class attribute.
+ *
+ * @example
+ * const [div, p, span] = elements('div p span');
+ *
+ * @param {string} tagNames
+ */
+function* elements(tagNames) {
+    for (let tagName of tagNames.split(' '))
+        yield document.createElement(tagName.trim());
+}
 
-export { asyncTemplate, asyncTemplates, createFragment, get, tag, template, templates };
+export { asyncTemplate, asyncTemplates, createFragment, elements, get, tag, template, templates };
