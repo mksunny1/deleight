@@ -84,20 +84,18 @@ export function asyncTemplate(templateStr, argNames, tagName) {
  * @param {string} itemName The name of the current item of the iterable as seen inside the template string. Defaults
  * to 'item'
  * Defaults to the empty string.
- * @returns {ArrayTemplate}
+ * @returns {ITemplates}
  */
-export function arrayTemplate(templateStr, argNames, itemName) {
+export function templates(templateStr, argNames, itemName) {
     if (!argNames)
         argNames = [];
     if (!itemName)
         itemName = "item";
-    return Function("arr", ...argNames, `
-        const result = [];
-        for (let ${itemName} of arr) {
-            result.push(\`${templateStr}\`);
+    return (Function(`
+        function* gen(arr, ${argNames.join(', ')}) {
+            for (let ${itemName} of arr) yield \`${templateStr}\`;
         }
-        return result;
-    `);
+        return gen;`))();
 }
 /**
  * Async equivalent of arrayTemplate. The async template tag ('T' by default)
@@ -116,9 +114,9 @@ export function arrayTemplate(templateStr, argNames, itemName) {
  * to 'item'
  * @param {string} tagName Supply a tagName argument to change the name of the tag function inside the template string if
  * the default name (T) is present in  argNames.
- * @returns {AsyncArrayTemplate}
+ * @returns {IAsyncTemplates}
  */
-export function asyncArrayTemplate(templateStr, argNames, itemName, tagName) {
+export function asyncTemplates(templateStr, argNames, itemName, tagName) {
     if (!argNames)
         argNames = [];
     if (!itemName)
@@ -133,13 +131,11 @@ export function asyncArrayTemplate(templateStr, argNames, itemName, tagName) {
         throw new Error(`The tag name ${tagName} clashes with the name of one of the arguments. 
         Please change the tag name or the argument name to resolve this.`);
     }
-    const f = Function(tagName, "arr", ...argNames, `
-        const result = [];
-        for (let ${itemName} of arr) {
-            result.push(${tagName}\`${templateStr}\`);
+    const f = (Function(`
+        function* gen(${tagName}, arr, ${argNames.join(', ')}) {
+            for (let ${itemName} of arr) yield ${tagName}\`${templateStr}\`;
         }
-        return Promise.all(result).then(resolved => resolved);
-    `);
+        return gen;`))();
     return (arr, ...args) => f(tag, arr, ...args);
 }
 /**

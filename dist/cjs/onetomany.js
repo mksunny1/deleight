@@ -95,7 +95,7 @@ class One {
      * @param {boolean} [recursive] Whether to wrap the arrays returned by `get` with another One.
      * @param {any[]} context An optional shared context to be passed to all propagated method or function calls.
      * This is an array of objects passed as the final arguments in calls. Empty array by default.
-     * @param {OneConstructor} [ctor] The constructor used to create the `get` Ones. This parameter is used internally;
+     * @param {IOneConstructor} [ctor] The constructor used to create the `get` Ones. This parameter is used internally;
      * no need to supply an argument.
      *
      * @example

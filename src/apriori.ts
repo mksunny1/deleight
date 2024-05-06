@@ -33,8 +33,6 @@ export async function tag(
     );
 }
 
-export type Args<T> = T[keyof T]
-
 /**
  * Effectively creates a template literal out of an existing template string and wraps it in a function
  * which can be called multiple times to 'render' the template with the given arguments.
@@ -91,15 +89,15 @@ export function asyncTemplate(
 /**
  * The return value of a call to arrayTemplate.
  */
-export interface ArrayTemplate {
-    (arr: Iterable<any>, ...args: any[]): string[];
+export interface ITemplates {
+    (arr: Iterable<any>, ...args: any[]): Iterable<string>;
 }
 
 /**
  * The return value of a call to asyncArrayTemplate.
  */
-export interface AsyncArrayTemplate {
-    (arr: Iterable<any>, ...args: any[]): Promise<string[]>;
+export interface IAsyncTemplates {
+    (arr: Iterable<any>, ...args: any[]): Iterable<Promise<string>>;
 }
 
 /**
@@ -116,27 +114,22 @@ export interface AsyncArrayTemplate {
  * @param {string} itemName The name of the current item of the iterable as seen inside the template string. Defaults
  * to 'item'
  * Defaults to the empty string.
- * @returns {ArrayTemplate}
+ * @returns {ITemplates}
  */
-export function arrayTemplate(
+export function templates(
     templateStr: string,
     argNames: Array<string>,
     itemName: string
-): ArrayTemplate {
+): ITemplates {
     if (!argNames) argNames = [];
     if (!itemName) itemName = "item";
 
-    return Function(
-        "arr",
-        ...argNames,
-        `
-        const result = [];
-        for (let ${itemName} of arr) {
-            result.push(\`${templateStr}\`);
+    return (Function(`
+        function* gen(arr, ${argNames.join(', ')}) {
+            for (let ${itemName} of arr) yield \`${templateStr}\`;
         }
-        return result;
-    `,
-    ) as ArrayTemplate;
+        return gen;`,
+    ))();
 }
 
 /**
@@ -156,14 +149,14 @@ export function arrayTemplate(
  * to 'item'
  * @param {string} tagName Supply a tagName argument to change the name of the tag function inside the template string if
  * the default name (T) is present in  argNames.
- * @returns {AsyncArrayTemplate}
+ * @returns {IAsyncTemplates}
  */
-export function asyncArrayTemplate(
+export function asyncTemplates(
     templateStr: string,
     argNames: Array<string>,
     itemName: string,
     tagName: string,
-): AsyncArrayTemplate {
+): IAsyncTemplates {
     if (!argNames) argNames = [];
     if (!itemName) itemName = "item";
     if (!tagName) tagName = "T";
@@ -177,18 +170,13 @@ export function asyncArrayTemplate(
         Please change the tag name or the argument name to resolve this.`);
     }
 
-    const f = Function(
-        tagName,
-        "arr",
-        ...argNames,
-        `
-        const result = [];
-        for (let ${itemName} of arr) {
-            result.push(${tagName}\`${templateStr}\`);
+    const f = (Function(`
+        function* gen(${tagName}, arr, ${argNames.join(', ')}) {
+            for (let ${itemName} of arr) yield ${tagName}\`${templateStr}\`;
         }
-        return Promise.all(result).then(resolved => resolved);
-    `,
-    );
+        return gen;`,
+    ))()
+
     return (arr, ...args) => f(tag, arr, ...args);
 }
 

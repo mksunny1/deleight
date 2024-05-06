@@ -77,7 +77,7 @@ function parentSelector(node, selector) {
  *     }
  * });
  *
- * @param {ApplyMap } applyMap
+ * @param {IApplyMap } applyMap
  * @param {HTMLElement} [containerElement]
  * @param {boolean|number} [asComponent]
  * @param {boolean|number} [firstOnly]

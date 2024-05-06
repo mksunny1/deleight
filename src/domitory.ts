@@ -9,7 +9,7 @@
  * @example
  * myInserter = (node, target) => target.append(node);
  */
-export interface Inserter {
+export interface IInserter {
     (node: Node, target: Node): void;
 }
 
@@ -28,12 +28,12 @@ export interface Inserter {
  *
  * @param {Iterable<Node>} elements The target nodes.
  * @param {Iterable<Node>} values The new nodes to insert.
- * @param {Inserter} [insertWith] The insertion function
+ * @param {IInserter} [insertWith] The insertion function
  */
 export function insert(
     elements: Iterator<Node> | Node[],
     values: Iterable<Node>,
-    insertWith?: Inserter,
+    insertWith?: IInserter,
 ) {
     if (!(values instanceof Array))
         values = Array.from(values);
@@ -79,7 +79,7 @@ export const inserter = {
  *     textContent: ['btn 1', 'btn 2', 'btn 3']
  * },
  */
-export interface SetMap {
+export interface ISetMap {
     [key: string]: any[];
 }
 
@@ -97,11 +97,11 @@ export interface SetMap {
  *
  *
  * @param {(Element|CSSStyleRule)[]} elements
- * @param {SetMap} values
+ * @param {ISetMap} values
  */
 export function set(
     elements: Iterable<Element | CSSStyleRule>,
-    values: SetMap,
+    values: ISetMap,
 ) {
     const localMemberValues: {[key: string]: (Element | CSSStyleRule)[]} = {};
     for (let [key, memberValues] of Object.entries(values)) {

@@ -17,7 +17,7 @@
  *     .btn: (...classedButtons) => doAnotherThingWith(classedButtons)
  * }
  */
-export interface ApplyMap {
+export interface IApplyMap {
   [key: string]: Function | Function[];
 }
 
@@ -104,13 +104,13 @@ export function parentSelector(node: Node, selector: string): Element | null {
  *     }
  * });
  *
- * @param {ApplyMap } applyMap
+ * @param {IApplyMap } applyMap
  * @param {HTMLElement} [containerElement]
  * @param {boolean|number} [asComponent]
  * @param {boolean|number} [firstOnly]
  */
 export function apply(
-  applyMap: ApplyMap,
+  applyMap: IApplyMap,
   containerElement?: Element,
   asComponent?: boolean | number,
   firstOnly?: boolean | number,

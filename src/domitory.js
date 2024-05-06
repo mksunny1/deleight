@@ -16,7 +16,7 @@
  *
  * @param {Iterable<Node>} elements The target nodes.
  * @param {Iterable<Node>} values The new nodes to insert.
- * @param {Inserter} [insertWith] The insertion function
+ * @param {IInserter} [insertWith] The insertion function
  */
 export function insert(elements, values, insertWith) {
     if (!(values instanceof Array))
@@ -65,7 +65,7 @@ export const inserter = {
  *
  *
  * @param {(Element|CSSStyleRule)[]} elements
- * @param {SetMap} values
+ * @param {ISetMap} values
  */
 export function set(elements, values) {
     const localMemberValues = {};

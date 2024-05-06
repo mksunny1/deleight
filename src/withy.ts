@@ -16,7 +16,7 @@
 
 //  extends object
 
-export interface AnyFunction {
+export interface IAnyFunction {
     (...args: any): any;
 }
 
@@ -51,36 +51,36 @@ export const ASSIGN = Symbol();
  * @example
  * With(obj)[ASSIGN]({prop1: 5, prop2: 6}).inc().prop2
  */
-export type RecursiveProp<T> = {
-    [key in keyof T]?: (arg: Recursive<T[key]>) => any;
+export type IRecursiveProp<T> = {
+    [key in keyof T]?: (arg: IRecursive<T[key]>) => any;
 };
 
 /**
  * Sets existing properties on object.
  */
-export type RecursiveSetProp<T> = {
+export type IRecursiveSetProp<T> = {
     [key in keyof T]?: any;
 };
 
 /**
  * An object whose methods returns itself
  */
-export type Recursive<T> = {
-    [key in keyof T]: T[key] extends AnyFunction
-    ? (...args: Parameters<T[key]>) => Recursive<T>
+export type IRecursive<T> = {
+    [key in keyof T]: T[key] extends IAnyFunction
+    ? (...args: Parameters<T[key]>) => IRecursive<T>
     : T[key];
     // to call methods and return itself (or simply return the prop is it is not a method)
 } & {
-    [WITH]: (arg: RecursiveProp<T>) => Recursive<T>;
+    [WITH]: (arg: IRecursiveProp<T>) => IRecursive<T>;
     // to wrap properties automatically
 
-    [SET]: (arg: RecursiveSetProp<T>) => Recursive<T>;
+    [SET]: (arg: IRecursiveSetProp<T>) => IRecursive<T>;
     // to set preexisting properties
 
-    [ASSIGN]: (...objs: any[]) => Recursive<T>;
+    [ASSIGN]: (...objs: any[]) => IRecursive<T>;
     // to assign any properties
 
-    (arg: any, ...args: any): Recursive<T>;
+    (arg: any, ...args: any): IRecursive<T>;
     // to perform unrelated operations (or functions which will be called with the wrapped object) inside the chain
 
     (): T;
@@ -99,7 +99,7 @@ export type Recursive<T> = {
  * @param obj
  * @returns
  */
-export function With<T>(obj: T): Recursive<T> {
+export function With<T>(obj: T): IRecursive<T> {
     const target: any = Object.assign(
         (...args: any) => {
             if (!args.length) return obj;
@@ -108,7 +108,7 @@ export function With<T>(obj: T): Recursive<T> {
         },
         { obj },
     );
-    const proxy = new Proxy<Recursive<T>>(target as any, trap);
+    const proxy = new Proxy<IRecursive<T>>(target as any, trap);
     target.proxy = proxy;
     return proxy;
 }

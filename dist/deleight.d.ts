@@ -124,7 +124,7 @@ declare class Actribute {
  *     .btn: (...classedButtons) => doAnotherThingWith(classedButtons)
  * }
  */
-interface ApplyMap {
+interface IApplyMap {
     [key: string]: Function | Function[];
 }
 /**
@@ -181,12 +181,12 @@ declare function parentSelector(node: Node, selector: string): Element | null;
  *     }
  * });
  *
- * @param {ApplyMap } applyMap
+ * @param {IApplyMap } applyMap
  * @param {HTMLElement} [containerElement]
  * @param {boolean|number} [asComponent]
  * @param {boolean|number} [firstOnly]
  */
-declare function apply(applyMap: ApplyMap, containerElement?: Element, asComponent?: boolean | number, firstOnly?: boolean | number): void;
+declare function apply(applyMap: IApplyMap, containerElement?: Element, asComponent?: boolean | number, firstOnly?: boolean | number): void;
 /**
  * Applies the given functions to the specified elements (or CSS rules).
  *
@@ -219,7 +219,6 @@ declare function applyTo(elements: (Element | CSSRule)[] | (Element | CSSRule), 
  * @returns {Promise<string>}
  */
 declare function tag(strings: Array<string>, ...expressions: any[]): Promise<string>;
-type Args<T> = T[keyof T];
 /**
  * Effectively creates a template literal out of an existing template string and wraps it in a function
  * which can be called multiple times to 'render' the template with the given arguments.
@@ -252,14 +251,14 @@ declare function asyncTemplate(templateStr: string, argNames: Array<string>, tag
 /**
  * The return value of a call to arrayTemplate.
  */
-interface ArrayTemplate {
-    (arr: Iterable<any>, ...args: any[]): string[];
+interface ITemplates {
+    (arr: Iterable<any>, ...args: any[]): Iterable<string>;
 }
 /**
  * The return value of a call to asyncArrayTemplate.
  */
-interface AsyncArrayTemplate {
-    (arr: Iterable<any>, ...args: any[]): Promise<string[]>;
+interface IAsyncTemplates {
+    (arr: Iterable<any>, ...args: any[]): Iterable<Promise<string>>;
 }
 /**
  * Similar to template, but will render an iterable (such as array) of items together instead
@@ -275,9 +274,9 @@ interface AsyncArrayTemplate {
  * @param {string} itemName The name of the current item of the iterable as seen inside the template string. Defaults
  * to 'item'
  * Defaults to the empty string.
- * @returns {ArrayTemplate}
+ * @returns {ITemplates}
  */
-declare function arrayTemplate(templateStr: string, argNames: Array<string>, itemName: string): ArrayTemplate;
+declare function templates(templateStr: string, argNames: Array<string>, itemName: string): ITemplates;
 /**
  * Async equivalent of arrayTemplate. The async template tag ('T' by default)
  * is applied to the template string. Use this when there are promises
@@ -295,9 +294,9 @@ declare function arrayTemplate(templateStr: string, argNames: Array<string>, ite
  * to 'item'
  * @param {string} tagName Supply a tagName argument to change the name of the tag function inside the template string if
  * the default name (T) is present in  argNames.
- * @returns {AsyncArrayTemplate}
+ * @returns {IAsyncTemplates}
  */
-declare function asyncArrayTemplate(templateStr: string, argNames: Array<string>, itemName: string, tagName: string): AsyncArrayTemplate;
+declare function asyncTemplates(templateStr: string, argNames: Array<string>, itemName: string, tagName: string): IAsyncTemplates;
 /**
  * Fetches text (typically markup) from the url. This is only a shorthand
  * for using `fetch`.
@@ -338,7 +337,7 @@ declare const createFragment: (markup: string) => DocumentFragment | Element;
  * @example
  * myInserter = (node, target) => target.append(node);
  */
-interface Inserter {
+interface IInserter {
     (node: Node, target: Node): void;
 }
 /**
@@ -356,9 +355,9 @@ interface Inserter {
  *
  * @param {Iterable<Node>} elements The target nodes.
  * @param {Iterable<Node>} values The new nodes to insert.
- * @param {Inserter} [insertWith] The insertion function
+ * @param {IInserter} [insertWith] The insertion function
  */
-declare function insert(elements: Iterator<Node> | Node[], values: Iterable<Node>, insertWith?: Inserter): void;
+declare function insert(elements: Iterator<Node> | Node[], values: Iterable<Node>, insertWith?: IInserter): void;
 /**
  * Default inserters for use with `insert`
  */
@@ -389,7 +388,7 @@ declare const inserter: {
  *     textContent: ['btn 1', 'btn 2', 'btn 3']
  * },
  */
-interface SetMap {
+interface ISetMap {
     [key: string]: any[];
 }
 /**
@@ -406,9 +405,9 @@ interface SetMap {
  *
  *
  * @param {(Element|CSSStyleRule)[]} elements
- * @param {SetMap} values
+ * @param {ISetMap} values
  */
-declare function set(elements: Iterable<Element | CSSStyleRule>, values: SetMap): void;
+declare function set(elements: Iterable<Element | CSSStyleRule>, values: ISetMap): void;
 /**
  * Correctly replace the specified nodes with corresponding values.
  *
@@ -451,7 +450,7 @@ declare class Listener {
  * the invocation of their associated handler functions.
  *
  */
-interface Matcher {
+interface IMatcher {
     [key: string]: Function | Function[];
 }
 /**
@@ -518,16 +517,16 @@ declare const END: unique symbol;
  *     'span.remove': [removeListener, preventDefault, stopPropagation]
  * }, true);
  *
- * @param {Matcher} matcher Map of event target matcher to associated handler function
+ * @param {IMatcher} matcher Map of event target matcher to associated handler function
  * @param {boolean} wrapListeners Whether to werap the matcher functions with `eventListener`.
  */
-declare function matchListener(matcher: Matcher, wrapListeners?: boolean): (e: {
-    target: MatchEventTarget;
+declare function matchListener(matcher: IMatcher, wrapListeners?: boolean): (e: {
+    target: IMatchEventTarget;
 }) => any;
 /**
  * An event target which may have a 'matches' method.
  */
-interface MatchEventTarget extends EventTarget {
+interface IMatchEventTarget extends EventTarget {
     matches?: (arg0: string) => any;
 }
 /**
@@ -538,7 +537,7 @@ interface MatchEventTarget extends EventTarget {
  * (good practice).
  */
 declare class MatchListener extends Listener {
-    constructor(matcher: Matcher, wrapListeners?: boolean);
+    constructor(matcher: IMatcher, wrapListeners?: boolean);
 }
 /**
  * Simply calls `stopPropagation` on the event. Useful for creating one-liner
@@ -712,8 +711,8 @@ declare function unWrap(one: One): any;
 /**
  * A recursive One constructor. Used internally for recursive 'One's.
  */
-interface OneConstructor {
-    (many: any[], recursive?: boolean, context?: any[], ctor?: OneConstructor): One;
+interface IOneConstructor {
+    (many: any[], recursive?: boolean, context?: any[], ctor?: IOneConstructor): One;
 }
 /**
  * An object which delegates actions on it to other objects
@@ -734,7 +733,7 @@ declare class One {
     /**
      * The constructor function used for creating new 'One's in calls to `get`.
      */
-    ctor?: OneConstructor;
+    ctor?: IOneConstructor;
     /**
      * The context shared by the many functions or methods of the objects in many.
      * They all receive its items as their last set of arguments.
@@ -748,7 +747,7 @@ declare class One {
      * @param {boolean} [recursive] Whether to wrap the arrays returned by `get` with another One.
      * @param {any[]} context An optional shared context to be passed to all propagated method or function calls.
      * This is an array of objects passed as the final arguments in calls. Empty array by default.
-     * @param {OneConstructor} [ctor] The constructor used to create the `get` Ones. This parameter is used internally;
+     * @param {IOneConstructor} [ctor] The constructor used to create the `get` Ones. This parameter is used internally;
      * no need to supply an argument.
      *
      * @example
@@ -757,7 +756,7 @@ declare class One {
      *
      * @constructor
      */
-    constructor(many: any[], recursive?: boolean, context?: any[], ctor?: OneConstructor);
+    constructor(many: any[], recursive?: boolean, context?: any[], ctor?: IOneConstructor);
     /**
      * Gets corresponding properties from all the objects in many. If this is
      * a recursive One and forceArray is falsy, the array result will be
@@ -959,7 +958,7 @@ declare class StyleSheet {
  * With(document.createElement('button'))[SET]({className: 'main', textContent: 'Wow'}).addEventListener('click', () => console.log('Wow!!'))(btn => document.body.append(btn))()
  *
  */
-interface AnyFunction {
+interface IAnyFunction {
     (...args: any): any;
 }
 /**
@@ -990,25 +989,25 @@ declare const ASSIGN: unique symbol;
  * @example
  * With(obj)[ASSIGN]({prop1: 5, prop2: 6}).inc().prop2
  */
-type RecursiveProp<T> = {
-    [key in keyof T]?: (arg: Recursive<T[key]>) => any;
+type IRecursiveProp<T> = {
+    [key in keyof T]?: (arg: IRecursive<T[key]>) => any;
 };
 /**
  * Sets existing properties on object.
  */
-type RecursiveSetProp<T> = {
+type IRecursiveSetProp<T> = {
     [key in keyof T]?: any;
 };
 /**
  * An object whose methods returns itself
  */
-type Recursive<T> = {
-    [key in keyof T]: T[key] extends AnyFunction ? (...args: Parameters<T[key]>) => Recursive<T> : T[key];
+type IRecursive<T> = {
+    [key in keyof T]: T[key] extends IAnyFunction ? (...args: Parameters<T[key]>) => IRecursive<T> : T[key];
 } & {
-    [WITH]: (arg: RecursiveProp<T>) => Recursive<T>;
-    [SET]: (arg: RecursiveSetProp<T>) => Recursive<T>;
-    [ASSIGN]: (...objs: any[]) => Recursive<T>;
-    (arg: any, ...args: any): Recursive<T>;
+    [WITH]: (arg: IRecursiveProp<T>) => IRecursive<T>;
+    [SET]: (arg: IRecursiveSetProp<T>) => IRecursive<T>;
+    [ASSIGN]: (...objs: any[]) => IRecursive<T>;
+    (arg: any, ...args: any): IRecursive<T>;
     (): T;
 };
 /**
@@ -1023,6 +1022,6 @@ type Recursive<T> = {
  * @param obj
  * @returns
  */
-declare function With<T>(obj: T): Recursive<T>;
+declare function With<T>(obj: T): IRecursive<T>;
 
-export { ASSIGN, Actribute, type AnyFunction, type ApplyMap, type Args, type ArrayTemplate, type AsyncArrayTemplate, END, EventListener, type Inserter, Listener, type MatchEventTarget, MatchListener, type Matcher, One, type OneConstructor, type Recursive, type RecursiveProp, type RecursiveSetProp, SET, type SetMap, Sophistry, StyleSheet, WITH, With, apply, applyTo, arrayTemplate, asyncArrayTemplate, asyncTemplate, createFragment, eventListener, flat, get, getLength, ignoreContext, insert, inserter, items, iterLengths, keys, matchListener, onEnter, onKey, one, parentSelector, preventDefault, range, remove, repeat, ruleSelector, ruleSelectorAll, set, setLength, stopPropagation, tag, template, uItems, unWrap, update };
+export { ASSIGN, Actribute, END, EventListener, type IAnyFunction, type IApplyMap, type IAsyncTemplates, type IInserter, type IMatchEventTarget, type IMatcher, type IOneConstructor, type IRecursive, type IRecursiveProp, type IRecursiveSetProp, type ISetMap, type ITemplates, Listener, MatchListener, One, SET, Sophistry, StyleSheet, WITH, With, apply, applyTo, asyncTemplate, asyncTemplates, createFragment, eventListener, flat, get, getLength, ignoreContext, insert, inserter, items, iterLengths, keys, matchListener, onEnter, onKey, one, parentSelector, preventDefault, range, remove, repeat, ruleSelector, ruleSelectorAll, set, setLength, stopPropagation, tag, template, templates, uItems, unWrap, update };

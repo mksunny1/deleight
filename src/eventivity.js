@@ -108,7 +108,7 @@ export const END = Symbol();
  *     'span.remove': [removeListener, preventDefault, stopPropagation]
  * }, true);
  *
- * @param {Matcher} matcher Map of event target matcher to associated handler function
+ * @param {IMatcher} matcher Map of event target matcher to associated handler function
  * @param {boolean} wrapListeners Whether to werap the matcher functions with `eventListener`.
  */
 export function matchListener(matcher, wrapListeners) {

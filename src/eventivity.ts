@@ -27,7 +27,7 @@ export class Listener {
  * the invocation of their associated handler functions.
  *
  */
-export interface Matcher {
+export interface IMatcher {
     [key: string]: Function | Function[];
 }
 
@@ -122,10 +122,10 @@ export const END = Symbol();
  *     'span.remove': [removeListener, preventDefault, stopPropagation]
  * }, true);
  *
- * @param {Matcher} matcher Map of event target matcher to associated handler function
+ * @param {IMatcher} matcher Map of event target matcher to associated handler function
  * @param {boolean} wrapListeners Whether to werap the matcher functions with `eventListener`.
  */
-export function matchListener(matcher: Matcher, wrapListeners?: boolean) {
+export function matchListener(matcher: IMatcher, wrapListeners?: boolean) {
     const listenerMap: { [key: string]: Function } = {};
     for (let [selector, args] of Object.entries(matcher)) {
         if (wrapListeners || args instanceof Array) {
@@ -138,7 +138,7 @@ export function matchListener(matcher: Matcher, wrapListeners?: boolean) {
                 : eventListener(args[0], args[1]);
         } else listenerMap[selector] = args;
     }
-    function listener(e: { target: MatchEventTarget }) {
+    function listener(e: { target: IMatchEventTarget }) {
         for (let [selector, fn] of Object.entries(listenerMap)) {
             if (e.target.matches && e.target.matches(selector)) return fn(e);
         }
@@ -149,7 +149,7 @@ export function matchListener(matcher: Matcher, wrapListeners?: boolean) {
 /**
  * An event target which may have a 'matches' method.
  */
-export interface MatchEventTarget extends EventTarget {
+export interface IMatchEventTarget extends EventTarget {
     matches?: (arg0: string) => any;
 }
 
@@ -161,7 +161,7 @@ export interface MatchEventTarget extends EventTarget {
  * (good practice).
  */
 export class MatchListener extends Listener {
-    constructor(matcher: Matcher, wrapListeners?: boolean) {
+    constructor(matcher: IMatcher, wrapListeners?: boolean) {
         super();
         this.listener = matchListener(matcher, wrapListeners);
     }

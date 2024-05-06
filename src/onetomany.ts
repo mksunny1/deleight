@@ -65,12 +65,12 @@ const oneTrap = {
 /**
  * A recursive One constructor. Used internally for recursive 'One's.
  */
-export interface OneConstructor {
+export interface IOneConstructor {
     (
         many: any[],
         recursive?: boolean,
         context?: any[],
-        ctor?: OneConstructor,
+        ctor?: IOneConstructor,
     ): One;
 }
 
@@ -95,7 +95,7 @@ export class One {
     /**
      * The constructor function used for creating new 'One's in calls to `get`.
      */
-    ctor?: OneConstructor;
+    ctor?: IOneConstructor;
 
     /**
      * The context shared by the many functions or methods of the objects in many.
@@ -111,7 +111,7 @@ export class One {
      * @param {boolean} [recursive] Whether to wrap the arrays returned by `get` with another One.
      * @param {any[]} context An optional shared context to be passed to all propagated method or function calls.
      * This is an array of objects passed as the final arguments in calls. Empty array by default.
-     * @param {OneConstructor} [ctor] The constructor used to create the `get` Ones. This parameter is used internally;
+     * @param {IOneConstructor} [ctor] The constructor used to create the `get` Ones. This parameter is used internally;
      * no need to supply an argument.
      *
      * @example
@@ -124,7 +124,7 @@ export class One {
         many: any[],
         recursive?: boolean,
         context?: any[],
-        ctor?: OneConstructor,
+        ctor?: IOneConstructor,
     ) {
         this.many = many;
         (this.recursive = recursive), (this.ctor = ctor);
