@@ -1,4 +1,4 @@
-import { arrayTemplate, createFragment } from "../../src/apriori.js";
+import { templates, createFragment } from "../../src/apriori.js";
 import { apply, parentSelector } from "../../src/appliance.js";
 import { set, update } from "../../src/domitory.js";
 import {
@@ -69,7 +69,7 @@ const nouns = [
   "keyboard",
 ];
 
-const itemTemplate = arrayTemplate(
+const itemTemplate = templates(
   `
 <tr>
     <td class='col-md-1'>\${indices[item]}</td>
@@ -149,11 +149,11 @@ function view(table) {
     },
     append(n, context) {
       const length = context.data.length;
-      const renderedItems = itemTemplate(
+      const renderedItems = [...itemTemplate(
         range(length - n, length),
         context.indices,
         context.data,
-      );
+      )];
       table.append(createFragment(renderedItems.join('')));
     },
     update(context) {
