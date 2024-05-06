@@ -126,7 +126,7 @@ export const mySophistry = new Sophistry();
 mySophistry.import("pStyle.css");
 ```
 
-*NB: Partially tested*
+*NB: Fully tested*
 
 
 ## Generational
