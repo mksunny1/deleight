@@ -1,4 +1,3 @@
-import "../../src/browser.js";
 import { Sophistry } from "../../src/sophistry.js";
 import { One } from "../../src/onetomany.js";
 import { apply } from "../../src/appliance.js";
