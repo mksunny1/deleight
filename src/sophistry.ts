@@ -28,16 +28,17 @@ export class Sophistry {
    *
    * @example
    * const element = apriori.createFragment(apriori.get('markup.html'));
-   * const styles = mySophistry.process(element);
+   * const [styles, promises] = mySophistry.process(element);
    * document.body.append(element);
    * for (let style of styles) style.style(element, document.body.firstElementChild);
    *
    * @param {Element} root
    * @param {boolean} [replace]
-   * @returns {StyleSheet[]}
+   * @returns {[StyleSheet[], Promise<any>[]]}
    */
-  process(root: Element | DocumentFragment, replace?: boolean): StyleSheet[] {
+  process(root: Element | DocumentFragment, replace?: boolean): [StyleSheet[], Promise<any>[]] {
     const styleSheets: StyleSheet[] = [];
+    const promises: Promise<any>[] = [];
     if (
       (root instanceof HTMLLinkElement &&
         root.getAttribute("rel") === "stylesheet") ||
@@ -60,9 +61,9 @@ export class Sophistry {
             root.getAttribute("rel") === "stylesheet"
           ) {
             st = new CSSStyleSheet();
-            fetch(root.getAttribute("href") as string)
+            promises.push(fetch(root.getAttribute("href") as string)
               .then((r) => r.text())
-              .then((t) => st.replaceSync(t));
+              .then((t) => st.replaceSync(t)));
           } else if (root instanceof HTMLStyleElement) {
             st = new CSSStyleSheet(); // root.sheet will not work if style has not been added to DOM!!!
             st.replaceSync(root.textContent);
@@ -74,15 +75,17 @@ export class Sophistry {
       }
       root.parentNode?.removeChild(root);
     } else {
-      let node: Element | null = root.children[0],
-        node2: Element | null;
+      let node: Element | null = root.children[0], node2: Element | null;
+      let nodeStyleSheets, nodePromises;
       while (node) {
         node2 = node.nextElementSibling;
-        styleSheets.push(...this.process(node, replace));
+        [nodeStyleSheets, nodePromises] = this.process(node, replace);
+        styleSheets.push(...nodeStyleSheets);
+        promises.push(...nodePromises);
         node = node2;
       }
     }
-    return styleSheets;
+    return [styleSheets, promises];
   }
   /**
    * Import a stylesheet defined in an external CSS file. Optionally
@@ -91,20 +94,20 @@ export class Sophistry {
    * apostrophe...
    *
    * @example
-   * const style = mySophistry.import('style.css');
+   * const [style, onImport] = mySophistry.import('style.css');
    *
    * @param {string} link
    * @param {string} [name]
-   * @returns {StyleSheet}
+   * @returns {[StyleSheet, Promise<any>]}
    */
-  import(link: string, name?: string): StyleSheet {
+  import(link: string, name?: string): [StyleSheet, Promise<any>] {
     const st = new CSSStyleSheet();
     const st2 = new StyleSheet(st);
     this.styles[name || link.split(".")[0]] = st2;
-    fetch(link)
+    const promise = fetch(link)
       .then((r) => r.text())
       .then((t) => st.replaceSync(t));
-    return st2;
+    return [st2, promise];
   }
   /**
    * Replaces the text of an existing stylesheet. This is reactive.
@@ -116,7 +119,7 @@ export class Sophistry {
    * @param {string} css
    * @returns
    */
-  set(name: string, css: string): StyleSheet {
+  set(name: string, css: string) {
     if (this.styles.hasOwnProperty(name))
       this.styles[name].css.replaceSync(css);
     else {
@@ -124,7 +127,6 @@ export class Sophistry {
       st.replaceSync(css);
       this.styles[name] = new StyleSheet(st);
     }
-    return this.styles[name];
   }
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "deleight",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A group of 8 libraries for writing accessible and joyfully interactive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
   "types": "./dist/deleight.d.ts",
@@ -44,6 +44,7 @@
   },
   "scripts": {
     "test": "node --experimental-modules --test",
+    "otest": "node --test-only --experimental-modules --test",
     "wtest": "node --experimental-modules --test --watch",
     "doc": "npx typedoc --out ./docs//api ./src/*.ts",
     "compile": "npx tsc",

@@ -867,15 +867,15 @@ declare class Sophistry {
      *
      * @example
      * const element = apriori.createFragment(apriori.get('markup.html'));
-     * const styles = mySophistry.process(element);
+     * const [styles, promises] = mySophistry.process(element);
      * document.body.append(element);
      * for (let style of styles) style.style(element, document.body.firstElementChild);
      *
      * @param {Element} root
      * @param {boolean} [replace]
-     * @returns {StyleSheet[]}
+     * @returns {[StyleSheet[], Promise<any>[]]}
      */
-    process(root: Element | DocumentFragment, replace?: boolean): StyleSheet[];
+    process(root: Element | DocumentFragment, replace?: boolean): [StyleSheet[], Promise<any>[]];
     /**
      * Import a stylesheet defined in an external CSS file. Optionally
      * specify a name for the imported style in the Scophystry context (cache).
@@ -883,13 +883,13 @@ declare class Sophistry {
      * apostrophe...
      *
      * @example
-     * const style = mySophistry.import('style.css');
+     * const [style, onImport] = mySophistry.import('style.css');
      *
      * @param {string} link
      * @param {string} [name]
-     * @returns {StyleSheet}
+     * @returns {[StyleSheet, Promise<any>]}
      */
-    import(link: string, name?: string): StyleSheet;
+    import(link: string, name?: string): [StyleSheet, Promise<any>];
     /**
      * Replaces the text of an existing stylesheet. This is reactive.
      *
@@ -900,7 +900,7 @@ declare class Sophistry {
      * @param {string} css
      * @returns
      */
-    set(name: string, css: string): StyleSheet;
+    set(name: string, css: string): void;
 }
 /**
  * This is used to wrap a CSSStyleSheet to provide convenient methods
