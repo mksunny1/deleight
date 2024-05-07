@@ -4,7 +4,7 @@
 
 This is a group of 9 small libraies created to simplify the development of interactive web frontends using vanilla HTML, CSS and JavasSript. This is an inclusive library which caters to the needs of everyone in web development.
 
-- Frontend JavaScript developers can develop apps without worrying about control, modularity or maintainance. Not only is the framework flexible, modular and compact, it also aligns with familiar semantics. You still retain the convenience of a declarative API.
+- Frontend JavaScript developers can create apps without worrying about control, modularity or maintainance. Not only is the framework flexible, modular and compact, it also aligns with familiar semantics. You still retain the convenience of a declarative API.
 
 - Distributed frontend teams can work freely in their favourite languages without worrying about interop. HTML experts can write pure HTML. JavaScript developers can write pure JavaScript. Designers can write pure CSS. Deleight will ensure that everything plays well together. Data can be injected into HTML in multiple ways and it is not compulsory to have code tags or component specifiers in markup. The same thing also applies to style encapsulation.
 
@@ -28,7 +28,7 @@ import { meEventivity } from './my-event-manager.js'
 // apply used globally on all paragraphs within the containingElement
 function(containingElement) {
     apply({
-        p: (...allP) => mySophistry.pStyle.style(...allP) || meEventivity.pClickListener.listen('click', ...allP)
+        p: (...divs) => mySophistry.styles.style(...divs) || meEventivity.listener.listen('click', divs,  myEventivity.options)
     }, containingElement);  // containingElement default to document.body.
 }
 ```
@@ -48,7 +48,7 @@ import { range } from 'deleight/generational'
 // set the text content of all selected p elements to its position in the array. We can set as many properties or attributes as we want at once.
 function(containingElement) {
     apply({
-        p: (...allP) => set(allP, {textContent: range(allP.length)})
+        p: (...divs) => set(divs, {textContent: range(divs.length)})
     }, containingElement);
 }
 ```
