@@ -42,12 +42,6 @@ const sources = [
 const exports = [];
 let extraPlugins;
 for (let [i, src] of sources.entries()) {
-    extraPlugins = (i === 0)? [
-        copy({
-            targets: [{ src: `./package.json`, dest: "dist" }],
-        })
-    ]: [];
-
     exports.push({
         input: `./src/${src}.js`,
         output: [
@@ -55,7 +49,6 @@ for (let [i, src] of sources.entries()) {
             { format: "cjs", file: `./dist/${src}/cjs/${src}.js`},
         ],
         plugins: [
-            ...extraPlugins,
             createPackage(src),
             createCommonJsPackage(src),
             terser()
