@@ -10,8 +10,8 @@ function createPackage(src) {
     return {
         name: `${src}`,
         buildEnd: async () => {
-            await mkdir(`dist/${src}`, { recursive: true });
-            await writeFile(`./dist/${src}/package.json`, JSON.stringify(pkg, null, 2));
+            await mkdir(`dist/${src}/esm`, { recursive: true });
+            await writeFile(`./dist/${src}/esm/package.json`, JSON.stringify(pkg, null, 2));
         },
     };
 }
@@ -64,10 +64,10 @@ for (let [i, src] of sources.entries()) {
     }, {
         input: `./src/${src}.ts`,
         plugins: [dts()],
-        output: {
-            format: "es",
-            file: `./dist/${src}/${src}.d.ts`,
-        },
+        output: [
+            { format: "es", file: `./dist/${src}/esm/${src}.d.ts`},
+            { format: "cjs", file: `./dist/${src}/cjs/${src}.d.ts`},
+        ]
     })
 }
 

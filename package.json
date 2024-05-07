@@ -1,6 +1,6 @@
 {
   "name": "deleight",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "A group of 8 libraries for writing accessible and joyfully interactive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
   "exports": {
@@ -48,6 +48,7 @@
     "doc": "npx typedoc --out ./docs//api ./src/*.ts",
     "compile": "npx tsc",
     "build": "npx tsc && rollup -c",
+    "dist": "rollup -c",
     "start": "node server.cjs"
   },
   "repository": {

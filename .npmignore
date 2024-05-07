@@ -5,3 +5,7 @@ test
 images
 .github
 readme-older.md
+tsconfig.json
+server.cjs
+rollup.config.mjs
+
