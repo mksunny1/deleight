@@ -106,7 +106,7 @@ wrappedOneArray.push([6], ["e"]);
 
 ## Apriori
 
-This is a fun library to use if you need to build some or all of your DOM with the help of JavaScript. It includes primitives for template creation, template rendering and document tree building. There are primitives for building the DOM with either in-page resources or dynamically loaded ones. This gives us the flexibility to choose whatever works best for a project.
+This is a fun library to use if you need to build part or all of your DOM with the help of JavaScript. It includes primitives for template creation, template rendering and document tree building. There are primitives for building the DOM with either in-page resources or dynamically loaded ones. This gives us the flexibility to choose whatever works best for a project.
 
 ```js
 import { get, template } from "deleight/apriori";
