@@ -132,5 +132,7 @@ out
 
 # project-specific
 readme-older.md
-src2
+dist
+package copy.json
+rollup.config copy.mjs
 

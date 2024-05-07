@@ -1,45 +1,44 @@
 {
   "name": "deleight",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "A group of 8 libraries for writing accessible and joyfully interactive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
-  "types": "./dist/deleight.d.ts",
   "exports": {
     "./appliance": {
-      "require": "./dist/cjs/appliance.js",
-      "default": "./dist/esm/appliance.js"
+      "require": "./dist/appliance/cjs/appliance.js",
+      "default": "./dist/appliance/esm/appliance.js"
     },
     "./actribute": {
-      "require": "./dist/cjs/actribute.js",
-      "default": "./dist/esm/actribute.js"
+      "require": "./dist/actribute/cjs/actribute.js",
+      "default": "./dist/actribute/esm/actribute.js"
     },
     "./eventivity": {
-      "require": "./dist/cjs/eventivity.js",
-      "default": "./dist/esm/eventivity.js"
+      "require": "./dist/eventivity/cjs/eventivity.js",
+      "default": "./dist/eventivity/esm/eventivity.js"
     },
     "./generational": {
-      "require": "./dist/cjs/generational.js",
-      "default": "./dist/esm/generational.js"
+      "require": "./dist/generational/cjs/generational.js",
+      "default": "./dist/generational/esm/generational.js"
     },
     "./apriori": {
-      "require": "./dist/cjs/apriori.js",
-      "default": "./dist/esm/apriori.js"
+      "require": "./dist/apriory/cjs/apriori.js",
+      "default": "./dist/apriori/esm/apriori.js"
     },
     "./sophistry": {
-      "require": "./dist/cjs/sophistry.js",
-      "default": "./dist/esm/sophistry.js"
+      "require": "./dist/sophistry/cjs/sophistry.js",
+      "default": "./dist/sophistry/esm/sophistry.js"
     },
     "./domitory": {
-      "require": "./dist/cjs/domitory.js",
-      "default": "./dist/esm/domitory.js"
+      "require": "./dist/domitory/cjs/domitory.js",
+      "default": "./dist/domitory/esm/domitory.js"
     },
     "./onetomany": {
-      "require": "./dist/cjs/onetomany.js",
-      "default": "./dist/esm/onetomany.js"
+      "require": "./dist/onetomany/cjs/onetomany.js",
+      "default": "./dist/onetomany/esm/onetomany.js"
     },
     "./withy": {
-      "require": "./dist/cjs/withy.js",
-      "default": "./dist/esm/withy.js"
+      "require": "./dist/withy/cjs/withy.js",
+      "default": "./dist/withy/esm/withy.js"
     }
   },
   "scripts": {
@@ -78,6 +77,7 @@
   "author": "Mark Sun",
   "license": "MIT",
   "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
     "express": "^4.19.2",
     "jsdom": "^24.0.0",
