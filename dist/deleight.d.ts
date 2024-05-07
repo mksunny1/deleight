@@ -8,8 +8,12 @@
  * are the names of props to pass to them along with the element.
  *
  * @example
+ * import { Actribute } from 'deleight/actribute';
  * // initialize:
- * const fallbackProps = {prop1: 'Fallback', prop4: 'Last resort'};
+ * const fallbackProps = {
+ *    prop1: 'Fallback', prop4: 'Last resort',
+ *    sig: '$2b$20$o7DWuroOjbA/4LDWIstjueW9Hi6unv4fI0xAit7UQfLw/PI8iPl1y'
+ * };
  * const act = new Actribute(fallbackProps);
  *
  * // register components:
@@ -55,8 +59,10 @@ declare class Actribute {
      * Construct a new Actribute instance with the fallback props and
      * attribute prefix.
      *
-     * When it is used to process markup, attributes with names starting
-     * with attrPrefix are assumed to be component specifiers.
+     * It is similar to a Custom Element registry. When used to process
+     * markup, attributes with names starting with `attrPrefix` are treated
+     * as component specifiers.
+     *
      * A component specifier is of the form [attrPrefix][componentName]="[propertyName] [propertyName] ..."
      *
      * When a component specifier is encountered, the component's function will be
@@ -69,6 +75,13 @@ declare class Actribute {
      * from which component props may be obtained if they are not found in
      * the props object passed to the `process` method.
      *
+     * @example
+     * import { Actribute } from 'deleight/actribute';
+     * const fallbackProps = {
+     *    prop1: 'Fallback', prop4: 'Last resort'
+     * };
+     * const act = new Actribute(fallbackProps);
+     *
      * @param {any} props The value to assign to the props member.
      * @param {string} attrPrefix The value to assign to attrPrefix. Defaults to 'c-'
      * @constructor
@@ -80,6 +93,15 @@ declare class Actribute {
      * the name.
      *
      * Returns the same actribute to support chaining.
+     *
+     * @example
+     * import { Actribute } from 'deleight/actribute';
+     * const fallbackProps = {
+     *    prop1: 'Fallback', prop4: 'Last resort'
+     * };
+     * const act = new Actribute(fallbackProps);
+     * act.register('comp1', (node, prop1) => node.textContent = prop1);
+     * act.register('comp2', (node, prop2) => node.style.left = prop2);
      *
      * @param {string} name The component name
      * @param {Function} component The component function
@@ -97,6 +119,16 @@ declare class Actribute {
      * recursively.
      *
      * Returns the same actribute to support call chaining.
+     *
+     * @example
+     * import { Actribute } from 'deleight/actribute';
+     * const fallbackProps = {
+     *    prop1: 'Fallback', prop4: 'Last resort'
+     * };
+     * const act = new Actribute(fallbackProps);
+     * act.register('comp1', (node, prop1) => node.textContent = prop1);
+     * act.register('comp2', (node, prop2) => node.style.left = prop2);
+     * act.process(document.body, {prop2: 1, prop3: 2});
      *
      * @param {HTMLElement} element
      * @param {any} [props]
@@ -132,6 +164,7 @@ interface IApplyMap {
  * a CSS stylesheet object. All rules that start with any of the selectors are
  * selected.
  * @example
+ * import { ruleSelectorAll } from 'deleight/appliance';
  * const firstSpanRule = ruleSelectorAll('span', document.getElementsByTagName('style')[0], true)[0];
  *
  * @param {string} selectors
@@ -144,6 +177,7 @@ declare function ruleSelectorAll(selectors: string, styleElement: HTMLStyleEleme
  * Similar to querySelector in the same way ruleSelectorAll is similar to
  * querySelectorAll.
  * @example
+ * import { ruleSelector } from 'deleight/appliance';
  * const firstSpanRule = ruleSelector('span', document.getElementsByTagName('style')[0])
  *
  *
@@ -155,6 +189,7 @@ declare function ruleSelector(selectors: string, styleElement: HTMLStyleElement)
 /**
  * Return the first ancestor that matches the selector.
  * @example
+ * import { parentSelector } from 'deleight/appliance';
  * const removeListener = (e) => {
  *     table.removeChild(component.beforeRemove(parentSelector(e.target, 'tr')));
  * };
@@ -173,6 +208,7 @@ declare function parentSelector(node: Node, selector: string): Element | null;
  * the elements are passed one by one, so that the behavior is almost like that
  * of web components.
  * @example
+ * import { apply } from 'deleight/appliance';
  * apply({
  *     main: main => {
  *         const newContent = [...range(101, 120)].map(i => `My index is  now ${i}`);
@@ -194,6 +230,7 @@ declare function apply(applyMap: IApplyMap, containerElement?: Element, asCompon
  * element. If falsy/not specified, all the elements are passed to the functions
  * at once.
  * @example
+ * import { applyTo } from 'deleight/appliance';
  * applyTo(Array.from(document.body.children), (...bodyChildren) => console.log(bodyChildren.length));
  *
  * @param {(Element|CSSRule)[]} elements
@@ -211,6 +248,7 @@ declare function applyTo(elements: (Element | CSSRule)[] | (Element | CSSRule), 
  * intended string.
  *
  * @example
+ * import { tag } from 'deleight/apriori';
  * const t = tag`I will wait for this ${Promise.resolve("promise")}!!!`
  * // t === 'I will wait for this promise!!!'
  *
@@ -224,7 +262,8 @@ declare function tag(strings: Array<string>, ...expressions: any[]): Promise<str
  * which can be called multiple times to 'render' the template with the given arguments.
  *
  * @example
- * const t = await apriori.template('I will render this ${"guy"} immediately!!!')();
+ * import { template } from 'deleight/apriori';
+ * const t = template('I will render this ${"guy"} immediately!!!')();
  * // t === 'I will render this guy immediately!!!'
  *
  * @param {string} templateStr the template string
@@ -237,7 +276,8 @@ declare function template(templateStr: string, argNames?: string[]): (...args: a
  * before interpolating them.
  *
  * @example
- * const t = await apriori.asyncTemplate('I will wait for this ${Promise.resolve("promise")}!!!')();
+ * import { asyncTemplate } from 'deleight/apriori';
+ * const t = await asyncTemplate('I will wait for this ${Promise.resolve("promise")}!!!')();
  * // t === 'I will wait for this promise!!!'
  *
  *
@@ -266,6 +306,7 @@ interface IAsyncTemplates {
  * function is called.
  *
  * @example
+ * import { templates } from 'deleight/apriori';
  * const t = arrayTemplate('I will render this ${it}/${other} immediately!!!', ['other'], 'it')([1, 2, 3, 4, 5], '(shared)').join(' & ');
  * // t === 'I will render this 1/(shared) immediately!!! & I will render this 2/(shared) immediately!!! & I will render this 3/(shared) immediately!!! & I will render this 4/(shared) immediately!!! & I will render this 5/(shared) immediately!!!'
  *
@@ -283,7 +324,8 @@ declare function templates(templateStr: string, argNames: Array<string>, itemNam
  * among the arguents that will be passed to the returned function.
  *
  * @example
- * let t = asyncArrayTemplate('I will async render this ${item}')([1, 2, 3, 4, 5].map(i => Promise.resolve(i)));
+ * import { asyncTemplates } from 'deleight/apriori';
+ * let t = asyncTemplates('I will async render this ${item}')([1, 2, 3, 4, 5].map(i => Promise.resolve(i)));
  * console.log(t instanceof Promise);   // true
  * t = (await t).join(' ')
  * // t === 'I will async render this 1 I will async render this 2 I will async render this 3 I will async render this 4 I will async render this 5'
@@ -302,7 +344,8 @@ declare function asyncTemplates(templateStr: string, argNames: Array<string>, it
  * for using `fetch`.
  *
  * @example
- * const markup = await apriori.get('./apriori/get.html')
+ * import { get } from 'deleight/apriori';
+ * const markup = await get('./something.html')
  *
  *
  * @param {string} url  The url to pass to `fetch`
@@ -317,7 +360,8 @@ declare function get(url: string, suppressErrors?: boolean, init?: RequestInit):
  * So this is also a shorthand for creating single elements.
  *
  * @example
- * const frag1 = apriori.createFragment(`
+ * import { createFragment } from 'deleight/apriori';
+ * const frag1 = createFragment(`
  *    <p>Para 1</p>
  *    <p>Para 2</p>
  *`)
@@ -330,9 +374,12 @@ declare const createFragment: (markup: string) => DocumentFragment | Element;
 /**
  * A generator for elements with the specified tag names.
  * The names are space-separated just like in a class attribute.
+ * You can also separate with commma if you prefer.
  *
  * @example
+ * import { elements } from 'deleight/apriori';
  * const [div, p, span] = elements('div p span');
+ * const [div2, p2, span2] = elements('div, p, span');
  *
  * @param {string} tagNames
  */
@@ -357,10 +404,10 @@ interface IInserter {
  *
  * @example
  * // Insert a span into all the children of the first main element:
- * import {apply} from 'appliance'
- * import {insert} from 'domitory'
+ * import { insert } from 'deleight/domitory';
  * const span = document.createElement('span');
- * apply({main: main => insert(main.children, main.children.map(() => span.cloneNode())))})
+ * const main = document.querySelector('main');
+ * insert(main.children, main.children.map(() => span.cloneNode()))
  *
  *
  * @param {Iterable<Node>} elements The target nodes.
@@ -399,7 +446,7 @@ declare const inserter: {
  * },
  */
 interface ISetMap {
-    [key: string]: any[];
+    [key: string]: Iterable<any>;
 }
 /**
  * Set specified properties and/or attributes on the specified elements.
@@ -408,11 +455,11 @@ interface ISetMap {
  *
  * @example
  * // Shuffle the class attributes of all the children of the first main element:
- * import {apply} from 'appliance'
- * import {set} from 'domitory'
- * import {uItems} from 'generational'
- * apply({main: main => set(main.children, {_class: uItems(main.children.map(c => c.className))})})
- *
+ * import { set } from 'deleight/domitory';
+ * import { uItems } from 'deleight/generational';
+ * const main = document.querySelector('main');
+ * const values = uItems(main.children.map(c => c.className));
+ * set(main.children, {_class: values});
  *
  * @param {(Element|CSSStyleRule)[]} elements
  * @param {ISetMap} values
@@ -421,41 +468,60 @@ declare function set(elements: Iterable<Element | CSSStyleRule>, values: ISetMap
 /**
  * Correctly replace the specified nodes with corresponding values.
  *
+ * This will materialize `elements` and `values` unless `lazy`
+ * is supplied and its value is truthy.
+ *
  * @example
  * // Safely shuffle all the children of the first main element:
- * import {apply} from 'appliance'
- * import {update} from 'domitory'
- * import {uItems} from 'generational'
- * apply({main: main => update(main.children, uItems(main.children))})
+ * import { update } from 'deleight/domitory';
+ * import { uItems } from 'deleight/generational';
+ * const main = document.querySelector('main');
+ * update(main.children, uItems(main.children))
  *
  * @param {Iterable<Node>} elements The nodes to replace.
  * @param {Iterable<Node>} values The replacement nodes.
+ * @param { boolean } [lazy]
  */
-declare function update(elements: Iterable<Node>, values: Iterable<Node>): [Iterable<Node>, Iterable<Node>];
+declare function update(elements: Iterable<Node>, values: Iterable<Node>, lazy?: boolean): [Iterable<Node>, Iterable<Node>];
 /**
  * Remove the elements from their parent nodes.
  *
+ * This will materialize `elements` unless `lazy`
+ * is supplied and its value is truthy.
+ *
  * @example
- * // Remove all elements with the 'rem' class
- * apply({'.rem': (...elements) => remove(elements)});
+ * import { update } from 'deleight/domitory';
+ * const main = document.querySelector('main');
+ * remoove(main.children);
  *
  * @param {Iterable<Node>} elements
+ * @param { boolean } [lazy]
  */
-declare function remove(elements: Iterable<Node>): Iterable<Node>;
+declare function remove(elements: Iterable<Node>, lazy?: boolean): Iterable<Node>;
 
 /**
  * This module exports event handling helpers.
  */
 /**
- * Base class for EventListener and MatchListener
+ * Base class for EventListener and MatchListener. This can be used to
+ * wrap any listeners which will be shared by many elements. Call the
+ * `listen` or `remove` method to add or remove the listener to/from
+ * the given elements.
+ *
+ * @example
+ * import { Listener } from 'deleight/eventivity';
+ * listener = new Listener(() => login(input.value));
+ * listener.listen('keyup', [window.input1, window.input2])
+ *
  */
 declare class Listener {
     listener: EventListenerOrEventListenerObject;
+    constructor(listener: EventListenerOrEventListenerObject);
     listen(eventName: string, elements: EventTarget[], options?: boolean | AddEventListenerOptions): void;
     remove(eventName: string, ...elements: EventTarget[]): void;
 }
 /**
- * Object mapping element mapping strings to event handler functions.
+ * Object mapping element matching strings to event handler functions.
  * The matching strings (keys) are used to match event targets to trigger
  * the invocation of their associated handler functions.
  *
@@ -485,6 +551,7 @@ interface IMatcher {
  * END symbol.
  *
  * @example
+ * import { eventListener } from 'deleight/eventivity';
  * input.onkeyup = eventListener([onEnter, () => login(input.value), preventDefault]);
  * apply({
  *     '#loginButton': button => {
@@ -504,6 +571,11 @@ declare function eventListener(ops: Function[] | Function, runContext?: any): (e
  *
  * This gives the listener a 'personality' and promotes its reuse
  * (good practice).
+ *
+ * @example
+ * import { eventListener } from 'deleight/eventivity';
+ * listener = new EventListener([onEnter, () => login(input.value), preventDefault]);
+ * listener.listen('keyup', [window.input1, window.input2])
  */
 declare class EventListener extends Listener {
     constructor(ops: Function[] | Function, runContext?: any);
@@ -514,6 +586,7 @@ declare class EventListener extends Listener {
  * `eventHandler`.
  *
  * @example
+ * import { END } from 'deleight/eventivity';
  * const keyEventBreaker = (e: KeyboardEvent) => (e.key !== key)? END: '';
  */
 declare const END: unique symbol;
@@ -522,7 +595,8 @@ declare const END: unique symbol;
  * elements to reduce the number of listeners to create.
  *
  * @example
- * table.onclick = matchListener({
+ * import { matchListener } from 'deleight/eventivity';
+ * window.mainTable.onclick = matchListener({
  *     'a.lbl': e => select(e.target.parentNode.parentNode),
  *     'span.remove': [removeListener, preventDefault, stopPropagation]
  * }, true);
@@ -534,7 +608,8 @@ declare function matchListener(matcher: IMatcher, wrapListeners?: boolean): (e: 
     target: IMatchEventTarget;
 }) => any;
 /**
- * An event target which may have a 'matches' method.
+ * An event target which may have a 'matches' method. This includes most
+ * standard HTML elements.
  */
 interface IMatchEventTarget extends EventTarget {
     matches?: (arg0: string) => any;
@@ -545,6 +620,15 @@ interface IMatchEventTarget extends EventTarget {
  *
  * This gives the listener a 'personality' and promotes its reuse
  * (good practice).
+ *
+ * @example
+ * import { MatchListener } from 'deleight/eventivity';
+ * const listener = new MatchListener({
+ *     'a.lbl': e => select(e.target.parentNode.parentNode),
+ *     'span.remove': [removeListener, preventDefault, stopPropagation]
+ * }, true);
+ *
+ * listener.listen('click', [window.table1, window.table2], eventOptions)
  */
 declare class MatchListener extends Listener {
     constructor(matcher: IMatcher, wrapListeners?: boolean);
@@ -552,6 +636,12 @@ declare class MatchListener extends Listener {
 /**
  * Simply calls `stopPropagation` on the event. Useful for creating one-liner
  * event handlers.
+ *
+ * @example
+ * import { eventListener, stopPropagation } from 'deleight/eventivity';
+ * window.firstButton.onclick = eventListener([stopPropagation, (e, runContext) => {
+ *  // handle event here.
+ * }]);
  *
  * @param e The event object
  * @returns
@@ -562,6 +652,12 @@ declare const stopPropagation: (e: {
 /**
  * Simply calls `preventDefault` on the event. Useful for creating one-liner
  * event handlers.
+ *
+ * @example
+ * import { eventListener, preventDefault } from 'deleight/eventivity';
+ * window.firstButton.onclick = eventListener([preventDefault, (e, runContext) => {
+ *  // handle event here.
+ * }]);
  *
  * @param e The event object
  * @returns
@@ -576,7 +672,11 @@ declare const preventDefault: (e: {
  * array passed to `eventListener`.
  *
  * @example
- *
+ * import { eventListener, onKey } from 'deleight/eventivity';
+ * const aKeyGuard = onKey('a');
+ * window.firstInput.keyup = eventListener([aKeyGuard, (e, runContext) => {
+ *  // handle event here.
+ * }]);
  *
  * @returns {Function}
  */
@@ -587,6 +687,13 @@ declare const keys: {
 /**
  * This will stop a key(up or down...) event handler run from continuing if
  * it has not been triggered by the enter key.
+ *
+ * @example
+ * import { eventListener, onEnter } from 'deleight/eventivity';
+ * window.firstInput.keyup = eventListener([onEnter, (e, runContext) => {
+ *  // handle event here.
+ * }]);
+ *
  */
 declare const onEnter: (e: KeyboardEvent) => "" | typeof END;
 
@@ -594,9 +701,21 @@ declare const onEnter: (e: KeyboardEvent) => "" | typeof END;
  * This module exports many useful generators like `range` and `repeat`.
  */
 /**
+ * Forcs any iterable to become an iterator. Will throw
+ * if not possible.
+ *
+ * @example
+ * import { iter } from 'deleight/generationsl';
+ * const it = iter([1, 2, 3, 4, 5]);
+ *
+ * @param { any } it
+ */
+declare function iter(it: any): Iterator<any>;
+/**
  * Fast and 'costless' range function for javascript based on generators.
  *
  * @example
+ * import { range } from 'deleight/generationsl';
  * const arr1000 = [...range(0, 1000)];
  * // creates an array with 1000 items counting from 0 to 999.
  *
@@ -610,7 +729,8 @@ declare function range(start: number, end?: number, step?: number): Generator<nu
  * 'arrayLike' object that matches the provided index.
  *
  * @example
- * const tenth = items(arr1000, range(0, 1000, 10));
+ * import { items, range } from 'deleight/generationsl';
+ * const tenth = []...items(range(1000), range(0, 1000, 10))];
  * // selects every 10th item in the array.
  *
  * @param {any} arrayLike
@@ -621,22 +741,92 @@ declare function items(arrayLike: any, index: Iterable<number>): Generator<any, 
  * Returns a generator that yields first argument (what) the number of
  * times specified by the second argument (times).
  *
- * @param {any} what
+ * @example
+ * import { repeat } from 'deleight/generationsl';
+ * const repeated = [...repeat([1, 2, 3], 4)];
+ * // [1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3]
+ *
+ * @param {Iterable<any>} what
  * @param {number} times
  */
-declare function repeat(what: any, times: number): Generator<any, void, unknown>;
+declare function repeat(what: Iterable<any>, times: number): Generator<any, void, unknown>;
+/**
+ * Returns an iterator over the next 'count' items of the iterator.
+ *
+ * Note that, for performance reasons, this only accepts an
+ * iterator as the 'it' argument. All the other module functions accept
+ * iterables.
+ *
+ * You can convert any iterable to an iterator using the `iter` funtion
+ * as shown in the following example.
+ *
+ * If a firstValue is specified, it will be yielded first.
+ *
+ * @example
+ * import { nextItems, iter } from 'deleight/generationsl';
+ * const it = iter([1, 'a', 2, 'b', 3, 'c', 4, 'd']);
+ * const [num, let] = next(it, 2);
+ *
+ * @param {Iterator<any>} it
+ * @param {number} count
+ * @param { any } [firstValue]
+ */
+declare function next(it: Iterator<any>, count: number, firstValue?: any): Generator<any, void, unknown>;
+/**
+ * Returns an iterator of iterators over the next 'count' items of
+ * the given iterable
+ *
+ * @example
+ * import { next } from 'deleight/generationsl';
+ * const o1 = [1, 2, 3, 4];
+ * const o2 = ['a', 'b', 'c', 'd'];
+ * const zip = group(flat(o1, o2), 2);
+ *
+ * @param { Iterable<any> } it
+ * @param { number } count
+ */
+declare function group(it: Iterable<any>, count: number): Generator<any[], void, unknown>;
+/**
+ * Returns an iterator over the items of all the input iterators, starting from
+ * the zero index to the maximum index of the first argument. The
+ * effective length of the iterator is the multiple of the length of thr smallest
+ * iterator and the number of iterators (number of args).
+ *
+ * Can be used to join arrays in a way no supported by `concat`, `push`, etc.
+ * To pass an array as an iterator, call array.values().
+ *
+ * @example
+ * import { flat } from 'deleight/generationsl';
+ * for (let i of flat(range(10, range(15)))) {
+ *      console.log(i);    // 0, 0, 1, 1, 2, 2, .... till smallest iterable (10) is exhausted.
+ * }
+ *
+ * @param  {...any[]} args
+ */
+declare function flat(...args: any[]): Generator<any, void, unknown>;
+/**
+ * Returns an unordered/random iterator over the input array..
+ *
+ * @example
+ * import { uItems } from 'deleight/generationsl';
+ * const unOrdered = uItems([1, 2, 3, 4]);  // [4, 1, 3, 2]
+ *
+ * @param {Iterable<any>} it
+ */
+declare function uItems(it: Iterable<any>): Generator<any, void, unknown>;
 /**
  * Call to get the length of an object. The object must either
  * have a length property of be previously passed in a call to`setLength`.
  *
  * @example
+ * import { getLength, setLength } from 'deleight/generationsl';
  * const myRange = range(12);
  * setLength(myRange, 12);
  * getLength(myRange);   // returns 12.
  *
- * @param {any} iter
+ * @param {any} it
  */
-declare function getLength(iter: any): number;
+declare function getLength(it: any): number;
 /**
  * Stores the 'fake' lenghts of iterables passed in calls to `setLength`.
  * Can also be modified manually.
@@ -648,39 +838,14 @@ declare const iterLengths: WeakMap<any, number>;
  * functions that use `getLength`.
  *
  * @example
+ * import { getLength, setLength } from 'deleight/generationsl';
  * const myRange = range(12);
  * setLength(myRange, 12);
  * getLength(myRange);   // returns 12.
  *
- * @param {any} iter
+ * @param {any} it
  */
-declare function setLength(iter: any, length: number): any;
-/**
- * Returns an iterator over the items of all the input iterators, starting from
- * the zero index to the maximum index of the first argument. The
- * effective length of the iterator is the multiple of the length of thr smallest
- * iterator and the number of iterators (number of args).
- *
- * Can be used to join arrays in a way no supported by `concat`, `push`, etc.
- * To pass an array as an iterator, call array.values().
- *
- * @example
- * for (let i of flat(range(10, range(15)))) {
- *      console.log(i);    // 0, 0, 1, 1, 2, 2, .... till smallest iterable (10) is exhausted.
- * }
- *
- * @param  {...Iterator<any>} args
- */
-declare function flat(...args: any[]): Generator<any, void, unknown>;
-/**
- * Returns an unordered/random iterator over the input array..
- *
- * @example
- * const unOrdered = uItems([1, 2, 3, 4]);  // [4, 1, 3, 2]
- *
- * @param {any[]} iter
- */
-declare function uItems(iter: any[]): Generator<any, void, unknown>;
+declare function setLength(it: any, length: number): any;
 
 /**
  * This module enables reactivity  by exporting primitives for multiplying the effects of single operations.
@@ -702,6 +867,7 @@ declare function uItems(iter: any[]): Generator<any, void, unknown>;
  * set the behavior however you like (by emptying or populating the array).
  *
  * @example
+ * import { one } from 'deleight/onetomany';
  * const component = one([data(), view(table)], false, [{}]);
  * component.create([10000]);
  *
@@ -713,6 +879,12 @@ declare function uItems(iter: any[]): Generator<any, void, unknown>;
 declare function one(many: any[], recursive?: boolean, context?: any[]): One;
 /**
  * Return a 'pure' One from a proxied One.
+ *
+ * @example
+ * import { one, unWrap } from 'deleight/onetomany';
+ * const o = one([{a: 1}, {a: 2}])
+ * o.a = [4, 7];
+ * const many = unWrap(o).many
  *
  * @param one
  * @returns
@@ -728,7 +900,9 @@ interface IOneConstructor {
  * An object which delegates actions on it to other objects
  *
  * @example
- *
+ * import { One } from 'deleight/onetomany';
+ * const o = new One([{a: 1}, {a: 2}])
+ * o.set('a', [4, 7]);
  *
  */
 declare class One {
@@ -761,6 +935,7 @@ declare class One {
      * no need to supply an argument.
      *
      * @example
+     * import { One } from 'deleight/onetomany';
      * const loginYes = new One([username => profileView(username)]);
      * loginYes.call([[username]]);
      *
@@ -774,6 +949,7 @@ declare class One {
      * is returned instead of the array.
      *
      * @example
+     * import { One } from 'deleight/onetomany';
      * const o = new One([{a: 1}, {a: 2}])
      * o.get('a');  // [1, 2]
      *
@@ -787,6 +963,7 @@ declare class One {
      * 'values' are treated similarly to 'args' in the call method.
      *
      * @example
+     * import { One } from 'deleight/onetomany';
      * const o = new One([{a: 1}, {a: 2}])
      * o.set('a', [4, 7]);
      *
@@ -798,6 +975,7 @@ declare class One {
      * Delete the property from all objects in many.
      *
      * @example
+     * import { One } from 'deleight/onetomany';
      * const o = new One([{a: 1}, {a: 2}])
      * o.delete('a');
      *
@@ -829,6 +1007,7 @@ declare class One {
      * calls to many items.
      *
      * @example
+     * import { One } from 'deleight/onetomany';
      * const loginYes = new One([username => profileView(username)]);
      * loginYes.call([[username]]);
      *
@@ -840,12 +1019,6 @@ declare class One {
      */
     call(args?: any[], method?: string | number | symbol): any[];
 }
-/**
- * Pass this as the first arg in a One call to prevent it from injecting
- * a context. This is an alternative to passing a third argument to the
- * `call` function
- */
-declare const ignoreContext: unique symbol;
 
 /**
  * This module supports CSS loading, caching and 'localised' reuse.
@@ -875,6 +1048,8 @@ declare class Sophistry {
      * https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM.
      *
      * @example
+     * import { Sophistry } from 'deleight/sophistry';
+     * const mySophistry = new Sophistry();
      * const element = apriori.createFragment(apriori.get('markup.html'));
      * const [styles, promises] = mySophistry.process(element);
      * document.body.append(element);
@@ -892,6 +1067,8 @@ declare class Sophistry {
      * apostrophe...
      *
      * @example
+     * import { Sophistry } from 'deleight/sophistry';
+     * const mySophistry = new Sophistry();
      * const [style, onImport] = mySophistry.import('style.css');
      *
      * @param {string} link
@@ -903,6 +1080,8 @@ declare class Sophistry {
      * Replaces the text of an existing stylesheet. This is reactive.
      *
      * @example
+     * import { Sophistry } from 'deleight/sophistry';
+     * const mySophistry = new Sophistry();
      * mySophistry.set('style.css', await apriori.get('new-style.css'));  // override everything.
      *
      * @param {string} name
@@ -916,7 +1095,8 @@ declare class Sophistry {
  * for styling and 'unstyling' elements.
  *
  * @example
- * const sss = new SophistryStyleSheet(css);
+ * import { StyleSheet } from 'deleight/sophistry';
+ * const sss = new StyleSheet(css);
  *
  */
 declare class StyleSheet {
@@ -1027,6 +1207,7 @@ type IRecursive<T> = {
  * concise syntax in some scenarios.
  *
  * @example
+ * import { With, ASSIGN } from 'deleight/withy';
  * const el = With(document.createElement('div')).append().append()[ASSIGN]().append()().append();
  *
  * @param obj
@@ -1034,4 +1215,4 @@ type IRecursive<T> = {
  */
 declare function With<T>(obj: T): IRecursive<T>;
 
-export { ASSIGN, Actribute, END, EventListener, type IAnyFunction, type IApplyMap, type IAsyncTemplates, type IInserter, type IMatchEventTarget, type IMatcher, type IOneConstructor, type IRecursive, type IRecursiveProp, type IRecursiveSetProp, type ISetMap, type ITemplates, Listener, MatchListener, One, SET, Sophistry, StyleSheet, WITH, With, apply, applyTo, asyncTemplate, asyncTemplates, createFragment, elements, eventListener, flat, get, getLength, ignoreContext, insert, inserter, items, iterLengths, keys, matchListener, onEnter, onKey, one, parentSelector, preventDefault, range, remove, repeat, ruleSelector, ruleSelectorAll, set, setLength, stopPropagation, tag, template, templates, uItems, unWrap, update };
+export { ASSIGN, Actribute, END, EventListener, type IAnyFunction, type IApplyMap, type IAsyncTemplates, type IInserter, type IMatchEventTarget, type IMatcher, type IOneConstructor, type IRecursive, type IRecursiveProp, type IRecursiveSetProp, type ISetMap, type ITemplates, Listener, MatchListener, One, SET, Sophistry, StyleSheet, WITH, With, apply, applyTo, asyncTemplate, asyncTemplates, createFragment, elements, eventListener, flat, get, getLength, group, insert, inserter, items, iter, iterLengths, keys, matchListener, next, onEnter, onKey, one, parentSelector, preventDefault, range, remove, repeat, ruleSelector, ruleSelectorAll, set, setLength, stopPropagation, tag, template, templates, uItems, unWrap, update };

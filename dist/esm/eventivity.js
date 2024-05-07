@@ -2,10 +2,23 @@
  * This module exports event handling helpers.
  */
 /**
- * Base class for EventListener and MatchListener
+ * Base class for EventListener and MatchListener. This can be used to
+ * wrap any listeners which will be shared by many elements. Call the
+ * `listen` or `remove` method to add or remove the listener to/from
+ * the given elements.
+ *
+ * @example
+ * import { Listener } from 'deleight/eventivity';
+ * listener = new Listener(() => login(input.value));
+ * listener.listen('keyup', [window.input1, window.input2])
+ *
  */
 class Listener {
     listener;
+    constructor(listener) {
+        this.listener = listener;
+    }
+    ;
     listen(eventName, elements, options) {
         for (let element of elements)
             element.addEventListener(eventName, this.listener, options);
@@ -38,6 +51,7 @@ const defaultRunContext = { running: false };
  * END symbol.
  *
  * @example
+ * import { eventListener } from 'deleight/eventivity';
  * input.onkeyup = eventListener([onEnter, () => login(input.value), preventDefault]);
  * apply({
  *     '#loginButton': button => {
@@ -82,11 +96,15 @@ function eventListener(ops, runContext) {
  *
  * This gives the listener a 'personality' and promotes its reuse
  * (good practice).
+ *
+ * @example
+ * import { eventListener } from 'deleight/eventivity';
+ * listener = new EventListener([onEnter, () => login(input.value), preventDefault]);
+ * listener.listen('keyup', [window.input1, window.input2])
  */
 class EventListener extends Listener {
     constructor(ops, runContext) {
-        super();
-        this.listener = eventListener(ops, runContext);
+        super(eventListener(ops, runContext));
     }
 }
 /**
@@ -95,6 +113,7 @@ class EventListener extends Listener {
  * `eventHandler`.
  *
  * @example
+ * import { END } from 'deleight/eventivity';
  * const keyEventBreaker = (e: KeyboardEvent) => (e.key !== key)? END: '';
  */
 const END = Symbol();
@@ -103,7 +122,8 @@ const END = Symbol();
  * elements to reduce the number of listeners to create.
  *
  * @example
- * table.onclick = matchListener({
+ * import { matchListener } from 'deleight/eventivity';
+ * window.mainTable.onclick = matchListener({
  *     'a.lbl': e => select(e.target.parentNode.parentNode),
  *     'span.remove': [removeListener, preventDefault, stopPropagation]
  * }, true);
@@ -140,16 +160,30 @@ function matchListener(matcher, wrapListeners) {
  *
  * This gives the listener a 'personality' and promotes its reuse
  * (good practice).
+ *
+ * @example
+ * import { MatchListener } from 'deleight/eventivity';
+ * const listener = new MatchListener({
+ *     'a.lbl': e => select(e.target.parentNode.parentNode),
+ *     'span.remove': [removeListener, preventDefault, stopPropagation]
+ * }, true);
+ *
+ * listener.listen('click', [window.table1, window.table2], eventOptions)
  */
 class MatchListener extends Listener {
     constructor(matcher, wrapListeners) {
-        super();
-        this.listener = matchListener(matcher, wrapListeners);
+        super(matchListener(matcher, wrapListeners));
     }
 }
 /**
  * Simply calls `stopPropagation` on the event. Useful for creating one-liner
  * event handlers.
+ *
+ * @example
+ * import { eventListener, stopPropagation } from 'deleight/eventivity';
+ * window.firstButton.onclick = eventListener([stopPropagation, (e, runContext) => {
+ *  // handle event here.
+ * }]);
  *
  * @param e The event object
  * @returns
@@ -158,6 +192,12 @@ const stopPropagation = (e) => e.stopPropagation();
 /**
  * Simply calls `preventDefault` on the event. Useful for creating one-liner
  * event handlers.
+ *
+ * @example
+ * import { eventListener, preventDefault } from 'deleight/eventivity';
+ * window.firstButton.onclick = eventListener([preventDefault, (e, runContext) => {
+ *  // handle event here.
+ * }]);
  *
  * @param e The event object
  * @returns
@@ -170,7 +210,11 @@ const preventDefault = (e) => e.preventDefault();
  * array passed to `eventListener`.
  *
  * @example
- *
+ * import { eventListener, onKey } from 'deleight/eventivity';
+ * const aKeyGuard = onKey('a');
+ * window.firstInput.keyup = eventListener([aKeyGuard, (e, runContext) => {
+ *  // handle event here.
+ * }]);
  *
  * @returns {Function}
  */
@@ -179,6 +223,13 @@ const keys = { enter: "Enter" };
 /**
  * This will stop a key(up or down...) event handler run from continuing if
  * it has not been triggered by the enter key.
+ *
+ * @example
+ * import { eventListener, onEnter } from 'deleight/eventivity';
+ * window.firstInput.keyup = eventListener([onEnter, (e, runContext) => {
+ *  // handle event here.
+ * }]);
+ *
  */
 const onEnter = onKey(keys.enter);
 

@@ -9,6 +9,7 @@
  * intended string.
  *
  * @example
+ * import { tag } from 'deleight/apriori';
  * const t = tag`I will wait for this ${Promise.resolve("promise")}!!!`
  * // t === 'I will wait for this promise!!!'
  *
@@ -33,7 +34,8 @@ async function tag(strings, ...expressions) {
  * which can be called multiple times to 'render' the template with the given arguments.
  *
  * @example
- * const t = await apriori.template('I will render this ${"guy"} immediately!!!')();
+ * import { template } from 'deleight/apriori';
+ * const t = template('I will render this ${"guy"} immediately!!!')();
  * // t === 'I will render this guy immediately!!!'
  *
  * @param {string} templateStr the template string
@@ -50,7 +52,8 @@ function template(templateStr, argNames) {
  * before interpolating them.
  *
  * @example
- * const t = await apriori.asyncTemplate('I will wait for this ${Promise.resolve("promise")}!!!')();
+ * import { asyncTemplate } from 'deleight/apriori';
+ * const t = await asyncTemplate('I will wait for this ${Promise.resolve("promise")}!!!')();
  * // t === 'I will wait for this promise!!!'
  *
  *
@@ -78,6 +81,7 @@ function asyncTemplate(templateStr, argNames, tagName) {
  * function is called.
  *
  * @example
+ * import { templates } from 'deleight/apriori';
  * const t = arrayTemplate('I will render this ${it}/${other} immediately!!!', ['other'], 'it')([1, 2, 3, 4, 5], '(shared)').join(' & ');
  * // t === 'I will render this 1/(shared) immediately!!! & I will render this 2/(shared) immediately!!! & I will render this 3/(shared) immediately!!! & I will render this 4/(shared) immediately!!! & I will render this 5/(shared) immediately!!!'
  *
@@ -105,7 +109,8 @@ function templates(templateStr, argNames, itemName) {
  * among the arguents that will be passed to the returned function.
  *
  * @example
- * let t = asyncArrayTemplate('I will async render this ${item}')([1, 2, 3, 4, 5].map(i => Promise.resolve(i)));
+ * import { asyncTemplates } from 'deleight/apriori';
+ * let t = asyncTemplates('I will async render this ${item}')([1, 2, 3, 4, 5].map(i => Promise.resolve(i)));
  * console.log(t instanceof Promise);   // true
  * t = (await t).join(' ')
  * // t === 'I will async render this 1 I will async render this 2 I will async render this 3 I will async render this 4 I will async render this 5'
@@ -145,7 +150,8 @@ function asyncTemplates(templateStr, argNames, itemName, tagName) {
  * for using `fetch`.
  *
  * @example
- * const markup = await apriori.get('./apriori/get.html')
+ * import { get } from 'deleight/apriori';
+ * const markup = await get('./something.html')
  *
  *
  * @param {string} url  The url to pass to `fetch`
@@ -165,7 +171,8 @@ async function get(url, suppressErrors, init) {
  * So this is also a shorthand for creating single elements.
  *
  * @example
- * const frag1 = apriori.createFragment(`
+ * import { createFragment } from 'deleight/apriori';
+ * const frag1 = createFragment(`
  *    <p>Para 1</p>
  *    <p>Para 2</p>
  *`)
@@ -185,14 +192,17 @@ const createFragment = function (markup) {
 /**
  * A generator for elements with the specified tag names.
  * The names are space-separated just like in a class attribute.
+ * You can also separate with commma if you prefer.
  *
  * @example
+ * import { elements } from 'deleight/apriori';
  * const [div, p, span] = elements('div p span');
+ * const [div2, p2, span2] = elements('div, p, span');
  *
  * @param {string} tagNames
  */
 function* elements(tagNames) {
-    for (let tagName of tagNames.split(' '))
+    for (let tagName of tagNames.replace(',', '').split(' '))
         yield document.createElement(tagName.trim());
 }
 

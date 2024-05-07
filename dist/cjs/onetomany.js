@@ -20,6 +20,7 @@
  * set the behavior however you like (by emptying or populating the array).
  *
  * @example
+ * import { one } from 'deleight/onetomany';
  * const component = one([data(), view(table)], false, [{}]);
  * component.create([10000]);
  *
@@ -34,6 +35,12 @@ function one(many, recursive, context) {
 const PURE = Symbol();
 /**
  * Return a 'pure' One from a proxied One.
+ *
+ * @example
+ * import { one, unWrap } from 'deleight/onetomany';
+ * const o = one([{a: 1}, {a: 2}])
+ * o.a = [4, 7];
+ * const many = unWrap(o).many
  *
  * @param one
  * @returns
@@ -66,7 +73,9 @@ const oneTrap = {
  * An object which delegates actions on it to other objects
  *
  * @example
- *
+ * import { One } from 'deleight/onetomany';
+ * const o = new One([{a: 1}, {a: 2}])
+ * o.set('a', [4, 7]);
  *
  */
 class One {
@@ -99,6 +108,7 @@ class One {
      * no need to supply an argument.
      *
      * @example
+     * import { One } from 'deleight/onetomany';
      * const loginYes = new One([username => profileView(username)]);
      * loginYes.call([[username]]);
      *
@@ -116,6 +126,7 @@ class One {
      * is returned instead of the array.
      *
      * @example
+     * import { One } from 'deleight/onetomany';
      * const o = new One([{a: 1}, {a: 2}])
      * o.get('a');  // [1, 2]
      *
@@ -150,6 +161,7 @@ class One {
      * 'values' are treated similarly to 'args' in the call method.
      *
      * @example
+     * import { One } from 'deleight/onetomany';
      * const o = new One([{a: 1}, {a: 2}])
      * o.set('a', [4, 7]);
      *
@@ -175,6 +187,7 @@ class One {
      * Delete the property from all objects in many.
      *
      * @example
+     * import { One } from 'deleight/onetomany';
      * const o = new One([{a: 1}, {a: 2}])
      * o.delete('a');
      *
@@ -209,6 +222,7 @@ class One {
      * calls to many items.
      *
      * @example
+     * import { One } from 'deleight/onetomany';
      * const loginYes = new One([username => profileView(username)]);
      * loginYes.call([[username]]);
      *
@@ -242,14 +256,7 @@ class One {
         return results;
     }
 }
-/**
- * Pass this as the first arg in a One call to prevent it from injecting
- * a context. This is an alternative to passing a third argument to the
- * `call` function
- */
-const ignoreContext = Symbol();
 
 exports.One = One;
-exports.ignoreContext = ignoreContext;
 exports.one = one;
 exports.unWrap = unWrap;

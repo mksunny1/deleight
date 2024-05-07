@@ -20,10 +20,10 @@ export interface IInserter {
  *
  * @example
  * // Insert a span into all the children of the first main element:
- * import {apply} from 'appliance'
- * import {insert} from 'domitory'
+ * import { insert } from 'deleight/domitory';
  * const span = document.createElement('span');
- * apply({main: main => insert(main.children, main.children.map(() => span.cloneNode())))})
+ * const main = document.querySelector('main');
+ * insert(main.children, main.children.map(() => span.cloneNode()))
  *
  *
  * @param {Iterable<Node>} elements The target nodes.
@@ -35,11 +35,12 @@ export function insert(
     values: Iterable<Node>,
     insertWith?: IInserter,
 ): [Iterable<Node>, Iterable<Node>] {
-    if (!(elements instanceof Array)) elements = Array.from(elements);
-    if (!(values instanceof Array)) values = Array.from(values);
     if (!insertWith) insertWith = inserter.append; // the default inserter
-    let i = 0;
-    for (let value of values) insertWith(value, elements[i++]);
+    let elements2 = elements as any as Iterator<Node>;
+    if (!elements2.next) elements2 = elements[Symbol.iterator]();
+    for (let value of values) {
+        insertWith(value, elements2.next().value);
+    }
     return [elements, values];
 }
 
@@ -79,7 +80,7 @@ export const inserter = {
  * },
  */
 export interface ISetMap {
-    [key: string]: any[];
+    [key: string]: Iterable<any>;
 }
 
 /**
@@ -89,12 +90,12 @@ export interface ISetMap {
  *
  * @example
  * // Shuffle the class attributes of all the children of the first main element:
- * import {apply} from 'appliance'
- * import {set} from 'domitory'
- * import {uItems} from 'generational'
- * apply({main: main => set(main.children, {_class: uItems(main.children.map(c => c.className))})})
- *
- *
+ * import { set } from 'deleight/domitory';
+ * import { uItems } from 'deleight/generational';
+ * const main = document.querySelector('main');
+ * const values = uItems(main.children.map(c => c.className));
+ * set(main.children, {_class: values});
+ * 
  * @param {(Element|CSSStyleRule)[]} elements
  * @param {ISetMap} values
  */
@@ -102,54 +103,77 @@ export function set(
     elements: Iterable<Element | CSSStyleRule>,
     values: ISetMap,
 ): [Iterable<Element | CSSStyleRule>, ISetMap] {
-    const localMemberValues: {[key: string]: (Element | CSSStyleRule)[]} = {};
+    const localMemberValues: {
+        [key: string]: Iterator<any>
+    } = {};
+    const deps: {[key: string]: string} = {};
+    let memberValues2: Iterator<any>;
+    let allValues = new Map();
     for (let [key, memberValues] of Object.entries(values)) {
-        if (!(memberValues instanceof Array)) memberValues = Array.from(memberValues);
-        localMemberValues[key] = memberValues;
+        if (allValues.has(memberValues)) deps[key] = allValues.get(memberValues);
+        else {
+            memberValues2 = memberValues as any as Iterator<any>;
+            if (!(memberValues2.next)) memberValues2 = memberValues[Symbol.iterator]();
+            localMemberValues[key] = memberValues2;
+            allValues.set(memberValues, key);
+        }
     }
 
-    if (!(elements instanceof Array)) elements = Array.from(elements);
+    // if (!(elements instanceof Array)) elements = Array.from(elements);
     // we must materialize this first.
 
-    let i = 0,
-        memberValue: any;
-    for (let [member, memberValues] of Object.entries(localMemberValues)) {
-        i = 0;
-        if (member.startsWith("_")) {
-            member = member.slice(1);
-            for (memberValue of memberValues) {
-                (elements[i++] as Element).setAttribute(member, memberValue as string);
-            }
-        } else {
-            for (memberValue of memberValues) {
-                elements[i++][member] = memberValue;
+    let member: string, memberValues: Iterator<any>, memberValue: any;
+    let currentValues: any = {}, dep: string;
+    for (let element of elements) {
+        for ([member, memberValues] of Object.entries(localMemberValues)) {
+            memberValue = memberValues.next().value;
+            currentValues[member] = memberValue;
+            if (member.startsWith("_")) {
+                member = member.slice(1);
+                (element as Element).setAttribute(member, memberValue as string);
+            } else {
+                element[member] = memberValue;
             }
         }
-        i++;
+        for ([member, dep] of Object.entries(deps)) {
+            if (member.startsWith("_")) {
+                member = member.slice(1);
+                (element as Element).setAttribute(member, currentValues[dep]);
+            } else {
+                element[member] = currentValues[dep];
+            }
+        }
     }
+
     return [elements, values];
 }
 
 /**
  * Correctly replace the specified nodes with corresponding values.
+ * 
+ * This will materialize `elements` and `values` unless `lazy` 
+ * is supplied and its value is truthy.
  *
  * @example
  * // Safely shuffle all the children of the first main element:
- * import {apply} from 'appliance'
- * import {update} from 'domitory'
- * import {uItems} from 'generational'
- * apply({main: main => update(main.children, uItems(main.children))})
+ * import { update } from 'deleight/domitory';
+ * import { uItems } from 'deleight/generational';
+ * const main = document.querySelector('main');
+ * update(main.children, uItems(main.children))
  *
  * @param {Iterable<Node>} elements The nodes to replace.
  * @param {Iterable<Node>} values The replacement nodes.
+ * @param { boolean } [lazy]
  */
-export function update(elements: Iterable<Node>, values: Iterable<Node>): [Iterable<Node>, Iterable<Node>] {
+export function update(elements: Iterable<Node>, values: Iterable<Node>, lazy?: boolean): [Iterable<Node>, Iterable<Node>] {
     let parentNode: Node | null, tempNode: Node;
     const template = document.createComment(""); // document.createElement('template');
     const temps: [Node, Node | null][] = [];
 
-    if (!(elements instanceof Array)) elements = Array.from(elements);
-    if (!(values instanceof Array)) values = Array.from(values);
+    if (!lazy) {
+        elements = Array.from(elements);
+        values = Array.from(values);
+    }
 
     for (let element of elements) {
         parentNode = element.parentNode;
@@ -159,25 +183,30 @@ export function update(elements: Iterable<Node>, values: Iterable<Node>): [Itera
     }
 
     /* at this point we have replaced what we want to replace with temporary values */
-    let i = 0;
+    const temps2 = temps.values();
     for (let value of values) {
-        [tempNode, parentNode] = temps[i++];
+        [tempNode, parentNode] = temps2.next().value;
         parentNode?.replaceChild(value, tempNode);
     }
     return [elements, values];   // we can, eg run cleanups or inits on either of these.
 }
 
 /**
- * Remove the elements from their parent nodes.
+ * Remove the elements from their parent nodes. 
+ * 
+ * This will materialize `elements` unless `lazy` 
+ * is supplied and its value is truthy.
  *
  * @example
- * // Remove all elements with the 'rem' class
- * apply({'.rem': (...elements) => remove(elements)});
+ * import { update } from 'deleight/domitory';
+ * const main = document.querySelector('main');
+ * remoove(main.children);
  *
  * @param {Iterable<Node>} elements
+ * @param { boolean } [lazy]
  */
-export function remove(elements: Iterable<Node>): Iterable<Node> {
-    if (!(elements instanceof Array)) elements = Array.from(elements);
+export function remove(elements: Iterable<Node>, lazy?: boolean): Iterable<Node> {
+    if (!lazy) elements = [...elements];
     for (let element of elements) element.parentNode?.removeChild(element);
     return elements;   // we can, eg run cleanups on these.
 }

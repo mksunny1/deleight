@@ -150,8 +150,13 @@ const everyHundredthIn1000 = items(everyTenthIn1000, range(0, 100, 10));
 Actribute aims to provide a more widely supported, flexible and powerful alternative to extending built-in HTML elements, using a similar API.
 
 ```js
+import { Actribute } from "deleight/actribute";
+
 // initialize:
-const fallbackProps = { prop1: "Fallback", prop4: "Last resort" };
+const fallbackProps = { 
+    prop1: "Fallback", prop4: "Last resort", 
+    sig: '$2b$20$o7DWuroOjbA/4LDWIstjueW9Hi6unv4fI0xAit7UQfLw/PI8iPl1y'
+};
 const act = new Actribute(fallbackProps);
 
 // register components:
@@ -180,7 +185,9 @@ we can benefit from the improved concision and structure of our code.
 
 ```js
 import { With, SET } from "deleight/withy";
-With(document.createElement('div'))[SET]({textContent: 'Yeah'})(div => document.body.append(div));
+With(document.createElement('div'))[SET]({
+    textContent: 'Wow!'
+})(div => document.body.append(div));
 ```
 
 *NB: Fully tested*

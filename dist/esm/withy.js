@@ -31,6 +31,7 @@ const ASSIGN = Symbol();
  * concise syntax in some scenarios.
  *
  * @example
+ * import { With, ASSIGN } from 'deleight/withy';
  * const el = With(document.createElement('div')).append().append()[ASSIGN]().append()().append();
  *
  * @param obj

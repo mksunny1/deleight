@@ -43,11 +43,19 @@ describe("domitory.remove", () => {
         assert.equal(body.children.length, 0);
     });
 
-    it("Should insert correctly when using generator", (t) => {
+
+    it("Should remove correctly when using childNodes", (t) => {
+        body.innerHTML = bodyMarkup;
+        assert.equal(body.children.length, 3);
+        remove(Array.from(body.childNodes));
+        assert.equal(body.children.length, 0);
+    });
+
+    it("Should remove correctly when using generator", (t) => {
         function* gen(iter) { for (let item of iter) yield item; }
         body.innerHTML = bodyMarkup;
         assert.equal(body.children.length, 3);
-        remove(gen(body.children));
+        remove(gen(body.children));  
         assert.equal(body.children.length, 0);
     });
     

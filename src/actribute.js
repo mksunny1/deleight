@@ -8,8 +8,12 @@
  * are the names of props to pass to them along with the element.
  *
  * @example
+ * import { Actribute } from 'deleight/actribute';
  * // initialize:
- * const fallbackProps = {prop1: 'Fallback', prop4: 'Last resort'};
+ * const fallbackProps = {
+ *    prop1: 'Fallback', prop4: 'Last resort',
+ *    sig: '$2b$20$o7DWuroOjbA/4LDWIstjueW9Hi6unv4fI0xAit7UQfLw/PI8iPl1y'
+ * };
  * const act = new Actribute(fallbackProps);
  *
  * // register components:
@@ -53,8 +57,10 @@ export class Actribute {
      * Construct a new Actribute instance with the fallback props and
      * attribute prefix.
      *
-     * When it is used to process markup, attributes with names starting
-     * with attrPrefix are assumed to be component specifiers.
+     * It is similar to a Custom Element registry. When used to process
+     * markup, attributes with names starting with `attrPrefix` are treated
+     * as component specifiers.
+     *
      * A component specifier is of the form [attrPrefix][componentName]="[propertyName] [propertyName] ..."
      *
      * When a component specifier is encountered, the component's function will be
@@ -66,6 +72,13 @@ export class Actribute {
      * The props object passed to this initializer behaves like a global
      * from which component props may be obtained if they are not found in
      * the props object passed to the `process` method.
+     *
+     * @example
+     * import { Actribute } from 'deleight/actribute';
+     * const fallbackProps = {
+     *    prop1: 'Fallback', prop4: 'Last resort'
+     * };
+     * const act = new Actribute(fallbackProps);
      *
      * @param {any} props The value to assign to the props member.
      * @param {string} attrPrefix The value to assign to attrPrefix. Defaults to 'c-'
@@ -81,6 +94,15 @@ export class Actribute {
      * the name.
      *
      * Returns the same actribute to support chaining.
+     *
+     * @example
+     * import { Actribute } from 'deleight/actribute';
+     * const fallbackProps = {
+     *    prop1: 'Fallback', prop4: 'Last resort'
+     * };
+     * const act = new Actribute(fallbackProps);
+     * act.register('comp1', (node, prop1) => node.textContent = prop1);
+     * act.register('comp2', (node, prop2) => node.style.left = prop2);
      *
      * @param {string} name The component name
      * @param {Function} component The component function
@@ -101,6 +123,16 @@ export class Actribute {
      * recursively.
      *
      * Returns the same actribute to support call chaining.
+     *
+     * @example
+     * import { Actribute } from 'deleight/actribute';
+     * const fallbackProps = {
+     *    prop1: 'Fallback', prop4: 'Last resort'
+     * };
+     * const act = new Actribute(fallbackProps);
+     * act.register('comp1', (node, prop1) => node.textContent = prop1);
+     * act.register('comp2', (node, prop2) => node.style.left = prop2);
+     * act.process(document.body, {prop2: 1, prop3: 2});
      *
      * @param {HTMLElement} element
      * @param {any} [props]
@@ -155,6 +187,15 @@ export class Actribute {
  * the lookup scheme is similar to a nested property access.
  * prop may contain any character except the propSep (space by default)
  * passed to the `process` method.
+ *
+ * @example
+ * import { Actribute } from 'deleight/actribute';
+ * const fallbackProps = {
+ *    prop1: 'Fallback', prop4: 'Last resort'
+ * };
+ * const act = new Actribute(fallbackProps);
+ * const prop = act.get(fallbackProps, 'prop1');
+ * // Fallback
  *
  * @param {T} obj
  * @param {string} prop

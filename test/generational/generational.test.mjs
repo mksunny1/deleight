@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import { strict as assert } from "node:assert";
-import { range, items, repeat, flat, getLength, setLength, uItems } from "../../src/generational.js";
+import { iter, range, items, repeat, flat, next, group, uItems, getLength, setLength } from "../../src/generational.js";
 
 describe("generational.range", () => {
     
@@ -38,6 +38,24 @@ describe("generational.flat", () => {
     
     it("Should correctly flatten the 'zip' of the iterables", async (t) => {
         assert.deepEqual([...flat([1, 2, 3], ['a', 'b', 'c'])], [1,'a',2,'b',3,'c']);
+    });
+
+});
+
+describe("generational.next", () => {
+    
+    it("Should return the next n items of any iterable", async (t) => {
+        assert.deepEqual([...next(iter([3, 4, 5, 6, 7, 8]), 3)], [3, 4, 5]);
+        assert.deepEqual([...next(range(3, 30), 5)], [3, 4, 5, 6, 7]);
+    });
+
+});
+
+describe("generational.group", () => {
+    
+    it("Should return group consecutive items", async (t) => {
+        assert.deepEqual([...group([3, 4, 5, 6, 7, 8], 3)].map(v => [...v]), [[3, 4, 5], [6, 7, 8]]);
+        assert.deepEqual([...group(range(3, 9), 2)].map(v => [...v]), [[3, 4], [5, 6], [7, 8]]);
     });
 
 });

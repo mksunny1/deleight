@@ -27,6 +27,8 @@ export class Sophistry {
    * https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM.
    *
    * @example
+   * import { Sophistry } from 'deleight/sophistry';
+   * const mySophistry = new Sophistry();
    * const element = apriori.createFragment(apriori.get('markup.html'));
    * const [styles, promises] = mySophistry.process(element);
    * document.body.append(element);
@@ -94,6 +96,8 @@ export class Sophistry {
    * apostrophe...
    *
    * @example
+   * import { Sophistry } from 'deleight/sophistry';
+   * const mySophistry = new Sophistry();
    * const [style, onImport] = mySophistry.import('style.css');
    *
    * @param {string} link
@@ -113,6 +117,8 @@ export class Sophistry {
    * Replaces the text of an existing stylesheet. This is reactive.
    *
    * @example
+   * import { Sophistry } from 'deleight/sophistry';
+   * const mySophistry = new Sophistry();
    * mySophistry.set('style.css', await apriori.get('new-style.css'));  // override everything.
    *
    * @param {string} name
@@ -146,7 +152,8 @@ const hash = (str: string) => {
  * for styling and 'unstyling' elements.
  *
  * @example
- * const sss = new SophistryStyleSheet(css);
+ * import { StyleSheet } from 'deleight/sophistry';
+ * const sss = new StyleSheet(css);
  *
  */
 export class StyleSheet {

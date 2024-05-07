@@ -9,6 +9,7 @@
  * a CSS stylesheet object. All rules that start with any of the selectors are
  * selected.
  * @example
+ * import { ruleSelectorAll } from 'deleight/appliance';
  * const firstSpanRule = ruleSelectorAll('span', document.getElementsByTagName('style')[0], true)[0];
  *
  * @param {string} selectors
@@ -35,6 +36,7 @@ function ruleSelectorAll(selectors, styleElement, firstOnly) {
  * Similar to querySelector in the same way ruleSelectorAll is similar to
  * querySelectorAll.
  * @example
+ * import { ruleSelector } from 'deleight/appliance';
  * const firstSpanRule = ruleSelector('span', document.getElementsByTagName('style')[0])
  *
  *
@@ -48,6 +50,7 @@ function ruleSelector(selectors, styleElement) {
 /**
  * Return the first ancestor that matches the selector.
  * @example
+ * import { parentSelector } from 'deleight/appliance';
  * const removeListener = (e) => {
  *     table.removeChild(component.beforeRemove(parentSelector(e.target, 'tr')));
  * };
@@ -71,6 +74,7 @@ function parentSelector(node, selector) {
  * the elements are passed one by one, so that the behavior is almost like that
  * of web components.
  * @example
+ * import { apply } from 'deleight/appliance';
  * apply({
  *     main: main => {
  *         const newContent = [...range(101, 120)].map(i => `My index is  now ${i}`);
@@ -111,6 +115,7 @@ function apply(applyMap, containerElement, asComponent, firstOnly) {
  * element. If falsy/not specified, all the elements are passed to the functions
  * at once.
  * @example
+ * import { applyTo } from 'deleight/appliance';
  * applyTo(Array.from(document.body.children), (...bodyChildren) => console.log(bodyChildren.length));
  *
  * @param {(Element|CSSRule)[]} elements
