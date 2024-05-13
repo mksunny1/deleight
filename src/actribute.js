@@ -101,16 +101,36 @@ export class Actribute {
      *    prop1: 'Fallback', prop4: 'Last resort'
      * };
      * const act = new Actribute(fallbackProps);
-     * act.register('comp1', (node, prop1) => node.textContent = prop1);
-     * act.register('comp2', (node, prop2) => node.style.left = prop2);
+     * act.register('comp1', (element, prop1) => element.textContent = prop1);
+     * act.register('comp2', (element, prop2) => element.style.left = prop2);
      *
      * @param {string} name The component name
      * @param {Function} component The component function
      * @returns {Actribute}
      */
     register(name, component) {
-        this.registry[name] = component;
-        return this;
+        return (this.registry[name] = component) && this;
+    }
+    /**
+     * Registers multiple components at once using an object that maps
+     * component names to component functions. This is more succint than
+     * repeated calls to `this.register()`.
+     * @example
+     * import { Actribute } from 'deleight/actribute';
+     * const fallbackProps = {
+     *    prop1: 'Fallback', prop4: 'Last resort'
+     * };
+     * const act = new Actribute(fallbackProps);
+     * act.registerAll({
+     *  comp1: (element, prop1) => element.textContent = prop1,
+     *  comp2: (element, prop2) => element.style.left = prop2
+     * });
+     *
+     * @param registerMap
+     * @returns
+     */
+    registerAll(registerMap) {
+        return Object.assign(this.registry, registerMap) && this;
     }
     /**
      * Recursively processes the node to identify and apply components.

@@ -33,6 +33,24 @@
  */
 
 /**
+ * Represents a component function. The function takes an element 
+ * as its first argument. It may optionally receive further props 
+ * arguments. It can return anything.
+ */
+interface IComponent {
+    (element: Element, ...props: any[]): any
+}
+
+/**
+ * Represents an object that is used to register multiple components 
+ * at once. The object keys become component names and the values become 
+ * component functions.
+ */
+export interface IRegisterMap {
+    [key: string|number]: IComponent
+}
+
+/**
  * An Actribute class. Similar to a custom elements registry 'class'.
  */
 export class Actribute {
@@ -105,16 +123,36 @@ export class Actribute {
      *    prop1: 'Fallback', prop4: 'Last resort'
      * };
      * const act = new Actribute(fallbackProps);
-     * act.register('comp1', (node, prop1) => node.textContent = prop1);
-     * act.register('comp2', (node, prop2) => node.style.left = prop2);
+     * act.register('comp1', (element, prop1) => element.textContent = prop1);
+     * act.register('comp2', (element, prop2) => element.style.left = prop2);
      *
      * @param {string} name The component name
      * @param {Function} component The component function
      * @returns {Actribute}
      */
-    register(name: string, component: Function): Actribute {
-        this.registry[name] = component;
-        return this;
+    register(name: string, component: IComponent): Actribute {
+        return ( this.registry[name] = component ) && this;
+    }
+    /**
+     * Registers multiple components at once using an object that maps 
+     * component names to component functions. This is more succint than 
+     * repeated calls to `this.register()`.
+     * @example
+     * import { Actribute } from 'deleight/actribute';
+     * const fallbackProps = {
+     *    prop1: 'Fallback', prop4: 'Last resort'
+     * };
+     * const act = new Actribute(fallbackProps);
+     * act.registerAll({
+     *  comp1: (element, prop1) => element.textContent = prop1,
+     *  comp2: (element, prop2) => element.style.left = prop2
+     * });
+     *  
+     * @param registerMap 
+     * @returns 
+     */
+    registerAll(registerMap: IRegisterMap) {
+        return Object.assign(this.registry, registerMap) && this;
     }
     /**
      * Recursively processes the node to identify and apply components.

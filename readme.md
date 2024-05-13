@@ -33,8 +33,6 @@ function(containingElement) {
 }
 ```
 
-*NB: Fully tested*
-
 
 ## Domitory
 
@@ -52,8 +50,6 @@ function(containingElement) {
     }, containingElement);
 }
 ```
-
-*NB: Fully tested*
 
 
 ## Eventivity
@@ -79,7 +75,6 @@ export const myEventivity = {
 
 ```
 
-*NB: Fully tested*
 
 ## OneToMany
 
@@ -101,8 +96,6 @@ wrappedOneArray.push([6], ["e"]);
 // wrapping enables shorthand syntax like this.
 ```
 
-*NB: Fully tested*
-
 
 ## Apriori
 
@@ -112,8 +105,6 @@ This is a fun library to use if you need to build part or all of your DOM with t
 import { get, template } from "deleight/apriori";
 export const myTemplate = template(await get("markup.html"));
 ```
-
-*NB: Fully tested*
 
 
 ## Sophistry
@@ -125,8 +116,6 @@ import { Sophistry } from "deleight/sophistry";
 export const mySophistry = new Sophistry();
 mySophistry.import("pStyle.css");
 ```
-
-*NB: Fully tested*
 
 
 ## Generational
@@ -141,8 +130,6 @@ const everyTenthIn1000 = range(0, 1000, 10);
 const everyHundredthIn1000 = items(everyTenthIn1000, range(0, 100, 10));
 // 0, 100, 200, ...
 ```
-
-*NB: Fully tested*
 
 
 ## Actribute
@@ -175,7 +162,6 @@ act.process(document.body, { prop2: 1, prop3: 2 });
 delete act.registry.comp2;
 ```
 
-*NB: Fully tested*
 
 ## Withy
 
@@ -189,8 +175,6 @@ With(document.createElement('div'))[SET]({
     textContent: 'Wow!'
 })(div => document.body.append(div));
 ```
-
-*NB: Fully tested*
 
 
 ## Installation

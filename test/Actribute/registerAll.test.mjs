@@ -6,7 +6,11 @@ describe("actribute.register", () => {
   it("Should correctly register a funtion", (t) => {
     const act = new Actribute();
     const comp1 = (element, ...args) => {};
-    act.register("comp1", comp1);
+    const comp2 = (element, ...args) => {};
+    act.registerAll({
+      comp1, comp2
+    });
     assert.deepEqual(act.registry.comp1, comp1);
+    assert.deepEqual(act.registry.comp2, comp2);
   });
 });
