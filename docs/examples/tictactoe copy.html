@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Tic-tac-toe Example</title>
+        <link href="./tictactoe.css" rel="stylesheet">
+        <script src="./tictactoe.js" type="module"></script>
+    </head>
+    <body>
+        <h1>Tic-tac-toe</h1>
+        <main>
+            <section title="Game">
+                <header aria-live="assertive" title="Status" id="status"></header>
+                <div aria-live="assertive" title="Board" id="board">
+                    
+                </div>
+                <template id="square">
+                    <button class="square"></button>
+                </template>
+            </section>
+            <section title="Reset">
+                <ol>
+                    <li>
+                        <button id="btnStart">
+                            Go to game start
+                        </button>
+                    </li>
+                    <li>
+                        <button id="btnStart">
+                            Go to move #1
+                        </button>
+                    </li>
+                </ol>
+            </section>
+        </main>
+        <footer>&copy;2024 Deleight</footer>
+    </body>
+</html>

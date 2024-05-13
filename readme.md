@@ -2,7 +2,7 @@
 
 ![Logo](https://github.com/mksunny1/deleight/blob/main/docs/assets/logos/small.png?raw=true)
 
-This is a group of 9 small libraies created to simplify the development of interactive web frontends using vanilla HTML, CSS and JavasSript. This is an inclusive library which caters to the needs of everyone in web development.
+This is a group of 9 small libraies that simplify web frontend development using vanilla HTML, CSS and JavasSript. Deleight is an inclusive library everyone operating on the web can benefit from.
 
 - Frontend JavaScript developers can create apps without worrying about control, modularity or maintainance. Not only is the framework flexible, modular and compact, it also aligns with familiar semantics. You still retain the convenience of a declarative API.
 

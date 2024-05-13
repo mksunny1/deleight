@@ -9,14 +9,8 @@ const colours = ["red","yellow","blue","green","pink","brown","purple","brown","
 const nouns = ["table","chair","house","bbq","desk","car","pony","cookie","sandwich","burger","pizza","mouse","keyboard",];
 
 class Component {
-    constructor(parent) {
-        this.parent = parent;
-        this.index = 0;
-    }
-    create(n) {
-        this.clear();
-        this.append(n);
-    }
+    constructor(parent) {this.parent = parent;this.index = 0;}
+    create(n) {this.clear();this.append(n);}
     append(n) {
         const mk = [];
         const a = this.index,
