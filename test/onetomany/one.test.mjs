@@ -2,7 +2,7 @@ import { describe, it } from "node:test";
 import { strict as assert } from "node:assert";
 import { one, unWrap } from "../../src/onetomany.js";
 
-describe("onetomany.One", () => {
+describe("onetomany.one", () => {
     const first = {}, second = {}, third = {}, fourth = {};
     const many = [first, second, third];
 

@@ -1,32 +1,35 @@
 /**
- * This module has been designed to be a drop-in replacement for extending built-in elements. It is supposed to be
- * 1. More widely supported. Safari does not support 'is' attribute.
- * 2. More concise and flexible. You can register and unregister components and you can attach multiple components to the same element..
- * 3. Easier to pass down props in markup without creating ugly markup.
- *
- * The attributes here name the components and the values
- * are the names of props to pass to them along with the element.
+ * Actributes lets you attach components to HTML elements within markup. 2 
+ * use cases we have found include implementing reactivity (Actribution) and 
+ * 'extending' built-in elements.
+ * 
+ * The attributes here name the components and any values
+ * are passed to the components along with the element. Components can use the 
+ * values in any appropriate to their operations. Simple components will typically 
+ * call the props function on them to extract properties from objects which they 
+ * then use for their operation. More complex components could interprete the values 
+ * as code.
  *
  * @example
- * import { Actribute } from 'deleight/actribute';
+ * import { Actribute, props } from 'deleight/actribute';
  * // initialize:
  * const fallbackProps = {
  *    prop1: 'Fallback', prop4: 'Last resort', 
  *    sig: '$2b$20$o7DWuroOjbA/4LDWIstjueW9Hi6unv4fI0xAit7UQfLw/PI8iPl1y'
  * };
- * const act = new Actribute(fallbackProps);
+ * const act = new Actribute();
  *
  * // register components:
- * act.register('comp1', (node, prop1) => node.textContent = prop1);
- * act.register('comp2', (node, prop2) => node.style.left = prop2);
+ * act.register('comp1', (element, attr, ...context) => element.textContent = props(attr.value, context)[0]);
+ * act.register('comp2', (element, attr) => element.style.left = attr.value);
  *
  * // use in markup:
- * // &lt;section c-comp1="prop1"  c-comp2="prop2" &gt;
+ * // &lt;section c-comp1="prop1"  c-comp2="100px" &gt;
  * //       First section
  * // &lt;/section&gt;
  *
  * / process components:
- * act.process(document.body, {prop2: 1, prop3: 2});
+ * act.process({el: document.body, ctx: [{prop1: 2, prop3: 2}, fallbackProps]});
  *
  * // unregister a component:
  * delete act.registry.comp2;
@@ -34,11 +37,11 @@
 
 /**
  * Represents a component function. The function takes an element 
- * as its first argument. It may optionally receive further props 
- * arguments. It can return anything.
+ * as its first argument and the attribute as its second argument. It may 
+ * optionally receive further context arguments. It can return anything.
  */
-interface IComponent {
-    (element: Element, ...props: any[]): any
+export interface IComponent {
+    (element: Element, attr: Attr, ...context: any[]): any
 }
 
 /**
@@ -50,8 +53,19 @@ export interface IRegisterMap {
     [key: string|number]: IComponent
 }
 
+export interface IActributeInit {
+    open?: string,
+    closed?: string
+}
+
+export type IProcessOptions = {
+    el?: Element,
+    attr?: string,
+    ctx?: any[]
+} | Element | string | any[]
+
 /**
- * An Actribute class. Similar to a custom elements registry 'class'.
+ * An Actribute class. This is almost like a custom elements registry 'class'.
  */
 export class Actribute {
     /**
@@ -61,27 +75,19 @@ export class Actribute {
     registry: { [key: string | number]: Function } = {};
 
     /**
-     * This object holds any fallback props which can be referenced
-     * in the markup, in the values of component attributes. Property names
-     * can be referenced similarly to CSS classes.
+     * The attribute used to specify that the tree of an element with 
+     * components is open to nested processing.
      */
-    props: any;
+    openAttr: string;
 
     /**
-     * This is the attribute prefix that denotes component specifiers in
-     * markup. A component specifier is an attribute where the name (after
-     * the prefix) refers to a component name (in the registery) and the
-     * optional value is a space-separated list of property names.
+     * The attribute used to specify that the tree of an element with 
+     * components is not open to nested processing.
      */
-    attrPrefix: string;
+    closedAttr: string;
 
     /**
-     * Construct a new Actribute instance with the fallback props and
-     * attribute prefix.
-     *
-     * It is similar to a Custom Element registry. When used to process 
-     * markup, attributes with names starting with `attrPrefix` are treated 
-     * as component specifiers.
+     * Construct a new Actribute instance.
      * 
      * A component specifier is of the form [attrPrefix][componentName]="[propertyName] [propertyName] ..."
      *
@@ -102,20 +108,16 @@ export class Actribute {
      * };
      * const act = new Actribute(fallbackProps);
      *
-     * @param {any} props The value to assign to the props member.
-     * @param {string} attrPrefix The value to assign to attrPrefix. Defaults to 'c-'
+     * @param {IActributeInit} init The value to assign to attrPrefix. Defaults to 'c-'
      * @constructor
      */
-    constructor(props: any, attrPrefix: string) {
-        this.props = props || {};
-        this.attrPrefix = attrPrefix || "c-";
+    constructor(init?: IActributeInit) {
+        this.openAttr = init?.open || 'o-pen';
+        this.closedAttr = init?.closed || 'c-losed';
     }
     /**
-     * Registers a function as a component bearing the given name.
-     * The component can be referenced in processed markup using
-     * the name.
-     *
-     * Returns the same actribute to support chaining.
+     * Registers multiple components at once using an object that maps 
+     * component names to component functions.
      * 
      * @example
      * import { Actribute } from 'deleight/actribute';
@@ -123,27 +125,7 @@ export class Actribute {
      *    prop1: 'Fallback', prop4: 'Last resort'
      * };
      * const act = new Actribute(fallbackProps);
-     * act.register('comp1', (element, prop1) => element.textContent = prop1);
-     * act.register('comp2', (element, prop2) => element.style.left = prop2);
-     *
-     * @param {string} name The component name
-     * @param {Function} component The component function
-     * @returns {Actribute}
-     */
-    register(name: string, component: IComponent): Actribute {
-        return ( this.registry[name] = component ) && this;
-    }
-    /**
-     * Registers multiple components at once using an object that maps 
-     * component names to component functions. This is more succint than 
-     * repeated calls to `this.register()`.
-     * @example
-     * import { Actribute } from 'deleight/actribute';
-     * const fallbackProps = {
-     *    prop1: 'Fallback', prop4: 'Last resort'
-     * };
-     * const act = new Actribute(fallbackProps);
-     * act.registerAll({
+     * act.register({
      *  comp1: (element, prop1) => element.textContent = prop1,
      *  comp2: (element, prop2) => element.style.left = prop2
      * });
@@ -151,69 +133,67 @@ export class Actribute {
      * @param registerMap 
      * @returns 
      */
-    registerAll(registerMap: IRegisterMap) {
+    register(registerMap: IRegisterMap) {
         return Object.assign(this.registry, registerMap) && this;
     }
     /**
-     * Recursively processes the node to identify and apply components.
+     * Recursively processes `options.el` (or `document.body` by default) to 
+     * identify and apply components. Attributes with names starting with 
+     * `options.attr` (or `c-` by default) are treated as component specifiers.
      *
      * At elements where any components are encountered, the components
-     * are called with the element and any specified props. The decendants
-     * are not processed.
-     *
-     * At elements without a component, the descendants are processed
-     * recursively.
-     *
+     * are called with the element, the attribute value and any specified 
+     * context objects (`...(options.context || [])`). 
+     * 
+     * Where a component is encountered, decendants are not processed unless `this.open` 
+     * attribute is present on the element. At elements without a component, the descendants 
+     * are processed recursively, except `this.closed` boolean attribute is 
+     * specified. These are supposed to echo the semantics of the Shadow DOM API.
+     *  
+     * If a component is not found and a wild-card component is registered (with '*'), 
+     * the widcard component is called instead with the whole attribute passed as the second 
+     * argument.
+     * 
      * Returns the same actribute to support call chaining.
      * 
      * @example
-     * import { Actribute } from 'deleight/actribute';
-     * const fallbackProps = {
-     *    prop1: 'Fallback', prop4: 'Last resort'
-     * };
-     * const act = new Actribute(fallbackProps);
-     * act.register('comp1', (node, prop1) => node.textContent = prop1);
-     * act.register('comp2', (node, prop2) => node.style.left = prop2);
-     * act.process(document.body, {prop2: 1, prop3: 2});
+     * import { Actribute, props } from 'deleight/actribute';
+     * const act = new Actribute();
+     * act.register({
+     *  comp1: (element, attr, singleContext) => element.textContent = attr.value,
+     *  comp2: (element, attr, singleContext) => element.style.left = props(attr.value, [singleContext])
+     * });
+     * act.process([{prop2: 1, prop3: 2}]);
      *
-     * @param {HTMLElement} element
-     * @param {any} [props]
-     * @param {string} [propSep]
+     * @param {IProcessOptions} [options]
      * @returns {Actribute}
      */
-    process(element: Element, props?: any, propSep?: string): Actribute {
-        if (!props) props = {};
-        if (propSep === undefined) {
-            propSep = " ";
+    process(options?: IProcessOptions): Actribute {
+        let element: Element, attrPrefix: string, context: any[];
+        if (typeof options === 'string') attrPrefix = options;
+        else if (options instanceof Element) element = options;
+        else if (options instanceof Array) context = options;
+        else if (typeof options === "object") {
+            element = options.el;
+            attrPrefix = options.attr;
+            context = options.ctx
         }
+        if (!element) element = document.body;
+        if (!attrPrefix) attrPrefix = 'c-';
+        if (!context) context = [];
 
-        let compProps: any[] = [],
-            comp: string,
-            propKey: string,
-            propVal: any,
-            processed = false;
+        const attrs = element.attributes, length = attrs.length;
 
-        for (let { name, value } of Array.from(element.attributes)) {
-            if (name.startsWith(this.attrPrefix)) {
+        let attr: Attr, i: number, comp: string, processed = false, open = element.hasAttribute(this.openAttr);
+        for (i = 0; i < length; i++) {
+            attr = attrs[i];
+            if (attr.name.startsWith(attrPrefix)) {
                 processed = true;
-                comp = name.substring(this.attrPrefix.length);
+                comp = attr.name.substring(attrPrefix.length);
                 if (this.registry.hasOwnProperty(comp)) {
-                    compProps = [];
-                    value = value.trim();
-                    if (value) {
-                        for (propKey of value.split(propSep)) {
-                            propKey = propKey.trim();
-                            if (propKey === "") continue; // just too much space between prop names/keys.
-                            propVal = get(props, propKey) || get(this.props, propKey);
-                            if (propVal !== undefined) compProps.push(propVal);
-                            else {
-                                throw new Error(
-                                    `The property "${propKey}" was not found for the component "${comp}" in the element "${element.toString()}"."`,
-                                );
-                            }
-                        }
-                    }
-                    this.registry[comp](element, ...compProps);
+                    this.registry[comp](element, attr, ...context);
+                } else if (this.registry.hasOwnProperty('*')) {
+                    this.registry['*'](element, attr, ...context);
                 } else {
                     throw new Error(
                         `The component  "${comp}" was not found in the registry.`,
@@ -221,11 +201,8 @@ export class Actribute {
                 }
             }
         }
-
-        if (!processed) {
-            for (let child of Array.from(element.children)) {
-                this.process(child, props, propSep);
-            }
+        if (!processed || open) {
+            for (let child of Array.from(element.children)) if (!child.hasAttribute(this.closedAttr)) this.process({el: child, attr: attrPrefix, ctx: context});
         }
         return this;
     }
@@ -238,15 +215,6 @@ export class Actribute {
  * prop may contain any character except the propSep (space by default)
  * passed to the `process` method.
  * 
- * @example
- * import { Actribute } from 'deleight/actribute';
- * const fallbackProps = {
- *    prop1: 'Fallback', prop4: 'Last resort'
- * };
- * const act = new Actribute(fallbackProps);
- * const prop = act.get(fallbackProps, 'prop1');
- * // Fallback
- *
  * @param {T} obj
  * @param {string} prop
  */
@@ -263,4 +231,34 @@ function get<T extends object>(obj: T, prop: string) {
         result = obj[props[i].trim()];
     }
     return result;
+}
+
+/**
+ * Obtain properties from the specified sources. Specify the property names 
+ * separated by a separator (`" "` by default).
+ * @example
+ * 
+ * @param names 
+ * @param sources 
+ * @param sep 
+ * @returns 
+ */
+export function props(names: string, sources: any[], sep?: string): any[] {
+    const results = [], length = sources.length;
+    names = names.trim();
+    
+    let name: string, val: any, i: number;
+    for (name of names.split(sep || ' ')) {
+        name = name.trim();
+        if (name === "") continue; // just too much space between prop names/keys.
+        val = undefined; i = -1;
+        while (val === undefined && ++i < length) val = get(sources[i], name);
+        if (val !== undefined) results.push(val);
+        else {
+            throw new TypeError(
+                `The property "${name}" was not found in any of the sources.`,
+            );
+        }
+    }
+    return results;
 }
