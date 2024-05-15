@@ -54,6 +54,8 @@ describe("onetomany.wrap", async () => {
         assert.deepEqual(arr2, expected);
         assert.deepEqual(arr3, expected);
 
+        assert.deepEqual(w4[1], [56, 57]);
+
     });
 
     await it("Should be able to call methods with no args", async (t) => {
@@ -76,7 +78,7 @@ describe("onetomany.wrap", async () => {
         assert.deepEqual(arr1, expected);
         assert.deepEqual(arr2, expected);
         assert.deepEqual(arr3, expected);
-        
+
     });
 
 });
