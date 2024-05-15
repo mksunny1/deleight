@@ -136,3 +136,5 @@ dist
 package copy.json
 rollup.config copy.mjs
 docs/api
+
+src/reactivity

@@ -7,30 +7,28 @@
     </head>
     <body>
         <h1>Tic-tac-toe</h1>
+        <div id="start">
+            <input id="nRows" value="3">
+            <input id="nCols" value="3">
+            <input id="players" value="X O">
+            <button id="start">Start</button>
+        </div>
         <main>
             <section title="Game">
                 <header aria-live="assertive" title="Status" id="status"></header>
                 <div aria-live="assertive" title="Board" id="board">
                     <div a-rep="nRows" class="row">
-                        <button a-rep="nCols" class="square"></button>
+                        <span a-rep="nCols" class="square"></span>
                     </div>
                 </div>
-                <template id="square">
-                    
-                </template>
             </section>
             <section title="History">
-                <ol>
-                    <li class="start">
-                        <button id="start">Go to game start</button>
-                        <input id="nRows" value="3">
-                        <input id="nCols" value="3">
-                    </li>
+                <ol id="history">
                 </ol>
-                <template id="navButton">
-                    <li><button>Go to move </button></li>
-                </template>
             </section>
+            <template id="historyButton">
+                <li><button>Go to </button></li>
+            </template>
         </main>
         <footer>&copy;2024 Deleight</footer>
     </body>

@@ -25,12 +25,38 @@
  * @param {any[]} many An array of objects to delegat actios to
  * @param {boolean} [recursive] Whether to return One instances in `get` calls
  * @param {any[]} [context] Shared context for the 'many' functions or object methods
+ * @param {number} [mainItem] Set a main item (like 0 for the first item) if the one must behave
+ * like it. This way the main item can be simply replaced with the one in existing code.
  * @returns
  */
-export function one(many, recursive, context) {
-    return new Proxy(new One(many, recursive, context, one), oneTrap);
+export function one(many, recursive, context, mainItem) {
+    const newOne = new One(many, recursive, context);
+    newOne.ctor = one;
+    if (mainItem !== undefined)
+        newOne.mainItem = mainItem;
+    return new Proxy(newOne, oneTrap);
 }
 const PURE = Symbol();
+/**
+ * Return a wrapped (proxied) One from a pure One.
+ *
+ * @example
+ * import { One, wrap } from 'deleight/onetomany';
+ * const o = new One([{a: 1}, {a: 2}])
+ * o.set('a', [4, 7]);
+ * const a = wrap(o).a   // [4, 7]
+ *
+ * @param o
+ * @param {number} [mainItem] Set a main item (like 0 for the first item) if the one must behave
+ * like it. This way the main item can be simply replaced with the one in existing code.
+ * @returns
+ */
+export function wrap(o, mainItem) {
+    o.ctor = one;
+    if (mainItem !== undefined)
+        o.mainItem = mainItem;
+    return new Proxy(o, oneTrap);
+}
 /**
  * Return a 'pure' One from a proxied One.
  *
@@ -52,15 +78,26 @@ const oneTrap = {
             return target;
         let result = target.get(p, true);
         if (result.length && typeof result[0] === "function") {
-            return (...args) => target.call(args, p);
+            if (target.mainItem !== undefined) {
+                return (...args) => target.call([args], p)[target.mainItem];
+            }
+            else {
+                return (...args) => target.call(args, p);
+            }
         }
         else if (target.recursive) {
-            if (target.ctor)
-                return target.ctor(result, true, target.context, target.ctor);
+            if (target.ctor) {
+                const newResult = target.ctor(result, true, target.context);
+                (newResult[PURE] || newResult).ctor = target.ctor;
+                return newResult;
+            }
             else
                 return new One(result, true, target.context);
         }
-        return result;
+        if (target.mainItem !== undefined)
+            return result[target.mainItem];
+        else
+            return result;
     },
     set(target, p, value) {
         target.set(p, value);
@@ -82,6 +119,11 @@ export class One {
      */
     many;
     /**
+     * Optionally set main item interpreted specially when the one is
+     * proxied.
+     */
+    mainItem;
+    /**
      * Whether this One will return other 'One's in calls to `get`.
      */
     recursive;
@@ -102,8 +144,6 @@ export class One {
      * @param {boolean} [recursive] Whether to wrap the arrays returned by `get` with another One.
      * @param {any[]} context An optional shared context to be passed to all propagated method or function calls.
      * This is an array of objects passed as the final arguments in calls. Empty array by default.
-     * @param {IOneConstructor} [ctor] The constructor used to create the `get` Ones. This parameter is used internally;
-     * no need to supply an argument.
      *
      * @example
      * import { One } from 'deleight/onetomany';
@@ -112,9 +152,9 @@ export class One {
      *
      * @constructor
      */
-    constructor(many, recursive, context, ctor) {
+    constructor(many, recursive, context) {
         this.many = many;
-        (this.recursive = recursive), (this.ctor = ctor);
+        this.recursive = recursive;
         this.context = context || [];
     }
     /**
@@ -143,16 +183,16 @@ export class One {
             for (let i = 0; i < length; i++)
                 results.push(this.many[i]);
         }
-        const args = [
-            results,
-            this.recursive,
-            this.context,
-        ];
-        return this.recursive && !forceArray
-            ? this.ctor
-                ? this.ctor(...args, this.ctor)
-                : new One(...args)
-            : results;
+        if (this.recursive && !forceArray) {
+            if (this.ctor) {
+                const newResult = this.ctor(results, this.recursive, this.context);
+                (newResult[PURE] || newResult).ctor = this.ctor;
+            }
+            else
+                return new One(results, this.recursive, this.context);
+        }
+        else
+            return results;
     }
     /**
      * Sets corresponding property values in the objects in many.
@@ -170,6 +210,8 @@ export class One {
         if (values === undefined)
             return this.set(prop, this.get(prop, true));
         // simply reset existing values, probably to trigger proxy handlers or setters
+        if (!(values instanceof Array))
+            values = [values];
         const length = this.many.length;
         const j = values.length;
         if (prop !== undefined && prop !== null) {
