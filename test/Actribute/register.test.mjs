@@ -8,5 +8,6 @@ describe("actribute.register", () => {
     const comp1 = (element, ...args) => {};
     act.register("comp1", comp1);
     assert.deepEqual(act.registry.comp1, comp1);
+    
   });
 });
