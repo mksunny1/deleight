@@ -2,7 +2,7 @@ import { describe, it } from "node:test";
 import { strict as assert } from "node:assert";
 import { With, WITH, SET, ASSIGN  } from "../../src/withy.js";
 
-describe("generational.With", () => {
+describe("withy.With", () => {
     const obj = {
         count: 0,
         inc() {this.count++},
