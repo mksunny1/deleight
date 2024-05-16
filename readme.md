@@ -28,7 +28,7 @@ import { meEventivity } from './my-event-manager.js'
 // apply used globally on all paragraphs within the containingElement
 function(containingElement) {
     apply({
-        p: (...divs) => mySophistry.styles.style(...divs) || meEventivity.listener.listen('click', divs,  myEventivity.options)
+        div: (...divs) => mySophistry.styles.style(...divs) || meEventivity.listener.listen('click', divs,  myEventivity.options)
     }, containingElement);  // containingElement default to document.body.
 }
 ```
@@ -221,6 +221,7 @@ Thank you for contributing.
 
 ## Ongoing work
 
+- Work on a new reactivity module to support more independent HTML and JavaScript development.
 - Adding and completing examples
 
 
