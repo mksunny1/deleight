@@ -2,7 +2,7 @@
 
 ![Logo](https://github.com/mksunny1/deleight/blob/main/docs/assets/logos/small.png?raw=true)
 
-This is a group of 10 libraies that simplify web frontend development in vanilla HTML, CSS and JavasSript. Deleight is an inclusive library that everyone operating on the web can benefit from.
+This is a group of 9 libraies that simplify web frontend development in vanilla HTML, CSS and JavasSript. Deleight is an inclusive library that everyone operating on the web can benefit from.
 
 - Frontend JavaScript developers can create apps without worrying about control, modularity or maintainance. Not only is the framework flexible, modular and compact, it also aligns with familiar semantics. You also have the convenience of a declarative API.
 
@@ -214,14 +214,17 @@ If you like the concept and/or the direction of deleight, feel free to contribut
 
 Thank you for contributing.
 
-## Ongoing work
+## Ongoing and Planned Work
 
-- Enhancing appliance and actributes to support more independent HTML and JavaScript development.
-- Adding and completing examples
-
+1. Complete testing on the tenth library (`reftype`) for referring to JavaScript variables directly in pure HTML. Everything is still transparent and explicit.
+2. Complete the site (deleightjs.com).
+3. Complete and add more examples.
+4. Discuss features, issues and related subjects on the site and in other channels.
+5. Improve the documentation.
+6. Work on further ideas.
 
 ## Ideas
 
-- Progressive Web Apps
-- Efficient navigation
+- Progressive Web Apps.
+- Efficient navigation library (not a router).
 

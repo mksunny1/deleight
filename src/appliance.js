@@ -64,6 +64,30 @@ export function parentSelector(node, selector) {
     return parent;
 }
 /**
+ * Selects the first elements corresponding to each of the selector args.
+ * This calls qcontainingElement.uerySelector on each of the selectors,
+ * so that only first elements are selected. It is different from
+ * querySelectorAll which will select *all* elements.
+ *
+ * The containing element defaults to document.body.
+ *
+ * @example
+ * import { select } from 'deleight/appliance'
+ * const [firstDiv, firstP, firstSpan] = select('div, p, span');
+ *
+ *
+ * @param { string[] } selectors
+ * @param { Element } [containingElement]
+ *
+ */
+export function querySelectors(selectors, containingElement) {
+    if (!containingElement)
+        containingElement = document.body;
+    if (typeof selectors === 'string')
+        selectors = selectors.split(',');
+    return selectors.map(s => containingElement.querySelector(s.trim()));
+}
+/**
  * Select the elements matching the keys in applyMap and run the functions given by the values over them.
  * This eliminates the many calls to querySelectorAll, which is quite verbose.
  *

@@ -51,9 +51,14 @@ export const inserter = {
     },
 };
 /**
- * Set specified properties and/or attributes on the specified elements.
- * Please do not pass the same 'generator' multiple times in values. First
- * convert them to arrays.
+ * Set specified properties and/or attributes on the specified elements
+ * (or their children). Pass an iterable of elements (often an array) as the
+ * first arg and an object mapping property names to value iterables to be matched against
+ * the elenments at corresponding indices.
+ *
+ * If a key in `values` starts with the underscore (`_`), the attribute with
+ * the name following the underscore will be set.
+ *
  *
  * @example
  * // Shuffle the class attributes of all the children of the first main element:
@@ -82,8 +87,6 @@ export function set(elements, values) {
             allValues.set(memberValues, key);
         }
     }
-    // if (!(elements instanceof Array)) elements = Array.from(elements);
-    // we must materialize this first.
     let member, memberValues, memberValue;
     let currentValues = {}, dep;
     for (let element of elements) {
