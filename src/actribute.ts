@@ -186,7 +186,7 @@ export class Actribute {
 
         let attr: Attr, i: number, comp: string, processed = false, open = element.hasAttribute(this.openAttr);
         for (i = 0; i < length; i++) {
-            attr = attrs[i];
+            attr = attrs[i]; if (!attr) continue;  // attr can get deleted by a component!
             if (attr.name.startsWith(attrPrefix)) {
                 processed = true;
                 comp = attr.name.substring(attrPrefix.length);
@@ -202,7 +202,11 @@ export class Actribute {
             }
         }
         if (!processed || open) {
-            for (let child of Array.from(element.children)) if (!child.hasAttribute(this.closedAttr)) this.process({el: child, attr: attrPrefix, ctx: context});
+            let child = element.firstElementChild;
+            while (child) {
+                if (!child.hasAttribute(this.closedAttr)) this.process({el: child, attr: attrPrefix, ctx: context});
+                child = child.nextElementSibling;
+            }
         }
         return this;
     }

@@ -53,8 +53,9 @@ export function* items(arrayLike, index) {
         yield arrayLike[i];
 }
 /**
- * Returns a generator that yields first argument (what) the number of
- * times specified by the second argument (times).
+ * Returns a generator that yields first argument (`what`) the number of
+ * times specified by the second argument (`times`). If `times` is not
+ * given, `what` is repeated indefinitely.
  *
  * @example
  * import { repeat } from 'deleight/generationsl';
@@ -62,13 +63,24 @@ export function* items(arrayLike, index) {
  * // [1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3]
  *
  * @param {Iterable<any>} what
- * @param {number} times
+ * @param {number} [times]
  */
 export function* repeat(what, times) {
     let item;
-    for (let i = 0; i < times; i++)
-        for (item of what)
+    if (times === undefined) {
+        const what2 = [];
+        for (let item of what) {
+            what2.push(item);
             yield item;
+        }
+        while (true)
+            for (item of what2)
+                yield item;
+    }
+    else
+        for (let i = 0; i < times; i++)
+            for (item of what)
+                yield item;
 }
 /**
  * Returns an iterator over the next 'count' items of the iterator.

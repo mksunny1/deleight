@@ -13,7 +13,7 @@
  * @param { any } it 
  */
 export function iter(it: any): Iterator<any> {
-  return (it.next)? it: it[Symbol.iterator]()
+    return (it.next) ? it : it[Symbol.iterator]()
 }
 
 /**
@@ -29,12 +29,12 @@ export function iter(it: any): Iterator<any> {
  * @param {number} [step]
  */
 export function* range(start: number, end?: number, step?: number) {
-  if (!step) step = 1;
-  if ((end === undefined || end === null) && start) {
-    end = start;
-    start = 0;
-  }
-  for (let i = start; i < (end as number); i += step) yield i;
+    if (!step) step = 1;
+    if ((end === undefined || end === null) && start) {
+        end = start;
+        start = 0;
+    }
+    for (let i = start; i < (end as number); i += step) yield i;
 }
 
 /**
@@ -50,12 +50,13 @@ export function* range(start: number, end?: number, step?: number) {
  * @param {Iterable<any>} index
  */
 export function* items(arrayLike: any, index: Iterable<number>) {
-  for (let i of index) yield arrayLike[i];
+    for (let i of index) yield arrayLike[i];
 }
 
 /**
- * Returns a generator that yields first argument (what) the number of 
- * times specified by the second argument (times).
+ * Returns a generator that yields first argument (`what`) the number of 
+ * times specified by the second argument (`times`). If `times` is not 
+ * given, `what` is repeated indefinitely.
  * 
  * @example
  * import { repeat } from 'deleight/generationsl';
@@ -63,11 +64,18 @@ export function* items(arrayLike: any, index: Iterable<number>) {
  * // [1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3]
  * 
  * @param {Iterable<any>} what 
- * @param {number} times 
+ * @param {number} [times] 
  */
-export function* repeat(what: Iterable<any>, times: number) {
-  let item: any;
-  for (let i = 0; i < times; i++) for (item of what) yield item;
+export function* repeat(what: Iterable<any>, times?: number) {
+    let item: any;
+    if (times === undefined) {
+        const what2 = [];
+        for (let item of what) {
+            what2.push(item);
+            yield item;
+        }
+        while (true) for (item of what2) yield item;
+    } else for (let i = 0; i < times; i++) for (item of what) yield item;
 }
 
 /**
@@ -92,12 +100,12 @@ export function* repeat(what: Iterable<any>, times: number) {
  * @param { any } [firstValue]
  */
 export function* next(it: Iterator<any>, count: number, firstValue?: any) {
-  let count2 = count;
-  if (firstValue) {
-    yield firstValue;
-    count2--;
-  }
-  while (count2-- > 0) yield it.next().value;
+    let count2 = count;
+    if (firstValue) {
+        yield firstValue;
+        count2--;
+    }
+    while (count2-- > 0) yield it.next().value;
 }
 
 /**
@@ -114,12 +122,12 @@ export function* next(it: Iterator<any>, count: number, firstValue?: any) {
  * @param { number } count 
  */
 export function* group(it: Iterable<any>, count: number) {
-  const it2 = iter(it);
-  let nextItem: IteratorResult<any, any> = it2.next();
-  while (!nextItem.done) {
-    yield [...next(it2, count, nextItem.value)]
-    nextItem = it2.next();
-  }
+    const it2 = iter(it);
+    let nextItem: IteratorResult<any, any> = it2.next();
+    while (!nextItem.done) {
+        yield [...next(it2, count, nextItem.value)]
+        nextItem = it2.next();
+    }
 }
 
 /**
@@ -140,17 +148,17 @@ export function* group(it: Iterable<any>, count: number) {
  * @param  {...any[]} args
  */
 export function* flat(...args: any[]) {
-  const count = args.length;
-  args = args.map(arg => iter(arg));
+    const count = args.length;
+    args = args.map(arg => iter(arg));
 
-  let i: number, nextItem: IteratorResult<any, any>;
-  while (true) {
-    for (i = 0; i < count; i++) {
-      nextItem = args[i].next();
-      if (nextItem.done) return;
-      else yield nextItem.value;
+    let i: number, nextItem: IteratorResult<any, any>;
+    while (true) {
+        for (i = 0; i < count; i++) {
+            nextItem = args[i].next();
+            if (nextItem.done) return;
+            else yield nextItem.value;
+        }
     }
-  }
 }
 
 /**
@@ -163,10 +171,10 @@ export function* flat(...args: any[]) {
  * @param {Iterable<any>} it
  */
 export function* uItems(it: Iterable<any>) {
-  const arr = [...it];
-  for (let i = arr.length - 1; i >= 0; i--) {
-    yield arr.splice(Math.round(Math.random() * i), 1)[0];
-  }
+    const arr = [...it];
+    for (let i = arr.length - 1; i >= 0; i--) {
+        yield arr.splice(Math.round(Math.random() * i), 1)[0];
+    }
 }
 
 /**
@@ -182,7 +190,7 @@ export function* uItems(it: Iterable<any>) {
  * @param {any} it
  */
 export function getLength(it: any) {
-  return iterLengths.get(it) || (it as any[]).length;
+    return iterLengths.get(it) || (it as any[]).length;
 }
 
 /**
@@ -205,7 +213,7 @@ export const iterLengths = new WeakMap<any, number>();
  * @param {any} it
  */
 export function setLength(it: any, length: number) {
-  iterLengths.set(it, length);
-  return it;
+    iterLengths.set(it, length);
+    return it;
 }
 

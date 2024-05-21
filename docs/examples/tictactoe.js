@@ -1,93 +1,123 @@
 import { Actribute } from '../../src/actribute.js'
-import { apply } from '../../src/appliance.js'
-import { one } from '../../src/onetomany.js'
-import { insert, set } from '../../src/domitory.js'
+import { update } from '../../src/domitory.js'
+import { items, range, repeat } from '../../src/generational.js'
 
-
-const vars = {};     // state.
-const board = document.getElementById('board');
-const status = document.getElementById('status');
-const history = document.getElementById('history');
+const [ status, board, history ] = document.querySelectorAll('#board, #status, #history');
 const historyItem = document.getElementById('historyItem').content.firstElementChild;
 const historyItemButton = historyItem.firstElementChild;
+const act = new Actribute();
+const vars = {};          // state 1.
+const arrayVars = {};     // state 2.
 
+act.register({
+    rep: (element, nReps, context) => {
+        const reps = context[nReps.value];
+        const parentNode = element.parentNode;
+        if (parentNode.children.length === 1) element.setAttribute('i-ndex', 0);
+        if (parentNode.children.length < reps) {
+            const clone = element.cloneNode(true);
+            clone.setAttribute('i-ndex', parentNode.children.length);
+            parentNode.appendChild(clone);
+        } else if (parentNode.children.length > reps) {
+            parentNode.lastElementChild.remove();
+        }
+        if (element instanceof HTMLSpanElement) {
+            element.textContent = ''; element.removeAttribute('p-layed');
+        }
+    }
+})
+
+function start() {
+    const inputs = document.querySelectorAll('input');
+    let [nRows, nCols, players, winCount] = Array.prototype.map.call(inputs, input => input.value);
+    nRows = parseInt(nRows); nCols = parseInt(nCols); winCount = parseInt(winCount);
+
+    // generate squares:
+    const squares = [];
+    let i = nRows; while (i-- > 0) squares.push(Array(nCols));
+    act.process({ el: board, ctx: [{ nRows, nCols }], attr: 'a-' });
+
+    players = players.split(' ');     // players are split by spaces.
+    const nextPlayer = repeat(range(0, players.length));
+
+    Object.assign(vars, { players, squares, nextPlayer, move: 0, nRows, nCols, winCount });
+    Object.assign(arrayVars, {
+        moves: [], nextPlayer: [nextPlayer.next().value],
+        winner: Array(1), historyText: ['game start']
+    });
+
+    updateHistory();
+    display();
+}
+document.getElementById('startButton').onclick = (e) => start();
+board.onclick = (e) => { play(e) }
 history.onclick = (e) => {
-    vars.move = parseInt(e.target.getAttribute('m-ove'));
+    vars.move = parseInt(e.target.getAttribute('m-ove')); 
+    let player, row, col, square; 
+    for (let i = 0; i < arrayVars.moves.length; i++) {
+        [player, row, col] = arrayVars.moves[i];
+        vars.squares[row][col] = (i < vars.move)? player: '';
+        square = board.children[row].children[col];
+        square.textContent = (i < vars.move)? player: '';
+        square.setAttribute('p-layed', (i < vars.move)? 'true': '')
+    }
     display();
 }
 
-function start() {
-    const [ nRows, nCols, players ] = 
-        Array.map.call(main.querySelectorAll('£nRows, £nCols, £players'), 
-                       input => input.value);
-                       
-    const squares = [];
-    let rows = nRows, row, col;
-    while ( rows-- > 0 ) {
-        rows.push(row = []);
-        for ( col = 0; col++ < nCols; ) row.push(Array(1))
-    }
-
-    players = players.split(' ');
-    Object.assign(vars, {
-        squares, players, nextPlayer: [players[0]], 
-        winner: Array(1), move: 0, nRows, nCols
-    });
-    historyItemButton.setAttribute('m-ove', '0');
-    historyItemButton.textContent = 'Go to game start'
-    history.appendChild(historyItem.cloneNode(true))
-    display();
+function updateHistory() {
+    historyItemButton.setAttribute('m-ove', vars.move);
+    historyItemButton.textContent = 'Go to ' + arrayVars.historyText[vars.move];
+    update(items(history.children, range(vars.move, history.children.length)),
+        [historyItem.cloneNode(true), history.lastElementChild]);
 }
 
 function display() {
-    const pos = vars.move;
-    let row, col, rowVar, rowElement;
-    for (row = 0; row < vars.nRows; row++) {
-        rowVar = vars.squares[row];
-        rowElement = board.children[row];
-        for (col = 0; col < vars.nCols; col++) {
-            rowElement.children[col].textContent = rowVar[col][pos];
-        }
-    }
-    if (vars.winner[pos]) status.textContent = `Winner: ${vars.winner[pos]}`
-    else status.textContent = `Next Player: ${vars.nextPlayer[pos]}`
+    if (arrayVars.winner[vars.move]) status.textContent = `Winner: ${arrayVars.winner[vars.move]}`
+    else status.textContent = `Next Player: ${vars.players[arrayVars.nextPlayer[vars.move]]}`
 }
 
 function play(e) {
-    const pos = vars.move;
-
     // 1. if a winner already exists return
-    if (vars.winner[pos]) return; 
+    if (arrayVars.winner[vars.move] !== undefined) return;
 
-    // 2. splice any vars beyond current move
-    if (vars.nextPlayer.length > pos + 1) {
-        pos++;
-        vars.nextPlayer.length = pos
-        vars.winner.length = pos
-        let row, col, i;
-        for (row of vars.squares) for (col of row) col.length = pos;
-        for ( i = vars.nextPlayer.length; i > pos; i-- ) history.removeChild(history.lastElementChild);
-        pos--;
-    }
+    // also exit if square has been played earlier:
+    if (e.target.getAttribute('p-layed')) return;
+    else e.target.setAttribute('p-layed', 'true');
 
     // 3. compute row and col.
+    const col = parseInt(e.target.getAttribute('i-ndex'));
+    const row = parseInt(e.target.parentNode.getAttribute('i-ndex'));
+    const player = vars.players[arrayVars.nextPlayer[vars.move]];
 
-    // 4. push new vars (including new history view entry)
+    // 4. check for winner.
+    const lines = [[[-1, 0], [1, 0]], [[0, -1], [0, 1]], [[-1, -1], [1, 1]], [[-1, 1], [1, -1]]]
+    let winner, x, y, xOffset, yOffset, count;
+    for (let line of lines) {
+        count = 1;
+        for ([xOffset, yOffset] of line) {
+            x = row + xOffset; y = col + yOffset;
+            while (x >= 0 && x < vars.nRows && y >= 0 && y < vars.nCols) {
+                if (vars.squares[x][y] !== player) break;
+                else count++;
+                x += xOffset; y += yOffset;
+            }
+            if (count >= vars.winCount) { winner = player; break }
+        }
+        if (count >= vars.winCount) break;
+    }
 
-    
+    // 5. update vars
+    arrayVars.moves.length = ++vars.move;
+    if (arrayVars.nextPlayer[vars.move] === undefined) {
+        arrayVars.nextPlayer[vars.move] = vars.nextPlayer.next().value;
+    }
+    arrayVars.historyText[vars.move] = `move #${vars.move}`;
+    vars.squares[row][col] = player;
+    arrayVars.moves[vars.move - 1] = [player, row, col];
+    board.children[row].children[col].textContent = player;
+    if (winner !== undefined) arrayVars.winner[vars.move] = winner;
+    else arrayVars.winner.length = vars.move;   // this is important!
 
-    // 5. check for winner.
-
-    // 6. if winner update current winner value else increment move variable
-
-    // 7. display.
-
+    updateHistory();
+    display()
 }
-
-function jumpTo(move) {
-    // 1. set value of move
-
-    // 2. disolay.
-
-}
-

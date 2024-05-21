@@ -1,0 +1,18 @@
+Earlier lessons:
+1. tems(history.children, range(vars.move, history.children.length)) was 
+flopping because ... (forgot)
+2. querySelectorAll follows the source order irrespective of the selector order
+3. Used the same id ('start') for container div and start button.
+4. mis-representation of intent to actribute.process leading to destructive overwork.
+
+Documented:
+1. the initial player shows O instead of X using this code: `repeat(range(0, players.length))`.
+repeat was not materializing given iterable (in case it was a generator). fixed that. also
+not actually a bug there but a bug in the display code confusing my interpretation. it was showing 
+the index (0) and not the letter (O). the display was supposed to fetch the letter using the index 
+but was displaying the index directly.
+
+2. reference error: 'squares' is not defined. it should have been vars.squares.
+
+3. TypeError: Cannot read properties of undefined (reading 1). arrayVars.squares only had 1 
+item. and we were trying to set a value within the second item.

@@ -70,8 +70,9 @@ export const inserter = {
  *
  * @param {(Element|CSSStyleRule)[]} elements
  * @param {ISetMap} values
+ * @param { boolean } undefinedIsEmpty
  */
-export function set(elements, values) {
+export function set(elements, values, undefinedIsEmpty) {
     const localMemberValues = {};
     const deps = {};
     let memberValues2;
@@ -92,6 +93,8 @@ export function set(elements, values) {
     for (let element of elements) {
         for ([member, memberValues] of Object.entries(localMemberValues)) {
             memberValue = memberValues.next().value;
+            if (undefinedIsEmpty && memberValue === undefined)
+                memberValue = '';
             currentValues[member] = memberValue;
             if (member.startsWith("_")) {
                 member = member.slice(1);
@@ -146,10 +149,21 @@ export function update(elements, values, lazy) {
     }
     /* at this point we have replaced what we want to replace with temporary values */
     const temps2 = temps.values();
+    let nextTemp;
     for (let value of values) {
-        [tempNode, parentNode] = temps2.next().value;
-        parentNode?.replaceChild(value, tempNode);
+        nextTemp = temps2.next();
+        if (!nextTemp.done) {
+            [tempNode, parentNode] = nextTemp.value;
+            parentNode?.replaceChild(value, tempNode);
+        }
+        else
+            parentNode.appendChild(value);
+        // this will allow us replace fewer nodes with more nodes if necessary. 
     }
+    while (!(nextTemp = temps2.next()).done) {
+        [tempNode, parentNode] = nextTemp.value;
+        parentNode.removeChild(tempNode);
+    } // this will allow us to replace more nodes with fewer nodes if necessary:
     return [elements, values]; // we can, eg run cleanups or inits on either of these.
 }
 /**
@@ -173,3 +187,8 @@ export function remove(elements, lazy) {
         element.parentNode?.removeChild(element);
     return elements; // we can, eg run cleanups on these.
 }
+/**
+ * notes:
+ * 1. add tests for `undefinedIsEmpty` parameter in `set`.
+ * 2. add tests for `update` using elements and values of different sizes.
+ */ 
