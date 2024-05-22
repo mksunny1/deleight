@@ -11,3 +11,5 @@ It will be a simple site with the following key features:
 
 4. Highly interactive and performant UI. As this is a JavaScript project for high interactivity, performance and flexibility, our site should be a correct reflection of these tenets of modern web development practice.
 
+5. All the news and latest information.
+
