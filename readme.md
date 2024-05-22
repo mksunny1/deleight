@@ -219,9 +219,8 @@ Thank you for contributing.
 1. Complete testing on the tenth library (`reftype`) for referring to JavaScript variables directly in pure HTML. Everything is still transparent and explicit.
 2. Complete the site (deleightjs.com).
 3. Complete and add more examples.
-4. Discuss features, issues and related subjects on the site and in other channels.
-5. Improve the documentation.
-6. Work on further ideas.
+4. Improve the documentation.
+5. Fix the logo...
 
 ## Ideas
 
