@@ -35,6 +35,14 @@
  * delete act.registry.comp2;
  */
 /**
+ * A component can also declare itself open by returning this symbol
+ */
+export const open = Symbol('Open component');
+/**
+ * A component can also declare itself closed by returning this symbol
+ */
+export const closed = Symbol('Closed component');
+/**
  * An Actribute class. This is almost like a custom elements registry 'class'.
  */
 export class Actribute {
@@ -155,7 +163,7 @@ export class Actribute {
         if (!context)
             context = [];
         const attrs = element.attributes, length = attrs.length;
-        let attr, i, comp, processed = false, open = element.hasAttribute(this.openAttr);
+        let attr, i, comp, processed = false, localOpen = element.hasAttribute(this.openAttr), localClosed = element.hasAttribute(this.closedAttr), compResult;
         for (i = 0; i < length; i++) {
             attr = attrs[i];
             if (!attr)
@@ -164,17 +172,22 @@ export class Actribute {
                 processed = true;
                 comp = attr.name.substring(attrPrefix.length);
                 if (this.registry.hasOwnProperty(comp)) {
-                    this.registry[comp](element, attr, ...context);
+                    compResult = this.registry[comp](element, attr, ...context);
                 }
                 else if (this.registry.hasOwnProperty('*')) {
-                    this.registry['*'](element, attr, ...context);
+                    compResult = this.registry['*'](element, attr, ...context);
                 }
                 else {
                     throw new Error(`The component  "${comp}" was not found in the registry.`);
                 }
+                if (compResult === open)
+                    localOpen = true;
+                else if (compResult === closed)
+                    localClosed = true;
             }
         }
-        if (!processed || open) {
+        if (!processed || (localOpen && !localClosed)) {
+            // local closed takes precedence over local open if they are both specified.
             let child = element.firstElementChild;
             while (child) {
                 if (!child.hasAttribute(this.closedAttr))
@@ -211,12 +224,14 @@ function get(obj, prop) {
  * @example
  *
  * @param names
- * @param sources
+ * @param scopes
  * @param sep
  * @returns
  */
-export function props(names, sources, sep) {
-    const results = [], length = sources.length;
+export function props(names, scopes, sep) {
+    if (typeof names !== 'string')
+        names = names.toString();
+    const results = [], length = scopes.length;
     names = names.trim();
     let name, val, i;
     for (name of names.split(sep || ' ')) {
@@ -226,7 +241,7 @@ export function props(names, sources, sep) {
         val = undefined;
         i = -1;
         while (val === undefined && ++i < length)
-            val = get(sources[i], name);
+            val = get(scopes[i], name);
         if (val !== undefined)
             results.push(val);
         else {
@@ -235,3 +250,29 @@ export function props(names, sources, sep) {
     }
     return results;
 }
+/**
+ * Join multiple components, so that they can be applied as one component.
+ * Can reduce repetitive markup in many cases. If you specify a returnValue
+ * the new component will return it, else it will return the return value of
+ * the last component.
+ *
+ * @param components
+ * @param returnValue
+ * @returns
+ */
+export function join(components, returnValue) {
+    return (element, attr, ...context) => {
+        let lastValue;
+        for (let comp of components)
+            lastValue = comp(element, attr, ...context);
+        return returnValue || lastValue;
+    };
+}
+/**
+ * tests needed for:
+ * - join
+ * - return open from component
+ * - return closed from component
+ * - return open and closed from component
+ *
+ */ 

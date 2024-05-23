@@ -65,6 +65,16 @@ export type IProcessOptions = {
 } | Element | string | any[]
 
 /**
+ * A component can also declare itself open by returning this symbol
+ */
+export const open = Symbol('Open component');
+
+/**
+ * A component can also declare itself closed by returning this symbol
+ */
+export const closed = Symbol('Closed component');
+
+/**
  * An Actribute class. This is almost like a custom elements registry 'class'.
  */
 export class Actribute {
@@ -184,24 +194,29 @@ export class Actribute {
 
         const attrs = element.attributes, length = attrs.length;
 
-        let attr: Attr, i: number, comp: string, processed = false, open = element.hasAttribute(this.openAttr);
+        let attr: Attr, i: number, comp: string, processed = false, 
+        localOpen = element.hasAttribute(this.openAttr), 
+        localClosed = element.hasAttribute(this.closedAttr), compResult: any;
         for (i = 0; i < length; i++) {
             attr = attrs[i]; if (!attr) continue;  // attr can get deleted by a component!
             if (attr.name.startsWith(attrPrefix)) {
                 processed = true;
                 comp = attr.name.substring(attrPrefix.length);
                 if (this.registry.hasOwnProperty(comp)) {
-                    this.registry[comp](element, attr, ...context);
+                    compResult = this.registry[comp](element, attr, ...context);
                 } else if (this.registry.hasOwnProperty('*')) {
-                    this.registry['*'](element, attr, ...context);
+                    compResult = this.registry['*'](element, attr, ...context);
                 } else {
                     throw new Error(
                         `The component  "${comp}" was not found in the registry.`,
                     );
                 }
+                if (compResult === open) localOpen = true;
+                else if (compResult === closed) localClosed = true;
             }
         }
-        if (!processed || open) {
+        if (!processed || (localOpen && !localClosed)) {   
+            // local closed takes precedence over local open if they are both specified.
             let child = element.firstElementChild;
             while (child) {
                 if (!child.hasAttribute(this.closedAttr)) this.process({el: child, attr: attrPrefix, ctx: context});
@@ -243,12 +258,14 @@ function get<T extends object>(obj: T, prop: string) {
  * @example
  * 
  * @param names 
- * @param sources 
+ * @param scopes 
  * @param sep 
  * @returns 
  */
-export function props(names: string, sources: any[], sep?: string): any[] {
-    const results = [], length = sources.length;
+export function props(names: string, scopes: any[], sep?: string): any[] {
+    if (typeof names !== 'string') names = (names as any).toString();
+
+    const results = [], length = scopes.length;
     names = names.trim();
     
     let name: string, val: any, i: number;
@@ -256,7 +273,7 @@ export function props(names: string, sources: any[], sep?: string): any[] {
         name = name.trim();
         if (name === "") continue; // just too much space between prop names/keys.
         val = undefined; i = -1;
-        while (val === undefined && ++i < length) val = get(sources[i], name);
+        while (val === undefined && ++i < length) val = get(scopes[i], name);
         if (val !== undefined) results.push(val);
         else {
             throw new TypeError(
@@ -266,3 +283,32 @@ export function props(names: string, sources: any[], sep?: string): any[] {
     }
     return results;
 }
+
+/**
+ * Join multiple components, so that they can be applied as one component.
+ * Can reduce repetitive markup in many cases. If you specify a returnValue 
+ * the new component will return it, else it will return the return value of 
+ * the last component.
+ * 
+ * @param components 
+ * @param returnValue 
+ * @returns 
+ */
+export function join(components: IComponent[], returnValue?: any) {
+    return (element: Element, attr: Attr, ...context: any[]) => {
+        let lastValue;
+        for (let comp of components) lastValue = comp(element, attr, ...context);
+        return returnValue || lastValue;
+    }
+}
+
+
+
+/**
+ * tests needed for: 
+ * - join
+ * - return open from component
+ * - return closed from component
+ * - return open and closed from component
+ * 
+ */
