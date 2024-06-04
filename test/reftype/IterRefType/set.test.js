@@ -23,6 +23,7 @@ describe('IterRefType.set', (t) => {
         ];
 
         const reftype = new IterRefType(refs);
+        reftype.addIndex = true;
         body.innerHTML = `
         <main ite-r>
             <article>

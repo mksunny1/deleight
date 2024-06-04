@@ -23,6 +23,7 @@ describe('IterRefType.add', (t) => {
         ];
 
         const reftype = new IterRefType(refs);
+        reftype.addIndex = true;
         body.innerHTML = `
         <main ite-r>
             <article>
@@ -65,6 +66,7 @@ describe('IterRefType.add', (t) => {
         })();
         
         const reftype = new IterRefType(gRefs);
+        reftype.addIndex = true;
         body.innerHTML = `
         <main ite-r>
             <article>
@@ -97,7 +99,7 @@ describe('IterRefType.add', (t) => {
         }
     });
 
-    it('Should move the reftype to the last added element', (t) => {
+    it('Should allow adding (linking) multiple elements', (t) => {
         const refs = [
             { chapter: 1, title: 'Introduction' },
             { chapter: 2, title: 'History' },
@@ -107,6 +109,7 @@ describe('IterRefType.add', (t) => {
         ];
         
         const reftype = new IterRefType(refs);
+        reftype.addIndex = true;
         body.innerHTML = `
         <main ite-r>
             <article>

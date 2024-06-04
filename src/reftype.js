@@ -193,12 +193,19 @@ export class RefType {
             [iterAttr]: this.options?.iter || options.iter
         };
         let reftype, attr, attrVal, rAttr, toContinue;
+        let addIndex;
         for (let element of elements) {
             toContinue = false;
             if (!this.elements || !(this.elements.includes(element))) {
                 for (rAttr of [refAttr, iterAttr]) {
                     if (element.hasAttribute(rAttr)) {
                         attrVal = element.getAttribute(rAttr);
+                        if (rAttr === iterAttr && attrVal.startsWith('{') && attrVal.endsWith('}')) {
+                            addIndex = true;
+                            attrVal = attrVal.slice(1, -1);
+                        }
+                        else
+                            addIndex = false;
                         if (!this.children)
                             this.children = {};
                         if (!(this.children.hasOwnProperty(attrVal))) {
@@ -206,6 +213,8 @@ export class RefType {
                         }
                         else
                             reftype = this.children[attrVal];
+                        if (addIndex && reftype instanceof IterRefType)
+                            reftype.addIndex = true;
                         reftype.elements = [element];
                         reftype.add(element);
                         toContinue = true;
@@ -304,12 +313,21 @@ export class RefType {
      * @returns
      */
     react(...refs) {
+        // hide or show as necessary.
+        if (this.refs === null && !this.hidden)
+            return this.hide(); // please note the return. proceeding can lead to errors when getting
+        else if (this.hidden && this.refs !== null)
+            this.show();
         if (refs.length) { // call a subset
             let values;
-            if (refs.length === 1 && typeof refs[0] === 'object') {
-                values = refs[0];
-                refs = Array.from(Object.keys(refs[0]));
+            if (refs.length === 1) {
+                if (typeof refs[0] === 'object') {
+                    values = refs[0];
+                    refs = Array.from(Object.keys(refs[0]));
+                }
             }
+            if (this.hidden && this.refs !== null)
+                this.show(); // automatically show
             let child, key, val;
             let value, ref;
             for (ref of refs) {
@@ -329,23 +347,25 @@ export class RefType {
                     }
                 }
                 if (this.children?.hasOwnProperty(ref)) {
+                    child = this.children[ref];
                     if (value !== undefined) {
-                        child = this.children[ref];
                         child.refs = value;
                         child.react();
                     }
                     else {
-                        this.children[ref].delete();
+                        child.delete();
                         delete this.children[ref];
                     }
+                }
+                if (ref === this.options?.self || ref === options.self) {
+                    if (value !== undefined)
+                        this.react();
+                    else
+                        this.delete();
                 }
             }
         }
         else { // call everything
-            if (this.refs === null && !this.hidden)
-                return this.hide(); // return to avoid unnecessary errors!
-            else if (this.hidden && this.refs !== null)
-                this.show();
             if (this.attrs)
                 for (let [key, val] of Object.entries(this.attrs)) {
                     react(val, this.get(key), setAttr);
@@ -380,9 +400,6 @@ export class RefType {
         for (let [ref, value] of Object.entries(refs)) {
             dest = this.destructure(ref);
             dest.parent[dest.prop] = value;
-            if (this.children?.hasOwnProperty(ref)) {
-                this.children[ref].refs = value;
-            }
         }
         this.react(refs);
         return this;
@@ -463,6 +480,9 @@ export class RefType {
     destructure(ref) {
         if (typeof ref !== 'string' || !ref.trim())
             return null;
+        if ((ref === this.options?.self) || (ref === options.self)) {
+            return { parent: this, prop: 'refs' };
+        }
         const path = ref.split(this.options?.sep?.ref || options.sep.ref);
         let val = this.refs, parent = this.parent, prop = path[0], propVal = val[prop];
         while (propVal === undefined && parent) {
@@ -497,6 +517,8 @@ export class RefType {
     get(ref) {
         if (typeof ref !== 'string' || !ref.trim())
             return '';
+        if ((ref === this.options?.self) || (ref === options.self))
+            return this.refs;
         const prop = this.destructure(ref);
         if (!prop)
             return;
@@ -620,7 +642,26 @@ export function setProp(element, member, value) {
  * @extends RefType
  */
 export class IterRefType extends RefType {
+    /**
+     * Map of linked elements to the arrays of item reftypes created
+     * for them.
+     */
     items;
+    /**
+     * When this is `true`, all the items will be wrapped with an
+     * object containing both the item and its index in the created
+     * item reftypes for each item. Also the indices will be reactive.
+     * This can help in cases where the index forms part of the display
+     * but is less performant and memory-efficient.
+     *
+     * To specify `addIndex` in markup, wrap the ref path with `{}`, as in
+     * `<span>ite-r="{refPath}">item.prop</span>`
+     *
+     */
+    addIndex;
+    /**
+     * Map of linked elements to the templates created for them.
+     */
     templates;
     /**
      * Returns the template associated with this reftype. If the template
@@ -725,6 +766,11 @@ export class IterRefType extends RefType {
      * @returns
      */
     react(...refs) {
+        // hide or show as necessary.
+        if (this.refs === null && !this.hidden)
+            return this.hide(); // please note the return. proceeding can lead to errors when getting
+        else if (this.hidden && this.refs !== null)
+            this.show();
         if (!this.items)
             this.items = new WeakMap();
         if (refs.length) { // setting an item:
@@ -737,11 +783,21 @@ export class IterRefType extends RefType {
             let element, children;
             for (let key of refs) {
                 value = values ? values[key] : this.get(key);
+                if (key === this.options?.self || key === options.self) {
+                    this.refs = value;
+                    this.react();
+                    continue;
+                }
                 for (element of this.elements) {
                     children = this.items.get(element);
                     if (children.hasOwnProperty(key)) {
                         child = children[key];
-                        child.refs = { item: value, index: (typeof key === 'number') ? key : parseInt(key) };
+                        if (this.addIndex) {
+                            child.refs = { item: value, index: (typeof key === 'number') ? key : parseInt(key) };
+                        }
+                        else {
+                            child.refs = value;
+                        }
                         child.react();
                     }
                 }
@@ -779,6 +835,11 @@ export class IterRefType extends RefType {
      * @param elements
      */
     reactOn(...elements) {
+        // hide or show as necessary.
+        if (this.refs === null && !this.hidden)
+            return this.hide(); // please note the return. proceeding can lead to errors when getting
+        else if (this.hidden && this.refs !== null)
+            this.show();
         let element;
         if (!this.items)
             this.items = new WeakMap();
@@ -807,7 +868,7 @@ export class IterRefType extends RefType {
      * @param item
      */
     createChild(element, index, item) {
-        const child = new (this.options?.ref || RefType)({ index, item }, this.options, this);
+        const child = new (this.options?.item || options.item)(this.addIndex ? { index, item } : item, this.options, this);
         const template = this.templates.get(element);
         if (template instanceof Element) {
             const clone = template.cloneNode(true);
@@ -861,13 +922,15 @@ export class IterRefType extends RefType {
      * @param items
      */
     push(...items) {
+        let result;
         if (this.refs.push)
-            this.refs.push(...items);
+            result = this.refs.push(...items);
         let element;
         for (let item of items) {
             for (element of this.elements)
                 this.addChild(element, item);
         }
+        return result;
     }
     /**
      * Reactively pops the wrapped array.
@@ -881,14 +944,16 @@ export class IterRefType extends RefType {
      *
      */
     pop() {
+        let result;
         if (this.refs.pop)
-            this.refs.pop();
+            result = this.refs.pop();
         let children;
         for (let element of this.elements) {
             children = this.items.get(element);
             children.at(-1).delete();
             children.pop();
         }
+        return result;
     }
     /**
      * Reactively splices the wrapped array.
@@ -905,14 +970,21 @@ export class IterRefType extends RefType {
      * @param items
      */
     splice(start, deleteCount, ...items) {
+        let result;
         if (this.refs.splice)
-            this.refs.splice(start, deleteCount, ...items);
+            result = this.refs.splice(start, deleteCount, ...items);
         for (let element of this.elements) {
             const children = this.items.get(element);
             const newChildren = items.map((item, index) => this.createChild(element, start + index, item));
             for (let i = 0; i < deleteCount; i++)
                 children[start + i].delete();
             children.splice(start, deleteCount, ...newChildren);
+            if (this.addIndex) {
+                // we need to update indices:
+                for (let i = start; i < children.length; i++) {
+                    children[i].set({ index: i + items.length });
+                }
+            }
             let childElement;
             const template = this.templates.get(element);
             const count = (template instanceof DocumentFragment) ? template.children.length : 1;
@@ -931,33 +1003,98 @@ export class IterRefType extends RefType {
                 }
             }
         }
+        return result;
     }
     /**
-     * Sets the array item correctly and calls {@link IterRefType#react}
+     * Supports structural changes in the array which do not
+     * involve setting new values. We instead move array items along
+     * with their linked elements to new positions.
+     *
+     * The function operates in two modes:
+     * 1. `!swap`: move the item at {@link i1} to the {@link i2},
+     * shifting the other items appropriately..
+     *
+     * 3. `swap`: swaps the items at {@link i1} and {@link i2}.
+     * nothing is shifted.
+     *
+     * In both cases item indices will be updated to reflect their
+     * new positions if {@link IterRefType#addIndex} is `true`.
      *
      * @example
-     * import { IterRefType } from "deleight/reftype";
-     * const refs = [{ mercury: 1}, {venus: 2}, {earch: 3}, {mars: 4 }], options = { };
-     * const iterReftype = new IterRefType(refs, options);
-     * iterReftype.add(...document.querySelectorAll('ul'));
-     * iterReftype.set({0: { pluto: 9 }, 1: { uranus: 1 }})  // reactively set items.
      *
-     * @param refs
+     *
+     * @param i1
+     * @param i2
+     * @param swap
      */
-    set(refs) {
-        let ref, nRef, value;
-        let element, children;
-        for ([ref, value] of Object.entries(refs)) {
-            nRef = parseInt(ref);
-            this.refs[nRef] = value;
-            for (element of this.elements) {
-                children = this.items.get(element);
-                if (children?.hasOwnProperty(ref)) {
-                    children[ref].refs = { item: value, index: parseInt(ref) };
+    move(i1, i2, swap) {
+        if (i1 === i2)
+            return; // nothing to do here.
+        const what = { [i1]: i2 };
+        if (swap)
+            what[i2] = i1;
+        let children;
+        let i;
+        let c1;
+        const refs = this.refs.slice();
+        let sources, anchors, childElement, parent, anchor;
+        let counter = 0, val, child;
+        for (let element of this.elements) {
+            counter++;
+            children = this.items.get(element);
+            sources = {};
+            for (val of Object.keys(what)) {
+                sources[val] = children[val];
+            }
+            anchors = {};
+            for (val of Object.values(what)) {
+                child = children[val];
+                anchors[val] = child.elements.at(-1).nextSibling || [child.elements[0].parentNode];
+            }
+            for ([i1, i2] of Object.entries(what)) {
+                if (typeof i1 === 'string')
+                    i1 = parseInt(i1);
+                c1 = sources[i1];
+                // move elements:
+                anchor = anchors[i2];
+                if (anchor instanceof Array) {
+                    parent = anchor[0];
+                    for (childElement of c1.elements) {
+                        parent.appendChild(childElement);
+                    }
                 }
+                else {
+                    parent = anchor.parentNode;
+                    for (childElement of c1.elements) {
+                        parent.insertBefore(childElement, anchor);
+                    }
+                }
+                if (!swap) {
+                    if (this.addIndex) {
+                        if (i1 > i2) {
+                            for (i = i2; i < i1; i++) {
+                                children[i].set({ index: i + 1 });
+                            }
+                        }
+                        else {
+                            for (i = i1 + 1; i <= i2; i++) {
+                                children[i].set({ index: i - 1 });
+                            }
+                        }
+                    }
+                    if (counter === 1)
+                        this.refs.splice(i2, 0, ...this.refs.splice(i1, 1));
+                    children.splice(i2, 0, ...children.splice(i1, 1));
+                }
+                else {
+                    if (counter === 1)
+                        this.refs[i2] = refs[i1];
+                    children[i2] = c1;
+                }
+                if (this.addIndex)
+                    c1.set({ index: i2 });
             }
         }
-        this.react(refs);
         return this;
     }
     /**
@@ -1083,5 +1220,12 @@ export const options = {
         }
     },
     ref: RefType,
-    iter: IterRefType
+    iter: IterRefType,
+    item: RefType,
+    /**
+     * The value of the ref that poins directly to the wrapped object.
+     * It must not be an empty string which has a special purpose in
+     * calculations.
+     */
+    self: '.'
 };

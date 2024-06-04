@@ -3,7 +3,7 @@ import { strict as assert } from "node:assert";
 import { IterRefType } from "../../../src/reftype.js";
 import { JSDOM } from "jsdom";
 
-describe('IterRefType.delete', (t) => {
+describe('IterRefType.raw_item', (t) => {
     const window = new JSDOM(`<!DOCTYPE html><body></body>`).window;
     const document = window.document;
     const body = document.body;
@@ -13,7 +13,7 @@ describe('IterRefType.delete', (t) => {
     global.HTMLTemplateElement = window.HTMLTemplateElement;
     global.DocumentFragment = window.DocumentFragment;
 
-    it('Should synchronously delete (splice) items', (t) => {
+    it('Should correctly add elements for an array', (t) => {
         const refs = [
             { chapter: 1, title: 'Introduction' },
             { chapter: 2, title: 'History' },
@@ -23,35 +23,31 @@ describe('IterRefType.delete', (t) => {
         ];
 
         const reftype = new IterRefType(refs);
-        reftype.addIndex = true;
         body.innerHTML = `
         <main ite-r>
             <article>
                 <header>
-                    <p t class="index">index</p>
-                    <p t class="title">item.title</p>
+                    <p t class="title">title</p>
                 </header>
                 <p>
                     In this chapter...
                 </p>
             </article>
-            <footer>End of item</footer>
         </main>
         `;
         const main = body.querySelector('main');
+        const articleTemplate = main.firstElementChild;
 
         reftype.add(main)    
         // must add the parent element dirctly. dont add body for example.
 
-        assert.equal(refs.length, 5);
-        assert.equal(main.children.length, 10);
+        assert.equal(main.children.length, 5);
         assert.equal(reftype.items.get(main).length, 5);
+        assert.equal(reftype.templates.get(main) === articleTemplate, true);
 
-        reftype.delete(3);
-
-        assert.equal(reftype.items.get(main)[3].get('item.title'), 'Machine Learning in JavaScript');
-        assert.equal(refs[3].title, 'Machine Learning in JavaScript');
-        assert.equal(main.children[6].querySelector('.title').textContent, refs[3].title);
+        for (let i = 0; i < 5; i++) {
+            assert.equal(main.children[i].querySelector('.title').textContent, refs[i].title);
+        }
     });
-
+    
 });
