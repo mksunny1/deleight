@@ -1,9 +1,13 @@
 {
   "name": "deleight",
-  "version": "1.3.3",
-  "description": "A group of 8 libraries for writing accessible and joyfully interactive web applications with traditional HTML, CSS and JavaScript.",
+  "version": "2.0.0",
+  "description": "A group of 10 libraries for writing accessible and joyfully interactive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
   "exports": {
+    "./reftype": {
+      "require": "./dist/reftype/cjs/reftype.js",
+      "default": "./dist/reftype/esm/reftype.js"
+    },
     "./appliance": {
       "require": "./dist/appliance/cjs/appliance.js",
       "default": "./dist/appliance/esm/appliance.js"
@@ -12,9 +16,9 @@
       "require": "./dist/actribute/cjs/actribute.js",
       "default": "./dist/actribute/esm/actribute.js"
     },
-    "./eventivity": {
-      "require": "./dist/eventivity/cjs/eventivity.js",
-      "default": "./dist/eventivity/esm/eventivity.js"
+    "./eutility": {
+      "require": "./dist/eutility/cjs/eutility.js",
+      "default": "./dist/eutility/esm/eutility.js"
     },
     "./generational": {
       "require": "./dist/generational/cjs/generational.js",
@@ -28,17 +32,17 @@
       "require": "./dist/sophistry/cjs/sophistry.js",
       "default": "./dist/sophistry/esm/sophistry.js"
     },
-    "./domitory": {
-      "require": "./dist/domitory/cjs/domitory.js",
-      "default": "./dist/domitory/esm/domitory.js"
+    "./queryoperator": {
+      "require": "./dist/queryoperator/cjs/queryoperator.js",
+      "default": "./dist/queryoperator/esm/queryoperator.js"
     },
     "./onetomany": {
       "require": "./dist/onetomany/cjs/onetomany.js",
       "default": "./dist/onetomany/esm/onetomany.js"
     },
-    "./withy": {
-      "require": "./dist/withy/cjs/withy.js",
-      "default": "./dist/withy/esm/withy.js"
+    "./withly": {
+      "require": "./dist/withly/cjs/withly.js",
+      "default": "./dist/withly/esm/withly.js"
     }
   },
   "scripts": {
@@ -65,15 +69,16 @@
     "accessibility",
     "tradition",
     "Deleight",
-    "Apriori",
-    "Eventivity",
-    "Sophistry",
-    "OneToMany",
-    "Appliance",
-    "Domitory",
     "Actribute",
+    "Appliance",
+    "Reftype",
+    "QueryOperator",
+    "Sophistry",
+    "Apriori",
+    "OneToMany",
     "Generational",
-    "withy"
+    "Eutility",
+    "withly"
   ],
   "author": "Mark Sun",
   "license": "MIT",

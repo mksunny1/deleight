@@ -61,6 +61,7 @@ export interface IActributeInit {
 export type IProcessOptions = {
     el?: Element,
     attr?: string,
+    rattr?: string,     // recursive attr
     ctx?: any[]
 } | Element | string | any[]
 
@@ -82,7 +83,7 @@ export class Actribute {
      * The object that holds all registered components. The keys are the
      * component names and the values are the component functions.
      */
-    registry: { [key: string | number]: Function } = {};
+    registry: { [key: string | number]: IComponent } = {};
 
     /**
      * The attribute used to specify that the tree of an element with 
@@ -178,32 +179,45 @@ export class Actribute {
      * @param {IProcessOptions} [options]
      * @returns {Actribute}
      */
-    process(options?: IProcessOptions): Actribute {
-        let element: Element, attrPrefix: string, context: any[];
+    process(options?: IProcessOptions, recursiveComps? : Map<IComponent, Attr>): Actribute {
+        let element: Element, attrPrefix: string, rattrPrefix: string, context: any[];
         if (typeof options === 'string') attrPrefix = options;
         else if (options instanceof Element) element = options;
         else if (options instanceof Array) context = options;
         else if (typeof options === "object") {
             element = options.el;
             attrPrefix = options.attr;
+            rattrPrefix = options.rattr;
             context = options.ctx
         }
         if (!element) element = document.body;
         if (!attrPrefix) attrPrefix = 'c-';
+        if (!rattrPrefix) rattrPrefix = 'r-';
         if (!context) context = [];
+        if (!recursiveComps) recursiveComps = new Map();
 
         const attrs = element.attributes, length = attrs.length;
 
-        let attr: Attr, i: number, comp: string, processed = false, 
+        let attr: Attr, i: number, comp: string, compF: IComponent, processed = false, 
         localOpen = element.hasAttribute(this.openAttr), 
         localClosed = element.hasAttribute(this.closedAttr), compResult: any;
+
+        for ([compF, attr] of recursiveComps.entries()) {
+            compF(element, attr, ...context);
+        }
+
         for (i = 0; i < length; i++) {
             attr = attrs[i]; if (!attr) continue;  // attr can get deleted by a component!
-            if (attr.name.startsWith(attrPrefix)) {
+            if ((attr.name.startsWith(attrPrefix) || attr.name.startsWith(rattrPrefix)) && 
+                attr.name !== this.openAttr && attr.name !== this.closedAttr) {
                 processed = true;
                 comp = attr.name.substring(attrPrefix.length);
                 if (this.registry.hasOwnProperty(comp)) {
-                    compResult = this.registry[comp](element, attr, ...context);
+                    compF = this.registry[comp];
+                    if (attr.name.startsWith(rattrPrefix) && !(recursiveComps.has(compF))) {
+                        recursiveComps.set(compF, attr);
+                    }
+                    compResult = compF(element, attr, ...context);
                 } else if (this.registry.hasOwnProperty('*')) {
                     compResult = this.registry['*'](element, attr, ...context);
                 } else {
@@ -215,11 +229,15 @@ export class Actribute {
                 else if (compResult === closed) localClosed = true;
             }
         }
-        if (!processed || (localOpen && !localClosed)) {   
+        if ((!processed || recursiveComps.size || localOpen) && !localClosed) {   
             // local closed takes precedence over local open if they are both specified.
             let child = element.firstElementChild;
+            const args = [];
+            if (recursiveComps.size) args.push(recursiveComps);
             while (child) {
-                if (!child.hasAttribute(this.closedAttr)) this.process({el: child, attr: attrPrefix, ctx: context});
+                this.process({
+                    el: child, attr: attrPrefix, rattr: rattrPrefix, ctx: context
+                }, ...args);
                 child = child.nextElementSibling;
             }
         }
@@ -301,14 +319,3 @@ export function join(components: IComponent[], returnValue?: any) {
         return returnValue || lastValue;
     }
 }
-
-
-
-/**
- * tests needed for: 
- * - join
- * - return open from component
- * - return closed from component
- * - return open and closed from component
- * 
- */

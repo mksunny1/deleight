@@ -1,6 +1,6 @@
 import { createFragment } from "../../src/apriori.js";
 import { apply, parentSelector } from "../../src/appliance.js";
-import { preventDefault, stopPropagation, eventListener, matchListener } from "../../src/eventivity.js";
+import { preventDefault, stopPropagation, eventListener, matchListener } from "../../src/eutility.js";
 
 function _random(max) {return Math.round(Math.random() * 1000) % max;}
 

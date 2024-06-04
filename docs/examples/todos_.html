@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TODO List Example</title>
+        <link href="./todos.css" rel="stylesheet">
+        <script src="./todos.js" type="module"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+    <body>
+        <h1>TODO List</h1>
+        <main>
+            <ul class="list" c-iter="todos">
+                <li class="item"  c-text c-attr c-prop >
+                    <header>
+                        <span>$.index</span>
+                        <b>$.val.title</b>
+                        <time>$.val.date</time>
+                        <input type="checkbox" a-checked="val.completed">
+                    </header>
+                    <p>$.val.description</p>
+                    <footer>
+                        <button a-c-edit="val.index">edit</button>
+                        <button a-c-del="val.index" title="delete" class="del">X</button>
+                    </footer>
+                </li>
+            </ul>
+        </main>
+    </body>
+</html>

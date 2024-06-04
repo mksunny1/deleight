@@ -28,15 +28,16 @@ function createCommonJsPackage(src) {
 }
 
 const sources = [
-    "domitory",
-    "eventivity",
-    "appliance",
+    "reftype",
     "actribute",
-    "apriori",
-    "generational",
-    "sophistry",
     "onetomany",
-    "withy",
+    "generational",
+    "queryoperator",
+    "apriori",
+    "sophistry",
+    "eutility",
+    "appliance",
+    "withly",
 ];
 
 const exports = [];

@@ -1,5 +1,5 @@
 import { Actribute } from '../../src/actribute.js'
-import { update } from '../../src/domitory.js'
+import { update } from '../../src/queryoperator.js'
 import { items, range, repeat } from '../../src/generational.js'
 
 const [ status, board, history ] = document.querySelectorAll('#board, #status, #history');

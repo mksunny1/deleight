@@ -1,298 +1,510 @@
 /**
- * This module enables reactivity  by exporting primitives for multiplying the effects of single operations.
+ * This module enables reactivity by exporting primitives for multiplying the effects of single operations.
  */
+export const map = Symbol(), args = Symbol();
+export class View {
+    one;
+    map;
+    /**
+     * Represents a single view of a `One` instance. A view can be described as an
+     * object comprising one property each from the different objects that are part of
+     * the `One` object. We can perform actions on a view without explicitly specifying
+     * the properties.
+     *
+     * @example
+     * import { One, View, args } from "deleight/onetomany";
+     * const one = new One({ a1: [], a2: [1, 2, 3, 4, 5] });
+     *
+     * const view = new View(one, { a1: 'push', a2: 'shift' })
+     * // push one array and simultaneously shift the other
+     * // to transfer content...
+     *
+     * view.call({ [args]: one.many.a2 })
+     *
+     * @param one
+     * @param map
+     */
+    constructor(one, map) { this.one = one; this.map = map; }
+    #oneWhat(what) {
+        const oneWhat = {};
+        if (what.hasOwnProperty(map)) {
+            let prop;
+            for (let [key, val] of Object.entries(what[map])) {
+                prop = this.map[key];
+                if (!oneWhat.hasOwnProperty(prop))
+                    oneWhat[prop] = { [map]: {} };
+                oneWhat[prop][map][key] = val;
+            }
+        }
+        else {
+            for (let [key, prop] of Object.entries(this.map))
+                oneWhat[prop] = { [map]: { [key]: what } };
+        }
+        return oneWhat;
+    }
+    get() { return this.one.get(this.map); }
+    set(what) { return this.one.set(this.#oneWhat(what)); }
+    delete() { return this.one.delete(this.map); }
+    call(what) { return this.one.call(this.#oneWhat(what)); }
+}
+export class One {
+    many;
+    /**
+     * Creates a single object that propagates actions on it to multiple objects.
+     *
+     * @example
+     * import { One } from "deleight/onetomany";
+     * const first = {}, second = {}, third = {}, fourth = {};
+     * const many = { first, second, third };
+     * const o1 = new One(many);
+     *
+     * // set the same value on all objects
+     * o1.set({ p1: 78 });
+     *
+     * @param many
+     */
+    constructor(many) { this.many = many; }
+    /**
+     * Joins `many` with `this.many` and returns `this`. The benefit of
+     * using this function instead of something like `Object.assign`  is to handle some
+     * special cases and ensure that the updated `One` is (almost) correctly typed during
+     * development.
+     *
+     * If the same key exists in the joined objects, the new one will overwrite the
+     * current one, except if the current value is a `One` instance when `extend` will
+     * be called on it instead.
+     *
+     * @example
+     * import { One } from "deleight/onetomany";
+     * const first = {}, second = {}, third = {}, fourth = {};
+     * const many = { first, second, third };
+     * const o1 = new One(many);
+     * const o2 = o1.extend({ fourth });
+     * // One({ first, second, third, fourth })
+     *
+     * @param many
+     */
+    extend(many) {
+        let currentVal;
+        for (let [key, value] of Object.entries(many)) {
+            if (this.many.hasOwnProperty(key)) {
+                currentVal = this.many[key];
+                if (currentVal instanceof One) {
+                    currentVal.extend(value);
+                }
+                else
+                    this.many[key] = value;
+            }
+            else
+                this.many[key] = value;
+        }
+        return this;
+    }
+    /**
+     * The opposite of extend. Removes the specified keys from `this.many` and
+     * returns `this` typed differently.
+     *
+     * @example
+     * import { One } from "deleight/onetomany";
+     * const first = {}, second = {}, third = {}, fourth = {};
+     * const many = { first, second, third };
+     * const o1 = new One(many);
+     * const o2 = o1.contract('first', 'third');
+     * // One({ second })
+     *
+     * @param keys
+     * @returns
+     */
+    contract(...keys) {
+        for (let k of keys)
+            delete this.many[k];
+        return this;
+    }
+    /**
+     * Creates and returns another instance of `One` containing only the
+     * objects with these names. If a name is not present in `this.many`,
+     * a new object is created for it in the returned `One`.
+     *
+     * @example
+     * import { One } from "deleight/onetomany";
+     * const first = {}, second = {}, third = {}, fourth = {};
+     * const many = { first, second, third };
+     * const o1 = new One(many);
+     * const o2 = o1.slice('first', 'second')
+     * // One({ first, second })
+     *
+     * @param names
+     */
+    slice(...names) {
+        const many = {};
+        for (let name of names)
+            many[name] = this.many[name] || {};
+        return new One(many);
+    }
+    ;
+    /**
+     * Creates and returns an instance of `View` for only the
+     * specified properties. `what` is an object mapping object keys (in `this.many`)
+     * to the property names.
+     *
+     * @example
+     * import { One, map } from "deleight/onetomany";
+     * const first = {}, second = {}, third = {}, fourth = {};
+     * const many = { first, second, third };
+     * const o1 = new One(many);
+     * o1.set({ p1: 78 });
+     * const complex = { first: 56, second: 12, third: 12 };
+     * o1.set({ p2: { [map]: complex } });
+     * o1.view({first: 'p1', second: 'p2'});
+     * view.get();     // { first: 78, second: 12 }
+     *
+     * @param map
+     */
+    view(map) { return new View(this, map); }
+    ;
+    /**
+     * Gets the property (or properties) with the specified name(s) from all the
+     * objects in `this.many`.
+     *
+     * 1. if `what` is a string, returns only the property specified (as an object mapping
+     * object key to property value).
+     * 2. if `what` is an array of strings, returns 'sub-objects' of all the objects
+     * consisting of the specified property names (also mapped like 1).
+     * 3. if what is an object, it is treated as a map of object names to property
+     * name(s) to return.
+     * 4. if an object in `this.many` is a `One` instance, its `get` method is
+     * called for its property value(s).
+     *
+     * @example
+     * import { One, map } from "deleight/onetomany";
+     * const first = {}, second = {}, third = {}, fourth = {};
+     * const many = { first, second, third };
+     * const o1 = new One(many);
+     * o1.set({ p1: 78 });
+     * const complex = { first: 56, second: 12, third: 12 };
+     * o1.set({ p2: { [map]: complex } });
+     *
+     * o1.get('p1');
+     * // { first: 78, second: 78, third: 78 }
+     *
+     * o1.get('p1', 'p2');
+     * // { first: { p1: 78, p2: 56 }, second: { p1: 78, p2: 12 }, third: { p1: 78, p2: 12 } }
+     *
+     * o1.get({ first: 'p2', second: 'p1' });
+     * // { first: 56, second: 78 }
+     *
+     * @param what
+     */
+    get(what, valueKey) {
+        const result = {};
+        let val, key, item, obj, subVal;
+        if (typeof what === 'string') {
+            for ([key, obj] of Object.entries(this.many)) {
+                if (obj instanceof One)
+                    result[key] = obj.get(what, valueKey);
+                else {
+                    val = obj[what];
+                    if (valueKey && val instanceof One)
+                        val = val.many[valueKey];
+                    result[key] = val;
+                }
+            }
+        }
+        else if (what instanceof Array) {
+            for ([key, obj] of Object.entries(this.many)) {
+                if (obj instanceof One)
+                    result[key] = obj.get(what, valueKey);
+                else {
+                    result[key] = val = {};
+                    for (item of what) {
+                        subVal = obj[item];
+                        if (valueKey && subVal instanceof One)
+                            subVal = subVal.many[valueKey];
+                        val[item] = subVal;
+                    }
+                }
+            }
+        }
+        else if (typeof what === 'object') {
+            for (let [key, props] of Object.entries(what)) {
+                obj = this.many[key];
+                if (obj instanceof One)
+                    result[key] = obj.get(props, valueKey);
+                else {
+                    if (props instanceof Array) {
+                        result[key] = val = {};
+                        for (item of props) {
+                            subVal = obj[item];
+                            if (valueKey && subVal instanceof One)
+                                subVal = subVal.many[valueKey];
+                            val[item] = subVal;
+                        }
+                    }
+                    else {
+                        val = obj[props];
+                        if (valueKey && val instanceof One)
+                            val = val.many[valueKey];
+                        result[key] = val;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+    ;
+    /**
+     * Sets one or more properties on all the objects in this instance.
+     * `what` is an object mapping property names to property values.
+     *
+     * Each value in `what` is set on all the objects in this `One`.
+     * The same value will be set unless the value is an object containing the `[map]` property.
+     * In such a case, the value of the property is treated as a map of object key (in `this.many`)
+     * to object property value. That is, the objects with corresponding
+     * keys will have their property values set to the corresponding values.
+     *
+     * This will call `set` on any nested `One` objects accordingly.
+     *
+     * @example
+     * import { One, map } from "deleight/onetomany";
+     * const first = {}, second = {}, third = {}, fourth = {};
+     * const many = { first, second, third };
+     * const o1 = new One(many);
+     * o1.set({ p1: 78 });
+     * const complex = { first: 56, second: 12, third: 12 };
+     * o1.set({ p2: { [map]: complex }, p3: complex });
+     *
+     * o1.get('p2', 'p3');
+     * // { first: { p2: 56, p3: complex }, second: { p2: 12, p3: complex }, third: { p2: 12, p3: complex } }
+     *
+     * @param what
+     */
+    set(what, valueKey) {
+        let key, obj, subValue, propVal;
+        for (let [prop, value] of Object.entries(what)) {
+            if (value.hasOwnProperty(map)) {
+                for ([key, subValue] of Object.entries(value[map])) {
+                    obj = this.many[key];
+                    if (obj instanceof One)
+                        obj.set({ prop: subValue }, valueKey);
+                    else {
+                        if (valueKey) {
+                            propVal = obj[prop];
+                            if (propVal instanceof One && propVal.many.hasOwnProperty(valueKey)) {
+                                propVal.many[valueKey] = subValue;
+                            }
+                        }
+                        else
+                            obj[prop] = subValue;
+                    }
+                }
+            }
+            else {
+                for ([key, obj] of Object.entries(this.many)) {
+                    if (obj instanceof One)
+                        obj.set({ prop: value }, valueKey);
+                    else {
+                        if (valueKey) {
+                            propVal = obj[prop];
+                            if (propVal instanceof One && propVal.many.hasOwnProperty(valueKey)) {
+                                propVal.many[valueKey] = value;
+                            }
+                        }
+                        else
+                            obj[prop] = value;
+                    }
+                }
+            }
+        }
+        return this;
+    }
+    ;
+    /**
+     * Performs `delete` on the objects in this `One`. The argument is
+     * treated the same way as in `get`.
+     *
+     * @example
+     * import { One, map } from "deleight/onetomany";
+     * const first = {}, second = {}, third = {}, fourth = {};
+     * const many = { first, second, third };
+     * const o1 = new One(many);
+     * o1.set({ p1: 78 });
+     * const complex = { first: 56, second: 12, third: 12 };
+     * o1.set({ p2: { [map]: complex }, p3: complex });
+     *
+     * o1.delete('p1', 'p2');
+     * // One({ first: { p3: complex }, second: { p3: complex }, third: { p3: complex } })
+     *
+     * @param what
+     */
+    delete(what) {
+        let key, item, obj;
+        if (typeof what === 'string') {
+            for ([key, obj] of Object.entries(this.many)) {
+                if (obj instanceof One)
+                    obj.delete(what);
+                else
+                    delete obj[what];
+            }
+        }
+        else if (what instanceof Array) {
+            for ([key, obj] of Object.entries(this.many)) {
+                if (obj instanceof One)
+                    obj.delete(what);
+                else
+                    for (item of what)
+                        delete obj[item];
+            }
+        }
+        else if (typeof what === 'object') {
+            for (let [key, props] of Object.entries(what)) {
+                obj = this.many[key];
+                if (obj instanceof One)
+                    obj.delete(props);
+                else {
+                    if (props instanceof Array)
+                        for (item of props)
+                            delete obj[item];
+                    else
+                        delete obj[props];
+                }
+            }
+        }
+        return this;
+    }
+    ;
+    /**
+     * Calls corresponding methods in a similar way to set. In this
+     * case, call arguments are interpreted instead of property values.
+     *
+     * Multiple arguments should be provided as an object with the `[arg]` property whose value
+     * should be an array containing the arguments. A regular array is considered a single argument.
+     *
+     * Nested one objects will have their call method invoked correspondingly.
+     *
+     * @example
+     * import { One, map, args } from "deleight/onetomany";
+     * const arr1 = [], arr2 = [], arr3 = [];
+     * const o4 = new One({ arr1, arr2, arr3 });
+     * o4.call({ push: 78 });
+     * o4.call({ push: { [args]: [56, 57] } });
+     * // arr1 = arr2 = arr3 = [78, 56, 57]
+     *
+     * @param what
+     */
+    call(what) {
+        let key, obj, subValue;
+        const result = {};
+        let propResult;
+        if (typeof what === 'string')
+            what = [what];
+        if (what instanceof Array) {
+            for (let prop of what) {
+                for ([key, obj] of Object.entries(this.many)) {
+                    result[key] = obj[prop]?.();
+                }
+            }
+        }
+        else {
+            for (let [prop, value] of Object.entries(what)) {
+                result[prop] = propResult = {};
+                if (value.hasOwnProperty(map)) {
+                    for ([key, subValue] of Object.entries(value[map])) {
+                        obj = this.many[key];
+                        if (obj instanceof One)
+                            propResult[key] = obj.call({ prop: subValue });
+                        else {
+                            if (subValue.hasOwnProperty(args))
+                                propResult[key] = obj[prop]?.(...subValue[args]);
+                            else
+                                propResult[key] = obj[prop]?.(subValue);
+                        }
+                    }
+                }
+                else {
+                    for ([key, obj] of Object.entries(this.many)) {
+                        if (obj instanceof One)
+                            propResult[key] = obj.call({ prop: value });
+                        else {
+                            if (value.hasOwnProperty(args))
+                                propResult[key] = obj[prop]?.(...value[args]);
+                            else
+                                propResult[key] = obj[prop]?.(value);
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    }
+}
 /**
- * Creates a One object which transmits a call, method dispatch, property
- * get or set applied to the 'one' object to the 'many' objects.
- *
- * The recursive arg is used to ensure that getting properties always
- * wraps the array results with `one` also.
- *
- * Items in the context arg will be passed to all delegated calls as the
- * final arguments. An empty array is created if not specified.
- *
- * Sometimes, you may want to pass an array of 1 or more objects to provide a shared
- * context for the items in many. Other times you may prefer no context because
- * it may affect the behavior of the calls, since the functions or methods may
- * be accepting optional arguments there. Passing your own arrays enable you to
- * set the behavior however you like (by emptying or populating the array).
+ * A simple wrapper around `One` for a more concise syntax.
  *
  * @example
- * import { one } from 'deleight/onetomany';
- * const component = one([data(), view(table)], false, [{}]);
- * component.create([10000]);
+ * import { one, map, args } from "deleight/onetomany";
+ * const arr1 = [], arr2 = [], arr3 = [];
+ * const o4 = one({ arr1, arr2, arr3 });
+ * o4.push(78, 56, 57);
+ * o4.push({ [map]: { arr1: 66, arr2: { [args]: [77, 88] }, arr3: 99 } });
+ * // arr1 === [78, 56, 57, 66]
+ * // arr2 === [78, 56, 57, 77, 88]
+ * // arr3 === [78, 56, 57, 99]
  *
- * @param {any[]} many An array of objects to delegat actios to
- * @param {boolean} [recursive] Whether to return One instances in `get` calls
- * @param {any[]} [context] Shared context for the 'many' functions or object methods
- * @param {number} [mainItem] Set a main item (like 0 for the first item) if the one must behave
- * like it. This way the main item can be simply replaced with the one in existing code.
+ * @param many
  * @returns
  */
-export function one(many, recursive, context, mainItem) {
-    const newOne = new One(many, recursive, context);
-    newOne.ctor = one;
-    if (mainItem !== undefined)
-        newOne.mainItem = mainItem;
-    return new Proxy(newOne, oneTrap);
-}
-const PURE = Symbol();
+export function one(many) { return wrap(new One(many)); }
 /**
- * Return a wrapped (proxied) One from a pure One.
+ * Wraps a pre-existing `One`
  *
  * @example
- * import { One, wrap } from 'deleight/onetomany';
- * const o = new One([{a: 1}, {a: 2}])
- * o.set('a', [4, 7]);
- * const a = wrap(o).a   // [4, 7]
- *
- * @param o
- * @param {number} [mainItem] Set a main item (like 0 for the first item) if the one must behave
- * like it. This way the main item can be simply replaced with the one in existing code.
- * @returns
- */
-export function wrap(o, mainItem) {
-    o.ctor = one;
-    if (mainItem !== undefined)
-        o.mainItem = mainItem;
-    return new Proxy(o, oneTrap);
-}
-/**
- * Return a 'pure' One from a proxied One.
- *
- * @example
- * import { one, unWrap } from 'deleight/onetomany';
- * const o = one([{a: 1}, {a: 2}])
- * o.a = [4, 7];
- * const many = unWrap(o).many
+ * import { One, wrap } from "deleight/onetomany";
+ * const arr1 = [], arr2 = [], arr3 = [];
+ * const o4 = new One({ arr1, arr2, arr3 });
+ * const wo4 = wrap(o4);
  *
  * @param one
  * @returns
  */
-export function unWrap(one) {
-    return one[PURE] || one;
+export function wrap(one) {
+    return new Proxy(one, oneTrap);
 }
-const oneTrap = {
-    get(target, p) {
-        if (p === PURE)
-            return target;
-        let result = target.get(p, true);
-        if (result.length && typeof result[0] === "function") {
-            if (target.mainItem !== undefined) {
-                return (...args) => target.call([args], p)[target.mainItem];
-            }
-            else {
-                return (...args) => target.call(args, p);
-            }
-        }
-        else if (target.recursive) {
-            if (target.ctor) {
-                const newResult = target.ctor(result, true, target.context);
-                (newResult[PURE] || newResult).ctor = target.ctor;
-                return newResult;
-            }
-            else
-                return new One(result, true, target.context);
-        }
-        if (target.mainItem !== undefined)
-            return result[target.mainItem];
-        else
-            return result;
-    },
-    set(target, p, value) {
-        target.set(p, value);
-        return true;
-    },
-};
 /**
- * An object which delegates actions on it to other objects
+ * The opposite of `wrap`
  *
  * @example
- * import { One } from 'deleight/onetomany';
- * const o = new One([{a: 1}, {a: 2}])
- * o.set('a', [4, 7]);
+ * import { one, unwrap } from "deleight/onetomany";
+ * const arr1 = [], arr2 = [], arr3 = [];
+ * const wo4 = one({ arr1, arr2, arr3 });
+ * const o4 = unwrap(wo4);
  *
+ * @param wrapped
+ * @returns
  */
-export class One {
-    /**
-     * The many objects this One delegates to.
-     */
-    many;
-    /**
-     * Optionally set main item interpreted specially when the one is
-     * proxied.
-     */
-    mainItem;
-    /**
-     * Whether this One will return other 'One's in calls to `get`.
-     */
-    recursive;
-    /**
-     * The constructor function used for creating new 'One's in calls to `get`.
-     */
-    ctor;
-    /**
-     * The context shared by the many functions or methods of the objects in many.
-     * They all receive its items as their last set of arguments.
-     */
-    context;
-    /**
-     * Creates a new One instance for propagating operations to all the items
-     * in many.
-     *
-     * @param {any[]} many The many objects or functions this One will delegate to.
-     * @param {boolean} [recursive] Whether to wrap the arrays returned by `get` with another One.
-     * @param {any[]} context An optional shared context to be passed to all propagated method or function calls.
-     * This is an array of objects passed as the final arguments in calls. Empty array by default.
-     *
-     * @example
-     * import { One } from 'deleight/onetomany';
-     * const loginYes = new One([username => profileView(username)]);
-     * loginYes.call([[username]]);
-     *
-     * @constructor
-     */
-    constructor(many, recursive, context) {
-        this.many = many;
-        this.recursive = recursive;
-        this.context = context || [];
-    }
-    /**
-     * Gets corresponding properties from all the objects in many. If this is
-     * a recursive One and forceArray is falsy, the array result will be
-     * used as the 'many' argument in a call to this.ctor and the created One
-     * is returned instead of the array.
-     *
-     * @example
-     * import { One } from 'deleight/onetomany';
-     * const o = new One([{a: 1}, {a: 2}])
-     * o.get('a');  // [1, 2]
-     *
-     * @param {string | number | symbol | null} [prop]
-     * @param {boolean} [forceArray]
-     * @returns {any[]|One}
-     */
-    get(prop, forceArray) {
-        const results = [];
-        const length = this.many.length;
-        if (prop !== undefined && prop !== null) {
-            for (let i = 0; i < length; i++)
-                results.push(this.many[i][prop]);
-        }
-        else {
-            for (let i = 0; i < length; i++)
-                results.push(this.many[i]);
-        }
-        if (this.recursive && !forceArray) {
-            if (this.ctor) {
-                const newResult = this.ctor(results, this.recursive, this.context);
-                (newResult[PURE] || newResult).ctor = this.ctor;
+export function unwrap(wrapped) { return wrapped[self]; }
+const self = Symbol();
+const oneTrap = {
+    get(target, p) {
+        if (p === self)
+            return target;
+        return Object.assign((...methodArgs) => {
+            let arg1;
+            if (methodArgs.length === 1 && typeof (arg1 = methodArgs[0]) === 'object' &&
+                arg1.hasOwnProperty(map)) {
+                return target.call({ [p]: arg1 });
             }
             else
-                return new One(results, this.recursive, this.context);
-        }
-        else
-            return results;
+                return target.call({ [p]: { [args]: methodArgs } });
+        }, {
+            get value() { return target.get(p); }
+        });
+    },
+    set(target, p, value) {
+        target.set({ [p]: value });
+        return true;
+    },
+    deleteProperty(target, p) {
+        target.delete(p);
+        return true;
     }
-    /**
-     * Sets corresponding property values in the objects in many.
-     * 'values' are treated similarly to 'args' in the call method.
-     *
-     * @example
-     * import { One } from 'deleight/onetomany';
-     * const o = new One([{a: 1}, {a: 2}])
-     * o.set('a', [4, 7]);
-     *
-     * @param {string | number | symbol | null} [prop]
-     * @param {any[]} [values]
-     */
-    set(prop, values) {
-        if (values === undefined)
-            return this.set(prop, this.get(prop, true));
-        // simply reset existing values, probably to trigger proxy handlers or setters
-        if (!(values instanceof Array))
-            values = [values];
-        const length = this.many.length;
-        const j = values.length;
-        if (prop !== undefined && prop !== null) {
-            for (let i = 0; i < length; i++)
-                this.many[i][prop] = values[Math.min(i, j - 1)];
-        }
-        else {
-            for (let i = 0; i < length; i++)
-                this.many[i] = values[Math.min(i, j - 1)];
-        }
-    }
-    /**
-     * Delete the property from all objects in many.
-     *
-     * @example
-     * import { One } from 'deleight/onetomany';
-     * const o = new One([{a: 1}, {a: 2}])
-     * o.delete('a');
-     *
-     * @param {string | number | symbol} prop
-     */
-    delete(prop) {
-        for (let many of this.many)
-            delete many[prop];
-    }
-    /**
-     * Calls all the items in many (if method is not specified) or their
-     * corresponding methods (if  method is specified). All the calls will
-     * receive any items in `this.context` as their final arguments to
-     * enable communication.
-     *
-     * args can be specified as follows:
-     * `[[a1, a2], [a1, a2], [a1, a2]]`
-     *
-     * If `this.many` has 3 items, they will receive their own args. If there
-     * are more items in `this.many`, they will all get the last provided args array
-     * (here the one passed to the third item).
-     *
-     * The `one` function wraps created 'One's with a proxy to allow methods
-     * to be called directly on them. Assuming we want to pass the same args
-     * as above to such a method, the call will look like:
-     *
-     * `object.method([a1, a2], [a1, a2], [a1, a2])`.
-     *
-     * There is no need to wrap with the outer array in such cases.
-     *
-     * Call returns an array containing the return values of the individual
-     * calls to many items.
-     *
-     * @example
-     * import { One } from 'deleight/onetomany';
-     * const loginYes = new One([username => profileView(username)]);
-     * loginYes.call([[username]]);
-     *
-     * @param {any[]} args The function or method arguments
-     * @param {string | number | symbol} [method] The name of a method to call.
-     * A function call is assumed if not specified.
-     *
-     * @returns {any[]}
-     */
-    call(args, method) {
-        if (args === undefined || !args.length)
-            args = [[]];
-        const results = [];
-        const length = this.many.length;
-        const j = args.length;
-        let iArgs, result;
-        if (method !== undefined) {
-            for (let i = 0; i < length; i++) {
-                iArgs = args[Math.min(i, j - 1)] || [];
-                result = this.many[i][method](...iArgs, ...this.context);
-                results.push(result);
-            }
-        }
-        else {
-            for (let i = 0; i < length; i++) {
-                iArgs = args[Math.min(i, j - 1)] || [];
-                result = this.many[i](...iArgs, ...this.context);
-                results.push(result);
-            }
-        }
-        return results;
-    }
-}
+};

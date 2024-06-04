@@ -1,12 +1,8 @@
 src
-src2
 docs
 test
-images
 .github
-readme-older.md
 tsconfig.json
 server.cjs
 rollup.config.mjs
-
 website
