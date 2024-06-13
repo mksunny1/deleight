@@ -259,16 +259,19 @@ import { One } from "deleight/actribute";
 
 ## Contributing
 
-If you like the concept and/or the direction of deleight, feel free to contribute to this project. We are accepting contributions in many areas. Sponsorship, issues, pull requests, benchmarks, testing, CI, examples; all are welcome. We only ask that everyone maintains a positive disposition about this and about each-other.
+If you like this, I invite you to contribute. You can contribute in many areas. Sponsorship, issues, pull requests, benchmarks, testing, CI, examples; all are welcome. I only ask everyone to maintain a positive disposition about this and about each-other.
+
+Here is a link: https://www.paypal.com/donate/?hosted_button_id=S2ZW3RJSDHASW.
 
 Thank you for contributing.
 
 ## Ongoing and Planned Work
 
-1. Complete the site (*deleightjs.com*).
-2. Complete and add more examples.
-3. Improve the documentation.
-4. Fix the logo...
+1. A better reftype
+2. Complete the site (*deleightjs.com*).
+3. Complete and add more examples.
+4. Improve the documentation.
+5. Fix the logo...
 
 ## Ideas
 
