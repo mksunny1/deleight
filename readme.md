@@ -268,8 +268,6 @@ import { One } from "deleight/actribute";
 
 If you like this, I invite you to contribute. You can contribute in many areas. Sponsorship, issues, pull requests, benchmarks, testing, CI, examples; all are welcome. I only ask everyone to maintain a positive disposition about this and about each-other.
 
-Here is a link: https://www.paypal.com/donate/?hosted_button_id=S2ZW3RJSDHASW.
-
 Thank you for contributing.
 
 ## Ongoing and Planned Work
