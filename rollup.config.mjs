@@ -28,6 +28,9 @@ function createCommonJsPackage(src) {
 }
 
 const sources = [
+    "class-action",
+    "action-object",
+    "active-component",
     "reftype",
     "actribute",
     "onetomany",

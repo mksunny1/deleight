@@ -1,9 +1,21 @@
 {
   "name": "deleight",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "A group of 10 libraries for writing accessible and joyfully interactive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
   "exports": {
+    "./class-action": {
+      "require": "./dist/class-action/cjs/class-action.js",
+      "default": "./dist/class-action/esm/class-action.js"
+    },
+    "./action-object": {
+      "require": "./dist/action-object/cjs/action-object.js",
+      "default": "./dist/action-object/esm/action-object.js"
+    },
+    "./active-component": {
+      "require": "./dist/active-component/cjs/active-component.js",
+      "default": "./dist/active-component/esm/active-component.js"
+    },
     "./reftype": {
       "require": "./dist/reftype/cjs/reftype.js",
       "default": "./dist/reftype/esm/reftype.js"
@@ -92,5 +104,10 @@
     "rollup-plugin-dts": "^6.1.0",
     "typedoc": "^0.25.13",
     "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "action-object": "^1.0.2",
+    "active-component": "^1.0.0",
+    "class-action": "^1.0.2"
   }
 }

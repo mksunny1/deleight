@@ -2,22 +2,29 @@
 
 ![Logo](https://github.com/mksunny1/deleight/blob/main/docs/assets/logos/small.png?raw=true)
 
-This is now a group of 10 libraies that simplify web frontend development in vanilla HTML, CSS and JavasSript. Deleight is an inclusive library that everyone operating on the web can benefit from.
-
-- Frontend JavaScript developers can create apps without worrying about control, modularity or maintainance. Not only is the framework flexible, modular and compact, it also aligns with familiar semantics. Plus you have multiple declarative APIs to choose from.
-
-- Distributed frontend teams can work freely in their favourite languages without worrying about interop. HTML experts can write pure HTML. JavaScript developers can write pure JavaScript. Designers can write pure CSS. Deleight will ensure that everything plays well together.
-
-- Backend developers using any technology can stop worrying about frontend complexity. Deleight ships modern ES6 modules which can be loaded directly into a webpage. Because the framework is modular and compact, you only load the libraries you need. You can also compose them with your favourite backend template engine to reduce the number of files to load. Finally, we try tom make the [API](https://mksunny1.github.io/deleight-api-docs/main) small and intuitive. There is not much to learn.
+This is now a group of 13 libraies that simplify web frontend development in vanilla HTML, CSS and JavasSript. Deleight aims to make frontend development more enjoyable for everyone.
 
 Apart from this brief guide and the [documentation](https://mksunny1.github.io/deleight-api-docs/main), there are also some examples which can be used to understand how the parts fit together and to develop a feel for using deleight. To play with the exmples, you can run the included server with `npm start` and visit http://localhost:8000/docs/examples/index.html. The demos are also hosted online [here](https://mksunny1.github.io/deleight/docs/examples).
 
 What follows is a brief description of the libraries and how to include them in your projects.
 
+## Class-Action
+
+[Class-action](https://github.com/mksunny1/class-action) is a simple library for replacing functions and methods with more compasable objects. It enables a form of metaprogramming in JavaScript. Learn more about it [here](https://github.com/mksunny1/class-action).
+
+## Action-object
+
+[Action-object](https://github.com/mksunny1/action-object) is a simple library for making JavaScript objects *reactive*. This means we can set up actions to run when an object property is set or a a method is invoked. It demonstrates a powerful use-case for [class-action](https://github.com/mksunny1/class-action). Learn more about it [here](https://github.com/mksunny1/action-object).
+
+## Active-component
+
+[Active-component](https://github.com/mksunny1/active-component) is the new reactivity library implemented with [action-object](https://github.com/mksunny1/action-object) and [class-action](https://github.com/mksunny1/class-action). Testing and documentation still in progress but the library is mostly complete now. Learn more about it [here](https://github.com/mksunny1/active-component).
 
 ## Reftype
 
-*Reftype* is the latest library in the stack. The main purpose is to relieve the burden on the JavaScript programmer to know about the markup layout and structure in a large web application. Without *Reftype*, we manipulate all aspects of the DOM explicitly with high-level primitives from Javascript. We may get some mileage from *Actribute* but the module is more abstract. 
+*Reftype* is the 10th library which has now been abstracted into Class-action, Action-object and Active-component. It is safe to say this library has been superceded by Active-component and may be removed in the future. Prefer Active-component which is based on more verssatile and composable parts. 
+
+Reftype aims to relieve the burden on the JavaScript programmer to know about the markup layout and structure in a large web application. Without *Reftype*, we manipulate all aspects of the DOM explicitly with Javascript. We may get some mileage from *Actribute* but the module is more abstract. 
 
 *Reftype* provides an alternative pattern quite similar to how *Vue.JS* and *Angular* operate. It lets you declaratively describe DOM operations using attribute directives. The major difference with *Reftype* is that it is more transparent, explicit and composable. It aligns with the policy of *Deleight* to use straight HTML, CSS and JavaScript. It is deliberately designed to be fast, lightweight and memory-efficient.
 
