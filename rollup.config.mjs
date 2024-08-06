@@ -30,7 +30,7 @@ function createCommonJsPackage(src) {
 const sources = [
     "class-action",
     "action-object",
-    "active-component",
+    "element-action",
     "reftype",
     "actribute",
     "onetomany",

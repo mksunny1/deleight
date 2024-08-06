@@ -16,46 +16,9 @@ What follows is a brief description of the libraries and how to include them in 
 
 [Action-object](https://github.com/mksunny1/action-object) is a simple library for making JavaScript objects *reactive*. This means we can set up actions to run when an object property is set or a a method is invoked. It demonstrates a powerful use-case for [class-action](https://github.com/mksunny1/class-action). Learn more about it [here](https://github.com/mksunny1/action-object).
 
-## Active-component
+## Element-action
 
-[Active-component](https://github.com/mksunny1/active-component) is the new reactivity library implemented with [action-object](https://github.com/mksunny1/action-object) and [class-action](https://github.com/mksunny1/class-action). Testing and documentation still in progress but the library is mostly complete now. Learn more about it [here](https://github.com/mksunny1/active-component).
-
-## Reftype
-
-*Reftype* is the 10th library which has now been abstracted into Class-action, Action-object and Active-component. It is safe to say this library has been superceded by Active-component and may be removed in the future. Prefer Active-component which is based on more verssatile and composable parts. 
-
-Reftype aims to relieve the burden on the JavaScript programmer to know about the markup layout and structure in a large web application. Without *Reftype*, we manipulate all aspects of the DOM explicitly with Javascript. We may get some mileage from *Actribute* but the module is more abstract. 
-
-*Reftype* provides an alternative pattern quite similar to how *Vue.JS* and *Angular* operate. It lets you declaratively describe DOM operations using attribute directives. The major difference with *Reftype* is that it is more transparent, explicit and composable. It aligns with the policy of *Deleight* to use straight HTML, CSS and JavaScript. It is deliberately designed to be fast, lightweight and memory-efficient.
-
-```html
-<main>
-    <p t> mercury +&+ venus </p>
-    <p t> mercury + or +venus</p>
-    <p t>mercury + before + venus</p>
-    <section t>earth</section>
-    <article t class-a="color1| |color2">mars</article>
-</main>
-```
-
-```js
-import { RefType } from 'deleight/reftype'
-
-const refs = {
-    mercury: 'Planet mercury',
-    venus: 'The second planet',
-    earth: 'Our planet!',
-    mars: 'Nearest planetary neighbor',
-    color1: 'red',
-    color2: 'green'
-};
-
-const reftype = new RefType(refs, { sep: { multivalue: '+' } });
-reftype.add(document.querySelector('main'));
-reftype.react();                     // will apply all reactions
-reftype.set({ color1: 'blue' });     // will apply specific reaction...
-
-```
+[Element-action](https://github.com/mksunny1/element-action) is the new reactivity library implemented with [action-object](https://github.com/mksunny1/action-object) and [class-action](https://github.com/mksunny1/class-action). The library is mostly complete now (and stripped-down for simplicity). Learn more about it [here](https://github.com/mksunny1/element-action).
 
 
 ## Actribute
@@ -230,49 +193,65 @@ export const myEutility = {
 ```
 
 
+## Reftype
+
+*Reftype* is the 10th library which has now been abstracted into Class-action, Action-object and element-action. I think this library has been superceded by element-action and may be removed in the future. Prefer element-action which is based on more verssatile and composable parts. 
+
+Reftype aims to relieve the burden on the JavaScript programmer to know about the markup layout and structure in a large web application. Without *Reftype*, we manipulate all aspects of the DOM explicitly with Javascript. We may get some mileage from *Actribute* but the module is more abstract. 
+
+*Reftype* provides an alternative pattern quite similar to how *Vue.JS* and *Angular* operate. It lets you declaratively describe DOM operations using attribute directives. The major difference with *Reftype* is that it is more transparent, explicit and composable. It aligns with the policy of *Deleight* to use straight HTML, CSS and JavaScript. It is deliberately designed to be fast, lightweight and memory-efficient.
+
+```html
+<main>
+    <p t> mercury +&+ venus </p>
+    <p t> mercury + or +venus</p>
+    <p t>mercury + before + venus</p>
+    <section t>earth</section>
+    <article t class-a="color1| |color2">mars</article>
+</main>
+```
+
+```js
+import { RefType } from 'deleight/reftype'
+
+const refs = {
+    mercury: 'Planet mercury',
+    venus: 'The second planet',
+    earth: 'Our planet!',
+    mars: 'Nearest planetary neighbor',
+    color1: 'red',
+    color2: 'green'
+};
+
+const reftype = new RefType(refs, { sep: { multivalue: '+' } });
+reftype.add(document.querySelector('main'));
+reftype.react();                     // will apply all reactions
+reftype.set({ color1: 'blue' });     // will apply specific reaction...
+
+```
+
+
 ## Installation
-
-You can currently install deleight in 2 ways:
-
-### Direct download
-
-Download or clone the repository and import any libraries you need from the ./src. It contains both JavaScript and TypeScript files.
-
-### From NPM
 
 `npm i deleight`
 
-Deleight will also be installable from a CDN network soon.
 
 ## Usage
 
-Depending on how you bring deleight into your app, there may be subtle differences in how to import the libraries:
-
-### Direct download
-
 ```js
-import { apply } from "./deleight/src/reftype.js";
-import { One } from "./deleight/src/actribute.js";
-// ...
-```
-
-### From NPM
-
-```js
-import { apply } from "deleight/reftype";
-import { One } from "deleight/actribute";
+import { Component } from "deleight/element-action";
+import { Actribute } from "deleight/actribute";
 // ...
 ```
 
 ## Contributing
 
-If you like this, I invite you to contribute. You can contribute in many areas. Sponsorship, issues, pull requests, benchmarks, testing, CI, examples; all are welcome. I only ask everyone to maintain a positive disposition about this and about each-other.
+If you like this, I invite you to contribute. You can contribute in many areas. Sponsorship, issues, pull requests, benchmarks, testing, CI, examples; all are welcome. Please just maintain a positive disposition about this and about each-other.
 
 Thank you for contributing.
 
 ## Ongoing and Planned Work
-
-1. A better reftype
+1. Make all the libraries stand on their own. Then we can include more useful libraries from other authors.
 2. Complete the site (*deleightjs.com*).
 3. Complete and add more examples.
 4. Improve the documentation.

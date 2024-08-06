@@ -4,5 +4,5 @@
     "target": "ESNext",
     "moduleResolution": "Bundler"
   },
-  "include": ["src/*.ts", "src/reactivity/reactivity.ts", "src/reactivity/reactivityOlder.ts"]
+  "include": ["src/*.ts"]
 }
