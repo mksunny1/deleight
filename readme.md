@@ -2,7 +2,7 @@
 
 ![Logo](https://github.com/mksunny1/deleight/blob/main/docs/assets/logos/small.png?raw=true)
 
-This is now a group of 13 libraies that simplify web frontend development in vanilla HTML, CSS and JavasSript. Deleight aims to make frontend development more enjoyable for everyone.
+This is now a group of 12 libraies that simplify web frontend development in vanilla HTML, CSS and JavasSript. Deleight aims to make frontend development more enjoyable for everyone.
 
 Apart from this brief guide and the [documentation](https://mksunny1.github.io/deleight-api-docs/main), there are also some examples which can be used to understand how the parts fit together and to develop a feel for using deleight. To play with the exmples, you can run the included server with `npm start` and visit http://localhost:8000/docs/examples/index.html. The demos are also hosted online [here](https://mksunny1.github.io/deleight/docs/examples).
 
@@ -19,6 +19,9 @@ What follows is a brief description of the libraries and how to include them in 
 ## Element-action
 
 [Element-action](https://github.com/mksunny1/element-action) is the new reactivity library implemented with [action-object](https://github.com/mksunny1/action-object) and [class-action](https://github.com/mksunny1/class-action). The library is mostly complete now (and stripped-down for simplicity). Learn more about it [here](https://github.com/mksunny1/element-action).
+
+
+* NB: [reftype](https://github.com/mksunny1/reftype) has is now a separate package and has been removed from here. Element-action is the preferred module for the same function. You can still install reftype with `npm i reftype` *
 
 
 ## Actribute
@@ -192,43 +195,6 @@ export const myEutility = {
 
 ```
 
-
-## Reftype
-
-*Reftype* is the 10th library which has now been abstracted into Class-action, Action-object and element-action. I think this library has been superceded by element-action and may be removed in the future. Prefer element-action which is based on more verssatile and composable parts. 
-
-Reftype aims to relieve the burden on the JavaScript programmer to know about the markup layout and structure in a large web application. Without *Reftype*, we manipulate all aspects of the DOM explicitly with Javascript. We may get some mileage from *Actribute* but the module is more abstract. 
-
-*Reftype* provides an alternative pattern quite similar to how *Vue.JS* and *Angular* operate. It lets you declaratively describe DOM operations using attribute directives. The major difference with *Reftype* is that it is more transparent, explicit and composable. It aligns with the policy of *Deleight* to use straight HTML, CSS and JavaScript. It is deliberately designed to be fast, lightweight and memory-efficient.
-
-```html
-<main>
-    <p t> mercury +&+ venus </p>
-    <p t> mercury + or +venus</p>
-    <p t>mercury + before + venus</p>
-    <section t>earth</section>
-    <article t class-a="color1| |color2">mars</article>
-</main>
-```
-
-```js
-import { RefType } from 'deleight/reftype'
-
-const refs = {
-    mercury: 'Planet mercury',
-    venus: 'The second planet',
-    earth: 'Our planet!',
-    mars: 'Nearest planetary neighbor',
-    color1: 'red',
-    color2: 'green'
-};
-
-const reftype = new RefType(refs, { sep: { multivalue: '+' } });
-reftype.add(document.querySelector('main'));
-reftype.react();                     // will apply all reactions
-reftype.set({ color1: 'blue' });     // will apply specific reaction...
-
-```
 
 
 ## Installation

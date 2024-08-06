@@ -31,7 +31,6 @@ const sources = [
     "class-action",
     "action-object",
     "element-action",
-    "reftype",
     "actribute",
     "onetomany",
     "generational",
