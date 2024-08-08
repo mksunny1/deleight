@@ -127,7 +127,7 @@ apply({
     }
 
     const removeListener = (e) => {
-      component.remove([parentSelector(e.target, "tr")]);
+      component.remove(parentSelector(e.target, "tr"));
     };
 
     table.addEventListener(

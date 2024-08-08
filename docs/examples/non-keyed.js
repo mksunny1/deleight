@@ -131,7 +131,7 @@ class Component {
     }
     beforeRemove(element) {
         const index = Array.from(this.view.parent.children).indexOf(element);
-        this.data.splice(index, 1); this.index.splice(index, 1)
+        this.data.splice(index, 1); this.indices.splice(index, 1)
         return element;
     }
     clear() {
