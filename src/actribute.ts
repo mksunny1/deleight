@@ -255,8 +255,8 @@ export class Actribute {
  * @param {T} obj
  * @param {string} prop
  */
-function get<T extends object>(obj: T, prop: string) {
-    const props = prop.split(".");
+function get<T extends object>(obj: T, prop: string, propSep='.') {
+    const props = prop.split(propSep);
     let result = obj[props[0].trim()];
     for (
         let i = 1;

@@ -10,6 +10,15 @@ const vars = {};          // state 1.
 const arrayVars = {};     // state 2.
 
 act.register({
+    /**
+     * rep component, responsible for laying out the game squares in 
+     * columns and rows. Will clone and append the element until we have 
+     * added all the elements we want (based on the value of nReps).
+     * 
+     * @param {*} element the element the component is applied to
+     * @param {*} nReps   the attribute (name and value) specifying the component
+     * @param {*} context  the context (options.ctx) passed to `act.process`.
+     */
     rep: (element, nReps, context) => {
         const reps = context[nReps.value];
         const parentNode = element.parentNode;
@@ -27,6 +36,9 @@ act.register({
     }
 })
 
+/**
+ * Start a new game
+ */
 function start() {
     const inputs = document.querySelectorAll('input');
     let [nRows, nCols, players, winCount] = Array.prototype.map.call(inputs, input => input.value);
@@ -51,6 +63,11 @@ function start() {
 }
 document.getElementById('startButton').onclick = (e) => start();
 board.onclick = (e) => { play(e) }
+
+/**
+ * Go to a point in history
+ * @param {*} e 
+ */
 history.onclick = (e) => {
     vars.move = parseInt(e.target.getAttribute('m-ove')); 
     let player, row, col, square; 
@@ -64,6 +81,9 @@ history.onclick = (e) => {
     display();
 }
 
+/**
+ * Update history after a play
+ */
 function updateHistory() {
     historyItemButton.setAttribute('m-ove', vars.move);
     historyItemButton.textContent = 'Go to ' + arrayVars.historyText[vars.move];
@@ -71,11 +91,20 @@ function updateHistory() {
         [historyItem.cloneNode(true), history.lastElementChild]);
 }
 
+/**
+ * Show game status
+ */
 function display() {
     if (arrayVars.winner[vars.move]) status.textContent = `Winner: ${arrayVars.winner[vars.move]}`
     else status.textContent = `Next Player: ${vars.players[arrayVars.nextPlayer[vars.move]]}`
 }
 
+/**
+ * Process a move.
+ * 
+ * @param {*} e 
+ * @returns 
+ */
 function play(e) {
     // 1. if a winner already exists return
     if (arrayVars.winner[vars.move] !== undefined) return;

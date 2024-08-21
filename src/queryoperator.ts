@@ -156,7 +156,7 @@ export function set(
  * Correctly replace the specified nodes with corresponding values.
  * 
  * This will materialize `elements` and `values` unless `lazy` 
- * is supplied and its value is truthy.
+ * is supplied as a truthy value.
  *
  * @example
  * // Safely shuffle all the children of the first main element:

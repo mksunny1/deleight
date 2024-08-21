@@ -2,26 +2,36 @@
 
 ![Logo](https://github.com/mksunny1/deleight/blob/main/docs/assets/logos/small.png?raw=true)
 
-This is now a group of 12 libraies that simplify web frontend development in vanilla HTML, CSS and JavasSript. Deleight aims to make frontend development more enjoyable for everyone.
+This is now a group of 10 independent libraies that simplify web frontend development in vanilla HTML, CSS and JavasSript. Deleight aims to make frontend development more enjoyable for everyone.
 
 Apart from this brief guide and the [documentation](https://mksunny1.github.io/deleight-api-docs/main), there are also some examples which can be used to understand how the parts fit together and to develop a feel for using deleight. To play with the exmples, you can run the included server with `npm start` and visit http://localhost:8000/docs/examples/index.html. The demos are also hosted online [here](https://mksunny1.github.io/deleight/docs/examples).
 
-What follows is a brief description of the libraries and how to include them in your projects.
+What follows is a brief description of the currently included libraries and how to include them in your projects. A list of removed libraries is also given for anyone who might still be interested in them. 
 
-## Class-Action
+## Apption
 
-[Class-action](https://github.com/mksunny1/class-action) is a simple library for replacing functions and methods with more compasable objects. It enables a form of metaprogramming in JavaScript. Learn more about it [here](https://github.com/mksunny1/class-action).
+Apption is a simple and pragmatic library for composing clean, efficient and succinct frontend applications. It exports several primitives for performing common actions in a typical web application. Further details can be found within its repository at https://github.com/mksunny1/apption.
 
-## Action-object
+```js
+import { call, ArrayActions, ChildrenActions } from 'deleight/apption';
 
-[Action-object](https://github.com/mksunny1/action-object) is a simple library for making JavaScript objects *reactive*. This means we can set up actions to run when an object property is set or a a method is invoked. It demonstrates a powerful use-case for [class-action](https://github.com/mksunny1/class-action). Learn more about it [here](https://github.com/mksunny1/action-object).
+const array = [];
+const tbody = document.querySelector('tbody'), row = document.querySelector('template').content.firstElementChild;
+const rowId = row.querySelector('td'), rowlbl = row.querySelector('a');
 
-## Element-action
+const AppChildrenActions = class extends ChildrenActions {
+    render(item) {
+        rowId.firstChild.nodeValue = item.id;
+        rowlbl.firstChild.nodeValue = item.lb;
+        return row.cloneNode(true);
+    } update(value = ' !!!') {
+        for (let i = 0; i < array.length; i += 10) 
+            this.element.children[i].querySelector('a').firstChild.nodeValue = array[i].lbl += value;
+    }
+}, actions = [new ArrayActions(array), new AppChildrenActions(tbody)];
 
-[Element-action](https://github.com/mksunny1/element-action) is the new reactivity library implemented with [action-object](https://github.com/mksunny1/action-object) and [class-action](https://github.com/mksunny1/class-action). The library is mostly complete now (and stripped-down for simplicity). Learn more about it [here](https://github.com/mksunny1/element-action).
-
-
-* NB: [reftype](https://github.com/mksunny1/reftype) has is now a separate package and has been removed from here. Element-action is the preferred module for the same function. You can still install reftype with `npm i reftype` *
+call({ push: actions }, { id: 1, lbl: 'First item }, { id: 2, lbl: 'Second item } );
+```
 
 
 ## Actribute
@@ -172,10 +182,11 @@ wrappedOneArray.push(99, 100, 101, 102, 103, 104);
 
 ```
 
-
 ## Eutility
 
-This library provides some useful primitives for simiplifying the code that will likely be included in many simple pages where JavaScript is used to support interactivity. Most JavaScript code can only run in response to an event. *Eutility* exports functions for:
+* NB: Eutility may be deprecated. It will likely be removed soon once all its dependents have been updated and a separate package is created for it. *
+
+This provides some useful primitives for simiplifying the code that will likely be included in many simple pages where JavaScript is used to support interactivity. Most JavaScript code can only run in response to an event. *Eutility* exports functions for:
 
 - composing event handlers
 - creating *lazy* handlers whose functionality can be injected later
@@ -196,6 +207,15 @@ export const myEutility = {
 ```
 
 
+## Removed libraries
+
+The following libraies which were previously included have now been removed because of their deviation from the main ideas of this project. The main problem is the complexity they introduce and the challenges to write efficient code with them. They are still retained in their own packages for those who might be interested in pursuing their development.
+
+- [Class-action](https://github.com/mksunny1/class-action)
+- [Action-object](https://github.com/mksunny1/action-object)
+- [Element-action](https://github.com/mksunny1/element-action)
+- [Reftype](https://github.com/mksunny1/reftype) 
+
 
 ## Installation
 
@@ -205,7 +225,8 @@ export const myEutility = {
 ## Usage
 
 ```js
-import { Component } from "deleight/element-action";
+import { act } from "deleight/apption";
+import { apply } from "deleight/appliance";
 import { Actribute } from "deleight/actribute";
 // ...
 ```
