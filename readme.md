@@ -6,11 +6,27 @@ This is now a group of 10 independent libraies that simplify web frontend develo
 
 Apart from this brief guide and the [documentation](https://mksunny1.github.io/deleight-api-docs/main), there are also some examples which can be used to understand how the parts fit together and to develop a feel for using deleight. To play with the exmples, you can run the included server with `npm start` and visit http://localhost:8000/docs/examples/index.html. The demos are also hosted online [here](https://mksunny1.github.io/deleight/docs/examples).
 
-What follows is a brief description of the currently included libraries and how to include them in your projects. A list of removed libraries is also given for anyone who might still be interested in them. 
+What follows is a brief description of the currently included libraries and how to include them in your projects. A list of removed libraries is also given for those who like them. 
+
+
+## Removed libraries
+
+The following libraies been removed from `deleight` at different times. They do not align fully with the main ideas of this project. The main goal here is to minimize complexity and make it easier to write flexible, succinct and efficient code. We want all the libraries to be independent and very close to bare-metal. 
+
+The removed libraries are retained in their own packages for those who might be interested in pursuing their development.
+
+- [Class-action](https://github.com/mksunny1/class-action)
+- [Action-object](https://github.com/mksunny1/action-object)
+- [Element-action](https://github.com/mksunny1/element-action)
+- [Reftype](https://github.com/mksunny1/reftype) 
+
+## Current Libraries
+
+These are the current libraries bundled together in `deleight`. All ten libraries have no dependencies and you can import each into your projects on their own using code like: `import { [primitive] } from 'deleight/[library]'`.
 
 ## Apption
 
-Apption is a simple and pragmatic library for composing clean, efficient and succinct frontend applications. It exports several primitives for performing common actions in a typical web application. Further details can be found within its repository at https://github.com/mksunny1/apption.
+Apption is a simple and pragmatic library for composing clean, efficient and succinct frontend applications. It exports several primitives for performing common actions in a typical web application. Further details can be found within its repository at https://github.com/mksunny1/apption. It consolidates some of the most useful patterns discovered from developing and using earlier libraries and from writing a lot of JavaScript code.
 
 ```js
 import { call, ArrayActions, ChildrenActions } from 'deleight/apption';
@@ -69,18 +85,20 @@ act.register({ comp1, comp2 })
 
 ## Appliance
 
-*Appliance* provides another declarative API for manipulating the DOM and for structuring code in JavaScript. It can be used to attach behavior to HTML elements easily and efficiently. It is like custom elements without the DOM building aspects. Here the elements may already exist in the DOM. This can produce big gains in accessibility and flexibility as DOM can be built server-side or client-side using any technology of choice. This can also increase efficiency because all the elements can be set up in one call.
+*Appliance* provides a declarative API for manipulating the DOM and for structuring code in JavaScript. It can be used to attach behavior to HTML elements easily and efficiently. It is like custom elements without the DOM building aspects. Here the elements may already exist in the DOM. This can produce big gains in accessibility and flexibility as DOM can be built server-side or client-side using any technology of choice. This can also increase efficiency because all the elements can be set up in one call.
 
 ```js
 import { apply } from 'deleight/appliance'
-import { mySophistry } from './my-style-manager.js'
-import { myEutility } from './my-event-manager.js'
+import { call } from 'deleight/apption'
+import { click, actions } from './my-app-actions.js'
 
-// apply used globally on all divs within the componentElement
-function(componentElement) {
+function(parentElement, item) {
     apply({
-        div: (...divs) => mySophistry.styles.style(...divs) || myEutility.listener.listen('click', divs,  myEutility.options)
-    }, componentElement);  // componentElement defaults to document.body.
+        "header": (...headers) => headers[item.index].textContent = item.title,
+        "p": (...paras) => paras[item.index].textContent = item.description,
+        ".cta": click(() => call({ update: actions })), "#clear": click(() => call({ clear: actions })),
+        "footer > button": click(() => call({ swap: actions }, 1, 998))
+    }, parentElement);
 }
 ```
 
@@ -103,7 +121,7 @@ function(componentElement) {
 
 ## Apriori
 
-This is a fun library to use if you need to build DOM with JavaScript. It includes primitives for template creation, template rendering and document tree building. There are tools for building DOM from in-page resources or dynamically loaded ones. This gives us the flexibility to choose whatever works best for a project.
+This is a fun library to use if you want to build DOM with JavaScript. It includes primitives for template creation, template rendering and document tree building. There are tools for building DOM from in-page resources or dynamically loaded ones. This gives us the flexibility to choose whatever works best for a project.
 
 ```js
 import { get, template } from "deleight/apriori";
@@ -121,15 +139,20 @@ Styling is a crucial aspect of most pages on the web. We need to make the pages 
 *Sophistry* enables efficiently scoping of declaratively written styles to specific elements. The library provides an API which simplifies the code needed for such. It will internally create open shadow roots where necessary. it maintains a cache to avoid reloading or re-processing the same styles (unless we request). *Sophistry* can draw styles from anywhere.
 
 ```js
-import { Sophistry } from "deleight/sophistry";
-export const mySophistry = new Sophistry();
-mySophistry.import("pStyle.css");
+import { Sophistry } from 'deleight/sophistry';
+import { createFragment } from 'deleight/apriori';
+const mySophistry = new Sophistry();
+const element = createFragment(apriori.get('markup.html'));
+const [styles, promises] = mySophistry.process(element);
+document.body.append(element);
+for (let style of styles) style.style(element, document.body.firstElementChild);
+
 ```
 
 
 ## Generational
 
-*Generational* exports some useful generators to improve performance and reduce memory footprint. The `range` and `items` generators have been especially useful in the examples. They may not work in many places where an array is expected because we can only iterate them once. Thus they should be used with caution. When in doubt, use an array.
+*Generational* exports some useful generators to improve performance and reduce memory footprint. The `range` and `items` generators have been especially useful in some of the examples. They may not work in many places where an array is expected because we can only iterate them once. Thus they should be used with caution. When in doubt, use an array.
 
 ```js
 import { range, items } from "deleight/generational";
@@ -205,16 +228,6 @@ export const myEutility = {
 };
 
 ```
-
-
-## Removed libraries
-
-The following libraies which were previously included have now been removed because of their deviation from the main ideas of this project. The main problem is the complexity they introduce and the challenges to write efficient code with them. They are still retained in their own packages for those who might be interested in pursuing their development.
-
-- [Class-action](https://github.com/mksunny1/class-action)
-- [Action-object](https://github.com/mksunny1/action-object)
-- [Element-action](https://github.com/mksunny1/element-action)
-- [Reftype](https://github.com/mksunny1/reftype) 
 
 
 ## Installation
