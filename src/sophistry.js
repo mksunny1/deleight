@@ -27,8 +27,9 @@ export class Sophistry {
      *
      * @example
      * import { Sophistry } from 'deleight/sophistry';
+     * import { createFragment } from 'deleight/apriori';
      * const mySophistry = new Sophistry();
-     * const element = apriori.createFragment(apriori.get('markup.html'));
+     * const element = createFragment(apriori.get('markup.html'));
      * const [styles, promises] = mySophistry.process(element);
      * document.body.append(element);
      * for (let style of styles) style.style(element, document.body.firstElementChild);

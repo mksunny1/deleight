@@ -17,9 +17,12 @@
  *     .btn: (...classedButtons) => doAnotherThingWith(classedButtons)
  * }
  */
-export interface IApplyMap {
-  [key: string]: Function | Function[];
-}
+export interface IApplyMap { [key: string | number]: IComponents; }
+
+/**
+ * A function, IApplyMap or an array of function and/or IRapplyMaps.
+ */
+export type IComponents = Function | IApplyMap | (Function | IApplyMap)[];
 
 /**
  * Functions similarly to querySelectorAll, but for selecting style rules in
@@ -35,22 +38,22 @@ export interface IApplyMap {
  * @returns {Array<CSSRule>}
  */
 export function ruleSelectorAll(
-  selectors: string,
-  styleElement: HTMLStyleElement,
-  firstOnly?: boolean,
+    selectors: string,
+    styleElement: HTMLStyleElement,
+    firstOnly?: boolean,
 ): Array<CSSRule> {
-  const arrSelectors = selectors.split(",").map((item) => item.trim());
-  const result: any[] = [];
-  let selector: string;
-  for (let rule of Array.from(styleElement.sheet?.cssRules || [])) {
-    for (selector of arrSelectors) {
-      if (rule.cssText.startsWith(selector)) {
-        result.push(rule);
-        if (firstOnly) return result;
-      }
+    const arrSelectors = selectors.split(",").map((item) => item.trim());
+    const result: any[] = [];
+    let selector: string;
+    for (let rule of Array.from(styleElement.sheet?.cssRules || [])) {
+        for (selector of arrSelectors) {
+            if (rule.cssText.startsWith(selector)) {
+                result.push(rule);
+                if (firstOnly) return result;
+            }
+        }
     }
-  }
-  return result;
+    return result;
 }
 
 /**
@@ -66,10 +69,10 @@ export function ruleSelectorAll(
  * @returns {CSSRule}
  */
 export function ruleSelector(
-  selectors: string,
-  styleElement: HTMLStyleElement,
+    selectors: string,
+    styleElement: HTMLStyleElement,
 ): CSSRule {
-  return ruleSelectorAll(selectors, styleElement, true)[0];
+    return ruleSelectorAll(selectors, styleElement, true)[0];
 }
 
 /**
@@ -85,9 +88,9 @@ export function ruleSelector(
  * @returns {Element}
  */
 export function parentSelector(node: Node, selector: string): Element | null {
-  let parent = node.parentElement;
-  while (parent && !parent.matches(selector)) parent = parent.parentElement;
-  return parent;
+    let parent = node.parentElement;
+    while (parent && !parent.matches(selector)) parent = parent.parentElement;
+    return parent;
 }
 
 /**
@@ -107,20 +110,31 @@ export function parentSelector(node: Node, selector: string): Element | null {
  * @param { Element } [containingElement]
  * 
  */
-export function querySelectors(selectors: string[]|string, containingElement?: Element) {
-  if (!containingElement) containingElement = document.body;
-  if (typeof selectors === 'string') selectors = selectors.split(',');
-  return selectors.map(s => containingElement.querySelector(s.trim()));
+export function querySelectors(selectors: string[] | string, containingElement?: Element) {
+    if (!containingElement) containingElement = document.body;
+    if (typeof selectors === 'string') selectors = selectors.split(',');
+    return selectors.map(s => containingElement.querySelector(s.trim()));
 }
 
 /**
  * Select the elements matching the keys in applyMap and run the functions given by the values over them.
- * This eliminates the many calls to querySelectorAll, which is quite verbose.
+ * This eliminates the many calls to querySelectorAll, which is quite verbose. 
+ * 
+ * If a key is a number instead of 
+ * a string, the child element at the index is selected instead. Negative indices can also be used to count from 
+ * the end backwards.
+ * 
+ * If a value in `applyMap` is an object but not an array, apply is called recursively on all selected 
+ * elements for it with the object used as the applyMap. 
  *
- * Without the third argument (asComponents), all selected elements are
+ * Without the third argument (`atomic`), all selected elements are
  * passed to the functions at once. With the argument given as a truthy value,
  * the elements are passed one by one, so that the behavior is almost like that
  * of web components.
+ * 
+ * A 4th argument (`selectFirst`) may also be specified to limit each selection to only the first matching 
+ * elements. In this case (and in all cases where there is only 1 match), the value of `atomic` will be irrelevant.
+ * 
  * @example
  * import { apply } from 'deleight/appliance';
  * apply({
@@ -133,31 +147,35 @@ export function querySelectors(selectors: string[]|string, containingElement?: E
  *
  * @param {IApplyMap } applyMap
  * @param {HTMLElement} [containerElement]
- * @param {boolean|number} [asComponent]
- * @param {boolean|number} [firstOnly]
+ * @param {boolean|number} [atomic]
+ * @param {boolean|number} [selectFirst]
  */
 export function apply(
-  applyMap: IApplyMap,
-  containerElement?: Element,
-  asComponent?: boolean | number,
-  firstOnly?: boolean | number,
+    applyMap: IApplyMap,
+    containerElement?: Element,
+    atomic?: boolean | number,
+    selectFirst?: boolean | number
 ) {
-  if (!containerElement) containerElement = document.body;
-  let selectorAll;
-  if (!firstOnly) {
-    selectorAll =
-      containerElement instanceof HTMLStyleElement
-        ? (selectors: string) => ruleSelectorAll(selectors, containerElement)
-        : containerElement.querySelectorAll.bind(containerElement);
-  } else {
-    selectorAll =
-      containerElement instanceof HTMLStyleElement
-        ? (selectors: string) => ruleSelector(selectors, containerElement)
-        : containerElement.querySelector.bind(containerElement);
-  }
-  for (let [selectors, functions] of Object.entries(applyMap)) {
-    applyTo(selectorAll(selectors), functions, asComponent);
-  }
+    if (!containerElement) containerElement = document.body;
+    let selectorAll;
+    if (!selectFirst) {
+        selectorAll =
+            containerElement instanceof HTMLStyleElement
+                ? (selectors: string) => ruleSelectorAll(selectors, containerElement)
+                : containerElement.querySelectorAll.bind(containerElement);
+    } else {
+        selectorAll =
+            containerElement instanceof HTMLStyleElement
+                ? (selectors: string) => ruleSelector(selectors, containerElement)
+                : containerElement.querySelector.bind(containerElement);
+    }
+    const children = containerElement instanceof HTMLStyleElement? containerElement.sheet?.cssRules: containerElement.children;
+    let index: number;
+    for (let [selectors, functions] of Object.entries(applyMap)) {
+        index = parseInt(selectors);
+        if (isNaN(index)) applyTo(selectorAll(selectors), functions, atomic);
+        else applyTo(children[index >= 0? index: children.length + index], functions, atomic);
+    }
 }
 /**
  * Applies the given functions to the specified elements (or CSS rules).
@@ -170,18 +188,32 @@ export function apply(
  * applyTo(Array.from(document.body.children), (...bodyChildren) => console.log(bodyChildren.length));
  *
  * @param {(Element|CSSRule)[]} elements
- * @param {Function|Function[]} functions
- * @param {boolean|undefined} [asComponent]
+ * @param {IComponents} components
+ * @param {boolean|undefined} [atomic]
  */
 export function applyTo(
-  elements: (Element | CSSRule)[] | (Element | CSSRule),
-  functions: Function | Function[],
-  asComponent?: boolean | number | undefined,
+    elements: (Element | CSSRule)[] | (Element | CSSRule),
+    components: IComponents,
+    atomic?: boolean | number | undefined,
+    selectFirst?: boolean | number
 ) {
-  let element: Element | CSSRule, fn: Function;
-  if (elements instanceof Element || elements instanceof CSSRule)
-    elements = [elements];
-  if (!(functions instanceof Array)) functions = [functions];
-  if (asComponent) for (element of elements) for (fn of functions) fn(element);
-  else for (fn of functions) fn(...elements);
+    let element: Element | CSSRule, comp: Function | IApplyMap;
+    if (elements instanceof Element || elements instanceof CSSRule)
+        elements = [elements];
+
+    if (!(components instanceof Array)) components = [components];
+
+    for (comp of (components as Function[])) {
+        if (comp instanceof Function) {
+            if (atomic) for (element of elements) comp(element);
+            else comp(...elements);
+        } else {
+            for (element of elements) apply(comp, element as Element, atomic, selectFirst);
+        }
+    }
+    
 }
+
+
+
+// todo: tests for: 1. number keys in apply map 2. nested apply maps

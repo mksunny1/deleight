@@ -91,10 +91,21 @@ export function querySelectors(selectors, containingElement) {
  * Select the elements matching the keys in applyMap and run the functions given by the values over them.
  * This eliminates the many calls to querySelectorAll, which is quite verbose.
  *
- * Without the third argument (asComponents), all selected elements are
+ * If a key is a number instead of
+ * a string, the child element at the index is selected instead. Negative indices can also be used to count from
+ * the end backwards.
+ *
+ * If a value in `applyMap` is an object but not an array, apply is called recursively on all selected
+ * elements for it with the object used as the applyMap.
+ *
+ * Without the third argument (`atomic`), all selected elements are
  * passed to the functions at once. With the argument given as a truthy value,
  * the elements are passed one by one, so that the behavior is almost like that
  * of web components.
+ *
+ * A 4th argument (`selectFirst`) may also be specified to limit each selection to only the first matching
+ * elements. In this case (and in all cases where there is only 1 match), the value of `atomic` will be irrelevant.
+ *
  * @example
  * import { apply } from 'deleight/appliance';
  * apply({
@@ -107,14 +118,14 @@ export function querySelectors(selectors, containingElement) {
  *
  * @param {IApplyMap } applyMap
  * @param {HTMLElement} [containerElement]
- * @param {boolean|number} [asComponent]
- * @param {boolean|number} [firstOnly]
+ * @param {boolean|number} [atomic]
+ * @param {boolean|number} [selectFirst]
  */
-export function apply(applyMap, containerElement, asComponent, firstOnly) {
+export function apply(applyMap, containerElement, atomic, selectFirst) {
     if (!containerElement)
         containerElement = document.body;
     let selectorAll;
-    if (!firstOnly) {
+    if (!selectFirst) {
         selectorAll =
             containerElement instanceof HTMLStyleElement
                 ? (selectors) => ruleSelectorAll(selectors, containerElement)
@@ -126,8 +137,14 @@ export function apply(applyMap, containerElement, asComponent, firstOnly) {
                 ? (selectors) => ruleSelector(selectors, containerElement)
                 : containerElement.querySelector.bind(containerElement);
     }
+    const children = containerElement instanceof HTMLStyleElement ? containerElement.sheet?.cssRules : containerElement.children;
+    let index;
     for (let [selectors, functions] of Object.entries(applyMap)) {
-        applyTo(selectorAll(selectors), functions, asComponent);
+        index = parseInt(selectors);
+        if (isNaN(index))
+            applyTo(selectorAll(selectors), functions, atomic);
+        else
+            applyTo(children[index >= 0 ? index : children.length + index], functions, atomic);
     }
 }
 /**
@@ -141,20 +158,27 @@ export function apply(applyMap, containerElement, asComponent, firstOnly) {
  * applyTo(Array.from(document.body.children), (...bodyChildren) => console.log(bodyChildren.length));
  *
  * @param {(Element|CSSRule)[]} elements
- * @param {Function|Function[]} functions
- * @param {boolean|undefined} [asComponent]
+ * @param {IComponents} components
+ * @param {boolean|undefined} [atomic]
  */
-export function applyTo(elements, functions, asComponent) {
-    let element, fn;
+export function applyTo(elements, components, atomic, selectFirst) {
+    let element, comp;
     if (elements instanceof Element || elements instanceof CSSRule)
         elements = [elements];
-    if (!(functions instanceof Array))
-        functions = [functions];
-    if (asComponent)
-        for (element of elements)
-            for (fn of functions)
-                fn(element);
-    else
-        for (fn of functions)
-            fn(...elements);
+    if (!(components instanceof Array))
+        components = [components];
+    for (comp of components) {
+        if (comp instanceof Function) {
+            if (atomic)
+                for (element of elements)
+                    comp(element);
+            else
+                comp(...elements);
+        }
+        else {
+            for (element of elements)
+                apply(comp, element, atomic, selectFirst);
+        }
+    }
 }
+// todo: tests for: 1. number keys in apply map 2. nested apply maps
