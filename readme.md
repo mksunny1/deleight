@@ -38,12 +38,12 @@ const rowId = row.querySelector('td'), rowlbl = row.querySelector('a');
 const AppChildrenActions = class extends ChildrenActions {
     render(item) {
         rowId.firstChild.nodeValue = item.id;
-        rowlbl.firstChild.nodeValue = item.lb;
+        rowlbl.firstChild.nodeValue = item.lbl;
         return row.cloneNode(true);
     } 
 }, actions = [new ArrayActions(array), new AppChildrenActions(tbody)];
 
-call({ push: actions }, { id: 1, lbl: 'First item }, { id: 2, lbl: 'Second item } );
+call({ push: actions }, { id: 1, lbl: 'First item' }, { id: 2, lbl: 'Second item' } );
 ```
 
 [More about *apption*](https://github.com/mksunny1/apption)
