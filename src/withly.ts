@@ -1,7 +1,7 @@
 /**
- * @module deleight/withly
- * 
  * This module exports {@link With} function for creating more concise and structured code.
+ * 
+ * @module deleight/withly
  */
 
 /**

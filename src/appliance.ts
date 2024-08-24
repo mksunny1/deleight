@@ -1,8 +1,8 @@
 /**
- * @module deleight/appliance
- * 
  * This module exports the {@link apply}, {@link applyTo}, {@link parentSelector} {@link ruleSelector}, 
  * {@link ruleSelectorAll} and {@link querySelectors} for succinctly selecting and operating on DOM elements and CSSOM rules. 
+ * 
+ * @module deleight/appliance
  */
 
 /**

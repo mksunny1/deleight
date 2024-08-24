@@ -1,8 +1,8 @@
 /**
- * @module deleight/sophistry
- * 
  * This module supports CSS loading, caching and 'localised' reuse. The main 
  * export is {@link Sophistrry}.
+ * 
+ * @module deleight/sophistry
  */
 
 /**

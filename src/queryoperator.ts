@@ -1,7 +1,7 @@
 /**
- * @module deleight/queryoperator
- * 
  * This module exports primitives for 'bulk' manipulation of the DOM.
+ * 
+ * @module deleight/queryoperator
  */
 
 
