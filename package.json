@@ -1,6 +1,6 @@
 {
   "name": "deleight",
-  "version": "4.0.6",
+  "version": "4.0.7",
   "description": "A group of 10 libraries for writing accessible and joyfully interactive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
   "exports": {
