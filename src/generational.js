@@ -1,4 +1,6 @@
 /**
+ * @module deleight/generational
+ *
  * This module exports many useful generators like `range` and `repeat`.
  */
 /**
@@ -6,7 +8,7 @@
  * if not possible.
  *
  * @example
- * import { iter } from 'deleight/generationsl';
+ * import { iter } from 'deleight/generational';
  * const it = iter([1, 2, 3, 4, 5]);
  *
  * @param { any } it
@@ -18,7 +20,7 @@ export function iter(it) {
  * Fast and 'costless' range function for javascript based on generators.
  *
  * @example
- * import { range } from 'deleight/generationsl';
+ * import { range } from 'deleight/generational';
  * const arr1000 = [...range(0, 1000)];
  * // creates an array with 1000 items counting from 0 to 999.
  *
@@ -41,7 +43,7 @@ export function* range(start, end, step) {
  * 'arrayLike' object that matches the provided index.
  *
  * @example
- * import { items, range } from 'deleight/generationsl';
+ * import { items, range } from 'deleight/generational';
  * const tenth = []...items(range(1000), range(0, 1000, 10))];
  * // selects every 10th item in the array.
  *
@@ -58,7 +60,7 @@ export function* items(arrayLike, index) {
  * given, `what` is repeated indefinitely.
  *
  * @example
- * import { repeat } from 'deleight/generationsl';
+ * import { repeat } from 'deleight/generational';
  * const repeated = [...repeat([1, 2, 3], 4)];
  * // [1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3]
  *
@@ -95,7 +97,7 @@ export function* repeat(what, times) {
  * If a firstValue is specified, it will be yielded first.
  *
  * @example
- * import { nextItems, iter } from 'deleight/generationsl';
+ * import { nextItems, iter } from 'deleight/generational';
  * const it = iter([1, 'a', 2, 'b', 3, 'c', 4, 'd']);
  * const [num, let] = next(it, 2);
  *
@@ -117,7 +119,7 @@ export function* next(it, count, firstValue) {
  * the given iterable
  *
  * @example
- * import { next } from 'deleight/generationsl';
+ * import { next } from 'deleight/generational';
  * const o1 = [1, 2, 3, 4];
  * const o2 = ['a', 'b', 'c', 'd'];
  * const zip = group(flat(o1, o2), 2);
@@ -143,7 +145,7 @@ export function* group(it, count) {
  * To pass an array as an iterator, call array.values().
  *
  * @example
- * import { flat } from 'deleight/generationsl';
+ * import { flat } from 'deleight/generational';
  * for (let i of flat(range(10, range(15)))) {
  *      console.log(i);    // 0, 0, 1, 1, 2, 2, .... till smallest iterable (10) is exhausted.
  * }
@@ -168,7 +170,7 @@ export function* flat(...args) {
  * Returns an unordered/random iterator over the input array..
  *
  * @example
- * import { uItems } from 'deleight/generationsl';
+ * import { uItems } from 'deleight/generational';
  * const unOrdered = uItems([1, 2, 3, 4]);  // [4, 1, 3, 2]
  *
  * @param {Iterable<any>} it
@@ -184,7 +186,7 @@ export function* uItems(it) {
  * have a length property of be previously passed in a call to`setLength`.
  *
  * @example
- * import { getLength, setLength } from 'deleight/generationsl';
+ * import { getLength, setLength } from 'deleight/generational';
  * const myRange = range(12);
  * setLength(myRange, 12);
  * getLength(myRange);   // returns 12.
@@ -205,7 +207,7 @@ export const iterLengths = new WeakMap();
  * functions that use `getLength`.
  *
  * @example
- * import { getLength, setLength } from 'deleight/generationsl';
+ * import { getLength, setLength } from 'deleight/generational';
  * const myRange = range(12);
  * setLength(myRange, 12);
  * getLength(myRange);   // returns 12.

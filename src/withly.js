@@ -1,5 +1,7 @@
 /**
- * This module exports With function for creating more concise and structured code.
+ * @module deleight/withly
+ *
+ * This module exports {@link With} function for creating more concise and structured code.
  */
 /**
  * Used to obtain a context (Recursive object) around a property of

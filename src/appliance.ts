@@ -1,6 +1,8 @@
 /**
- * This module exports the `apply` function for selecting and operating on DOM elements. It also exports 
- * new selector functions,
+ * @module deleight/appliance
+ * 
+ * This module exports the {@link apply}, {@link applyTo}, {@link parentSelector} {@link ruleSelector}, 
+ * {@link ruleSelectorAll} and {@link querySelectors} for succinctly selecting and operating on DOM elements and CSSOM rules. 
  */
 
 /**
@@ -213,7 +215,3 @@ export function applyTo(
     }
     
 }
-
-
-
-// todo: tests for: 1. number keys in apply map 2. nested apply maps

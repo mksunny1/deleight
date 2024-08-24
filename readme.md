@@ -24,7 +24,7 @@ The removed libraries are retained in their own packages for those who might be 
 
 These are the current libraries bundled together in `deleight`. All ten libraries have no dependencies and you can import each into your projects on their own using code like: `import { [primitive] } from 'deleight/[library]'`.
 
-## Apption
+### Apption
 
 Apption is a simple and pragmatic library for composing clean, efficient and succinct frontend applications. It exports several primitives for performing common actions in a typical web application. Further details can be found within its repository at https://github.com/mksunny1/apption. It consolidates some of the most useful patterns discovered from developing and using earlier libraries and from writing a lot of JavaScript code.
 
@@ -50,7 +50,7 @@ call({ push: actions }, { id: 1, lbl: 'First item }, { id: 2, lbl: 'Second item 
 ```
 
 
-## Actribute
+### Actribute
 
 *Actribute* is a versatile library for associating element attributes with JavaScript code. In one instance it can be used as a more widely supported, flexible and powerful alternative to extending built-in HTML elements, exposing a similar API. In another, it can be used to establish conventions for manipulating the DOM. The library also has some notable enhancements including the ability to join or recurse components.
 
@@ -83,7 +83,7 @@ act.register({ comp1, comp2 })
  delete act.registry.comp2;
 ```
 
-## Appliance
+### Appliance
 
 *Appliance* provides a declarative API for manipulating the DOM and for structuring code in JavaScript. It can be used to attach behavior to HTML elements easily and efficiently. It is like custom elements without the DOM building aspects. Here the elements may already exist in the DOM. This can produce big gains in accessibility and flexibility as DOM can be built server-side or client-side using any technology of choice. This can also increase efficiency because all the elements can be set up in one call.
 
@@ -102,7 +102,7 @@ function(parentElement, item) {
 }
 ```
 
-## Queryoperator
+### Queryoperator
 
 This provides a painless SQLesque API for manipulating the DOM. The library exports `insert`, `set`, `update` and `remove` functions for bulk manipulation of things on the DOM. It is an efficient, consistent and simple API to use. See the examples and the API docs.
 
@@ -119,7 +119,7 @@ function(componentElement) {
 ```
 
 
-## Apriori
+### Apriori
 
 This is a fun library to use if you want to build DOM with JavaScript. It includes primitives for template creation, template rendering and document tree building. There are tools for building DOM from in-page resources or dynamically loaded ones. This gives us the flexibility to choose whatever works best for a project.
 
@@ -132,7 +132,7 @@ function(componentElement, ...args) {
 ```
 
 
-## Sophistry
+### Sophistry
 
 Styling is a crucial aspect of most pages on the web. We need to make the pages beautiful and improve the UX for visual users. CSS is easy to include globally in any page, but when localising styles with Shadow DOM, one currently has to decide between writing duplicitive declarative styles vs writing JavaScript boilerplate to manage styles efficiently. 
 
@@ -150,7 +150,7 @@ for (let style of styles) style.style(element, document.body.firstElementChild);
 ```
 
 
-## Generational
+### Generational
 
 *Generational* exports some useful generators to improve performance and reduce memory footprint. The `range` and `items` generators have been especially useful in some of the examples. They may not work in many places where an array is expected because we can only iterate them once. Thus they should be used with caution. When in doubt, use an array.
 
@@ -164,7 +164,7 @@ const everyHundredthIn1000 = items(everyTenthIn1000, range(0, 100, 10));
 ```
 
 
-## Withly
+### Withly
 
 We are bringing `with` back to JavaScript with the help of Proxies. This functionality was removed from the language 
 because of performance, code comprehension and readbility issues. Once we have an implementation without these limitations, 
@@ -178,7 +178,7 @@ With(document.createElement('button'))[SET]({
 ```
 
 
-## OneToMany
+### OneToMany
 
 *OneToMany* exports primitives to manipulate many objects simultaneously. There are methods for getting and setting properties and invoking object methods. It provides a potentially more extensible alternative to functions, although presently it is less performant and the usage pattern is not quite as natural.
 
@@ -205,7 +205,7 @@ wrappedOneArray.push(99, 100, 101, 102, 103, 104);
 
 ```
 
-## Eutility
+### Eutility
 
 * NB: Eutility may be deprecated. It will likely be removed soon once all its dependents have been updated and a separate package is created for it. *
 

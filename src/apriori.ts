@@ -1,4 +1,6 @@
 /**
+ * @module deleight/apriori
+ * 
  * This module exports primitives for building DOM from text.
  */
 

@@ -1,9 +1,12 @@
 /**
- * This module supports CSS loading, caching and 'localised' reuse.
+ * @module deleight/sophistry
+ * 
+ * This module supports CSS loading, caching and 'localised' reuse. The main 
+ * export is {@link Sophistrry}.
  */
 
 /**
- * An instance of Sophistrory can be used to obtain and cache CSS Stylesheets
+ * An instance of Sophistrry can be used to obtain and cache CSS Stylesheets
  * which can be shared by multiple DOM elements.
  *
  *

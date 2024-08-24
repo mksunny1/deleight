@@ -1,4 +1,6 @@
 /**
+ * @module deleight/onetomany
+ *
  * This module enables reactivity by exporting primitives for multiplying the effects of single operations.
  */
 export const map = Symbol(), args = Symbol();
@@ -23,6 +25,8 @@ export class View {
      *
      * @param one
      * @param map
+     *
+     * @constructor
      */
     constructor(one, map) { this.one = one; this.map = map; }
     #oneWhat(what) {

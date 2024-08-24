@@ -1,4 +1,6 @@
 /**
+ * @module deleight/eutility
+ *
  * This module exports event handling helpers.
  */
 /**
