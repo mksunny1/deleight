@@ -40,14 +40,13 @@ const AppChildrenActions = class extends ChildrenActions {
         rowId.firstChild.nodeValue = item.id;
         rowlbl.firstChild.nodeValue = item.lb;
         return row.cloneNode(true);
-    } update(value = ' !!!') {
-        for (let i = 0; i < array.length; i += 10) 
-            this.element.children[i].querySelector('a').firstChild.nodeValue = array[i].lbl += value;
-    }
+    } 
 }, actions = [new ArrayActions(array), new AppChildrenActions(tbody)];
 
 call({ push: actions }, { id: 1, lbl: 'First item }, { id: 2, lbl: 'Second item } );
 ```
+
+[More about *apption*](https://github.com/mksunny1/apption)
 
 
 ### Actribute
@@ -83,6 +82,9 @@ act.register({ comp1, comp2 })
  delete act.registry.comp2;
 ```
 
+[API docs for *actribute*](https://mksunny1.github.io/deleight-api-docs/main/modules/actribute.html)
+
+
 ### Appliance
 
 *Appliance* provides a declarative API for manipulating the DOM and for structuring code in JavaScript. It can be used to attach behavior to HTML elements easily and efficiently. It is like custom elements without the DOM building aspects. Here the elements may already exist in the DOM. This can produce big gains in accessibility and flexibility as DOM can be built server-side or client-side using any technology of choice. This can also increase efficiency because all the elements can be set up in one call.
@@ -102,6 +104,9 @@ function(parentElement, item) {
 }
 ```
 
+[API docs for *appliance*](https://mksunny1.github.io/deleight-api-docs/main/modules/appliance.html)
+
+
 ### Queryoperator
 
 This provides a painless SQLesque API for manipulating the DOM. The library exports `insert`, `set`, `update` and `remove` functions for bulk manipulation of things on the DOM. It is an efficient, consistent and simple API to use. See the examples and the API docs.
@@ -118,6 +123,8 @@ function(componentElement) {
 }
 ```
 
+[API docs for *queryoperator*](https://mksunny1.github.io/deleight-api-docs/main/modules/queryoperator.html)
+
 
 ### Apriori
 
@@ -130,6 +137,8 @@ function(componentElement, ...args) {
     componentElement.insertAdjacentHTML('beforeend', myTemplate(...args));
 }
 ```
+
+[API docs for *apriori*](https://mksunny1.github.io/deleight-api-docs/main/modules/apriori.html)
 
 
 ### Sophistry
@@ -149,6 +158,8 @@ for (let style of styles) style.style(element, document.body.firstElementChild);
 
 ```
 
+[API docs for *sophistry*](https://mksunny1.github.io/deleight-api-docs/main/modules/sophistry.html)
+
 
 ### Generational
 
@@ -163,6 +174,8 @@ const everyHundredthIn1000 = items(everyTenthIn1000, range(0, 100, 10));
 // 0, 100, 200, ...
 ```
 
+[API docs for *generational*](https://mksunny1.github.io/deleight-api-docs/main/modules/generational.html)
+
 
 ### Withly
 
@@ -176,6 +189,8 @@ With(document.createElement('button'))[SET]({
     textContent: 'Wow!', className: 'main'
 })(btm => document.body.appendChild(btn));
 ```
+
+[API docs for *withly*](https://mksunny1.github.io/deleight-api-docs/main/modules/withly.html)
 
 
 ### OneToMany
