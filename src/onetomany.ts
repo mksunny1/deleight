@@ -1,7 +1,7 @@
 /**
  * This module enables reactivity by exporting primitives for multiplying the effects of single operations.
  * 
- * @module deleight/onetomany
+ * @module
  */
 
 export type IExtend<T, U> = Omit<T, keyof U> & {

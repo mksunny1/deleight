@@ -45,7 +45,7 @@
  * // unregister a component:
  * delete act.registry.comp2;
  * 
- * @module deleight/actribute
+ * @module 
  */
 
 /**

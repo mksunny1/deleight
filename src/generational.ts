@@ -1,7 +1,7 @@
 /**
  * This module exports many useful generators like `range` and `repeat`.
  * 
- * @module deleight/generational
+ * @module
  */
 
 /**
