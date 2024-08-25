@@ -96,8 +96,8 @@ import { click, actions } from './my-app-actions.js'
 
 function(parentElement, item) {
     apply({
-        "header": (...headers) => headers[item.index].textContent = item.title,
-        "p": (...paras) => paras[item.index].textContent = item.description,
+        header: (...headers) => headers[item.index].textContent = item.title,
+        p: (...paras) => paras[item.index].textContent = item.description,
         ".cta": click(() => call({ update: actions })), "#clear": click(() => call({ clear: actions })),
         "footer > button": click(() => call({ swap: actions }, 1, 998))
     }, parentElement);
@@ -220,6 +220,9 @@ wrappedOneArray.push(99, 100, 101, 102, 103, 104);
 
 ```
 
+[API docs for *onetomany*](https://mksunny1.github.io/deleight-api-docs/main/modules/onetomany.html)
+
+
 ### Eutility
 
 * NB: Eutility may be deprecated. It will likely be removed soon once all its dependents have been updated and a separate package is created for it. *
@@ -243,6 +246,8 @@ export const myEutility = {
 };
 
 ```
+
+[API docs for *eutility*](https://mksunny1.github.io/deleight-api-docs/main/modules/eutility.html)
 
 
 ## Installation
