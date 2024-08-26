@@ -46,7 +46,7 @@ const AppChildrenActions = class extends ChildrenActions {
 call({ push: actions }, { id: 1, lbl: 'First item' }, { id: 2, lbl: 'Second item' } );
 ```
 
-[More about *apption*](https://github.com/mksunny1/apption)
+[**More about *apption***](https://github.com/mksunny1/apption)
 
 
 ### Actribute
@@ -82,7 +82,7 @@ act.register({ comp1, comp2 })
  delete act.registry.comp2;
 ```
 
-[API docs for *actribute*](https://mksunny1.github.io/deleight-api-docs/main/modules/actribute.html)
+[**API docs for *actribute***](https://mksunny1.github.io/deleight-api-docs/main/modules/actribute.html)
 
 
 ### Appliance
@@ -104,7 +104,7 @@ function(parentElement, item) {
 }
 ```
 
-[API docs for *appliance*](https://mksunny1.github.io/deleight-api-docs/main/modules/appliance.html)
+[**API docs for *appliance***](https://mksunny1.github.io/deleight-api-docs/main/modules/appliance.html)
 
 
 ### Queryoperator
@@ -123,7 +123,7 @@ function(componentElement) {
 }
 ```
 
-[API docs for *queryoperator*](https://mksunny1.github.io/deleight-api-docs/main/modules/queryoperator.html)
+[**API docs for *queryoperator***](https://mksunny1.github.io/deleight-api-docs/main/modules/queryoperator.html)
 
 
 ### Apriori
@@ -138,7 +138,7 @@ function(componentElement, ...args) {
 }
 ```
 
-[API docs for *apriori*](https://mksunny1.github.io/deleight-api-docs/main/modules/apriori.html)
+[**API docs for *apriori***](https://mksunny1.github.io/deleight-api-docs/main/modules/apriori.html)
 
 
 ### Sophistry
@@ -158,7 +158,7 @@ for (let style of styles) style.style(element, document.body.firstElementChild);
 
 ```
 
-[API docs for *sophistry*](https://mksunny1.github.io/deleight-api-docs/main/modules/sophistry.html)
+[**API docs for *sophistry***](https://mksunny1.github.io/deleight-api-docs/main/modules/sophistry.html)
 
 
 ### Generational
@@ -174,7 +174,7 @@ const everyHundredthIn1000 = items(everyTenthIn1000, range(0, 100, 10));
 // 0, 100, 200, ...
 ```
 
-[API docs for *generational*](https://mksunny1.github.io/deleight-api-docs/main/modules/generational.html)
+[**API docs for *generational***](https://mksunny1.github.io/deleight-api-docs/main/modules/generational.html)
 
 
 ### Withly
@@ -187,15 +187,15 @@ we can benefit from the improved concision and structure in our code.
 import { With, SET } from "deleight/withly";
 With(document.createElement('button'))[SET]({
     textContent: 'Wow!', className: 'main'
-})(btm => document.body.appendChild(btn));
+}).addEventListener('click', e => document.body.textContent = 'Just Wow!')(btm => document.body.appendChild(btn));
 ```
 
-[API docs for *withly*](https://mksunny1.github.io/deleight-api-docs/main/modules/withly.html)
+[**API docs for *withly***](https://mksunny1.github.io/deleight-api-docs/main/modules/withly.html)
 
 
 ### OneToMany
 
-*OneToMany* exports primitives to manipulate many objects simultaneously. There are methods for getting and setting properties and invoking object methods. It provides a potentially more extensible alternative to functions, although presently it is less performant and the usage pattern is not quite as natural.
+*OneToMany* exports primitives to manipulate many objects simultaneously. There are methods for getting and setting properties and invoking object methods. It provides a potentially more extensible alternative to functions, although presently it is less performant and the usage pattern is not quite as natural. Note that this library has largely been superceded by [apption](https://github.com/mksunny1/apption). It is retained for historic reasons.
 
 ```js
 import { One, wrap, args } from "deleight/onetomany";
@@ -220,14 +220,12 @@ wrappedOneArray.push(99, 100, 101, 102, 103, 104);
 
 ```
 
-[API docs for *onetomany*](https://mksunny1.github.io/deleight-api-docs/main/modules/onetomany.html)
+[**API docs for *onetomany***](https://mksunny1.github.io/deleight-api-docs/main/modules/onetomany.html)
 
 
 ### Eutility
 
-* NB: Eutility may be deprecated. It will likely be removed soon once all its dependents have been updated and a separate package is created for it. *
-
-This provides some useful primitives for simiplifying the code that will likely be included in many simple pages where JavaScript is used to support interactivity. Most JavaScript code can only run in response to an event. *Eutility* exports functions for:
+This provides some useful primitives for simiplifying event-related code. Note that the [apption](https://github.com/mksunny1/apption) library now exports primitives that should generally be preferred for compositional functions. Still the other features and the history means this library will continue to be a part of Deleight and we will work to improve it as much as possible.
 
 - composing event handlers
 - creating *lazy* handlers whose functionality can be injected later
@@ -247,15 +245,19 @@ export const myEutility = {
 
 ```
 
-[API docs for *eutility*](https://mksunny1.github.io/deleight-api-docs/main/modules/eutility.html)
+[**API docs for *eutility***](https://mksunny1.github.io/deleight-api-docs/main/modules/eutility.html)
 
 
 ## Installation
+
+### NPM
 
 `npm i deleight`
 
 
 ## Usage
+
+### NPM
 
 ```js
 import { act } from "deleight/apption";
@@ -264,18 +266,27 @@ import { Actribute } from "deleight/actribute";
 // ...
 ```
 
+### CDN
+
+```js
+import { act } from "https://cdn.jsdelivr.net/npm/apption/dist/action.min.js";
+import { apply } from "https://cdn.jsdelivr.net/npm/deleight/dist/appliance/esm/appliance.min.js";
+import { Actribute } from "https://cdn.jsdelivr.net/npm/deleight/dist/actribute/esm/actribute.min.js";
+// ...
+```
+
+
 ## Contributing
 
-If you like this, I invite you to contribute. You can contribute in many areas. Sponsorship, issues, pull requests, benchmarks, testing, CI, examples; all are welcome. Please just maintain a positive disposition about this and about each-other.
+If you like this, I invite you to contribute. You can contribute in many areas. Your own libraaries, issues, pull requests, sponsorship, benchmarks, testing, CI, examples; all are welcome. Please just maintain a positive disposition about this and about each-other.
 
 Thank you for contributing.
 
 ## Ongoing and Planned Work
-1. Make all the libraries stand on their own. Then we can include more useful libraries from other authors.
+1. Improve the documentation.
 2. Complete the site (*deleightjs.com*).
 3. Complete and add more examples.
-4. Improve the documentation.
-5. Fix the logo...
+4. Fix the logo...
 
 ## Ideas
 
