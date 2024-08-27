@@ -278,7 +278,9 @@ import { Actribute } from "https://cdn.jsdelivr.net/npm/deleight/dist/actribute/
 
 ## Contributing
 
-If you like this, I invite you to contribute. You can contribute in many areas. Your own libraaries, issues, pull requests, sponsorship, benchmarks, testing, CI, examples; all are welcome. Please just maintain a positive disposition about this and about each-other.
+If you like this, I invite you to contribute. You can contribute in many areas. Your own libraaries, issues, pull requests, sponsorship, benchmarks, testing, CI, examples; all are welcome. Please just maintain a positive disposition about this and about each-other. Your contributions will go a long way in ensuring the continued development of deleight.
+
+[![](https://www.paypalobjects.com/en_GB/i/btn/btn_donate_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=S2ZW3RJSDHASW)
 
 Thank you for contributing.
 

@@ -1,12 +1,20 @@
 /**
- * @module deleight/sophistry
+ * This module supports CSS loading, caching and 'localised' reuse.
+ * The article at https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM#applying_styles_inside_the_shadow_dom
+   * stated that programmatically creating stylesheets facilitates
+   * selective reuse (as we would like when working with web components). Considering that CSS is
+   * traditionally written declaratively, it is worthwile to try to reduce the
+   * programming involved to use CSS with web components.
  *
- * This module supports CSS loading, caching and 'localised' reuse. The main
- * export is {@link Sophistrry}.
+ * The main export here is {@link Sophistry}.
+ *
+ *
+ * @module
  */
 /**
- * An instance of Sophistrry can be used to obtain and cache CSS Stylesheets
- * which can be shared by multiple DOM elements.
+ * An instance of Sophistry can be used to obtain and cache CSS Stylesheets
+ * which can be shared by multiple DOM elements. It can typically be very useful within
+ * web components.
  *
  *
  */
@@ -21,12 +29,9 @@ export class Sophistry {
      * and shadow roots) instead of duplicated even when they have been
      * created declaratively.
      *
-     * If replace is truthy, any cached stylesheets with the same name (or hash) as a
+     * If `replace` is truthy, any cached stylesheets with the same name (or hash) as a
      * styleshhet within the root will be replaced (reactively).
      *
-     * This resolves the stated issue with declaratively adding encapsulated
-     * styles to elements when using shadow DOM as described here;
-     * https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM.
      *
      * @example
      * import { Sophistry } from 'deleight/sophistry';
@@ -92,7 +97,7 @@ export class Sophistry {
     }
     /**
      * Import a stylesheet defined in an external CSS file. Optionally
-     * specify a name for the imported style in the Scophystry context (cache).
+     * specify a name for the imported style in the Sophystry cach ({@link Sophistry#styles}).
      * The name will default to the portion of the link before the first
      * apostrophe...
      *
@@ -115,7 +120,7 @@ export class Sophistry {
         return [st2, promise];
     }
     /**
-     * Replaces the text of an existing stylesheet. This is reactive.
+     * Replaces the text of an existing stylesheet in the cach. This is reactive.
      *
      * @example
      * import { Sophistry } from 'deleight/sophistry';

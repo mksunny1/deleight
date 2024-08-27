@@ -1,7 +1,7 @@
 /**
- * @module deleight/apriori
- *
  * This module exports primitives for building DOM from text.
+ *
+ * @module
  */
 /**
  * A template tag that will resolve only after all

@@ -1,7 +1,7 @@
 /**
- * @module deleight/queryoperator
- *
  * This module exports primitives for 'bulk' manipulation of the DOM.
+ *
+ * @module
  */
 /**
  * Insert the values using the elements as target. The way they are inserted

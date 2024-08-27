@@ -1,6 +1,4 @@
 /**
- * @module deleight/actribute
- *
  * This module exports the {@link Actribute} class which provides a structured way to attach behavior to HTML elements. The library
  * enables us to attach meaning to attributes in markup. The main motivation for its original
  * development was adding behavior to built-in elements without creating complexity and accessibility issues. However it can
@@ -46,6 +44,8 @@
  *
  * // unregister a component:
  * delete act.registry.comp2;
+ *
+ * @module
  */
 /**
  * A component can declare itself `open` by returning this symbol. This means

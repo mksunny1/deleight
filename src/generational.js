@@ -1,7 +1,7 @@
 /**
- * @module deleight/generational
- *
  * This module exports many useful generators like `range` and `repeat`.
+ *
+ * @module
  */
 /**
  * Forcs any iterable to become an iterator. Will throw

@@ -1,7 +1,7 @@
 /**
- * @module deleight/eutility
- *
  * This module exports event handling helpers.
+ *
+ * @module
  */
 /**
  * Base class for EventListener and MatchListener. This can be used to
