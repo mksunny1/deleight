@@ -1,6 +1,6 @@
 {
   "name": "deleight",
-  "version": "4.0.12",
+  "version": "4.0.13",
   "description": "A group of 10 libraries for writing accessible and joyfully interactive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
   "exports": {
@@ -25,7 +25,7 @@
       "default": "./dist/generational/esm/generational.js"
     },
     "./apriori": {
-      "require": "./dist/apriory/cjs/apriori.js",
+      "require": "./dist/apriori/cjs/apriori.js",
       "default": "./dist/apriori/esm/apriori.js"
     },
     "./sophistry": {
