@@ -275,6 +275,9 @@ import { Actribute } from "https://cdn.jsdelivr.net/npm/deleight/dist/actribute/
 // ...
 ```
 
+** NB: You can also simply copy the src directory from the [GitHub repository]() nto your project and use like any 
+other files you created. **
+
 
 ## Contributing
 

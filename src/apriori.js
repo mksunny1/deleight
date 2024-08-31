@@ -39,12 +39,13 @@ export async function tag(strings, ...expressions) {
  * // t === 'I will render this guy immediately!!!'
  *
  * @param {string} templateStr the template string
- * @param {string[]} argNames tThe names of the parameters of the returned function (which can be 'seen' inside the template string)
+ * @param {string[]} argNames The names of the parameters of the returned function (which can be 'seen' inside the template string).
+ * Defaults to: ['arg'].
  * @returns {(...any): string}
  */
 export function template(templateStr, argNames) {
     if (!argNames)
-        argNames = [];
+        argNames = ['arg'];
     return Function(...argNames, `return \`${templateStr}\`;`);
 }
 /**
@@ -58,14 +59,15 @@ export function template(templateStr, argNames) {
  *
  *
  * @param {string} templateStr the template string
- * @param {Array<string>} argNames The names of the parameters of the returned function (which can be 'seen' inside the template string)
+ * @param {Array<string>} argNames The names of the parameters of the returned function (which can be 'seen' inside the template string).
+ * Defaults to: ['arg'].
  * @param {string} tagName Supply a tagName argument to change the name of the tag function inside the template string if
  * the default name (T) is present in  argNames.
  * @returns {(...any): Promise<string>}
  */
 export function asyncTemplate(templateStr, argNames, tagName) {
     if (!argNames)
-        argNames = [];
+        argNames = ['arg'];
     if (!tagName)
         tagName = "T";
     if (argNames.includes(tagName)) {
@@ -204,4 +206,51 @@ export const createFragment = function (markup) {
 export function* elements(tagNames) {
     for (let tagName of tagNames.replace(',', '').split(' '))
         yield document.createElement(tagName.trim());
+}
+/**
+ * Returns an object which escapes properties sourced from it. Escaping markup is a key component of template rendering,
+ * so this is an important function to have here.
+ *
+ * NB: there are no tests yet. Please report any bugs.
+ *
+ * @example
+ * import { esc } from 'deleight/apriori'
+ * const obj = { a: 1, b: 'no special chars', c: '<p>But I am a paragraph</p>', d: { e: '<p>"esc" will still work here</p>' } }
+ * const escObj = esc(obj);
+ * console.log(escObj.c);     // &lt;p&gt;But I am a paragraph&lt;/p&gt;
+ * console.log(escObj.d.e);     // &lt;p&gt;&quot;esc&quot; will still work here&lt;/p&gt;
+ *
+ *
+ * @param {*} rawObject
+ */
+export function esc(rawObject) {
+    return new Proxy(rawObject, new EscTrap());
+}
+/**
+ * Credits 'bjornd' (https://stackoverflow.com/questions/6234773/can-i-escape-html-special-chars-in-javascript)
+ *
+ * @param {*} unsafe
+ * @returns
+ */
+function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+class EscTrap {
+    children = {};
+    get(target, p) {
+        if (this.children.hasOwnProperty(p))
+            return this.children[p];
+        const result = target[p];
+        if (typeof result === 'string')
+            return this.children[p] = escapeHtml(result);
+        else if (typeof result === 'object')
+            return this.children[p] = esc(result);
+        else
+            return this.children[p] = result;
+    }
 }
