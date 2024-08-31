@@ -131,11 +131,6 @@ out
 
 
 # project-specific
-readme-older.md
-dist
-package copy.json
-rollup.config copy.mjs
 docs/api
-archives
 
 

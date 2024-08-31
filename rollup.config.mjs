@@ -1,6 +1,6 @@
 import dts from "rollup-plugin-dts";
 import copy from "rollup-plugin-copy";
-import terser from "@rollup/plugin-terser";
+// import terser from "@rollup/plugin-terser";
 // import typescript from '@rollup/plugin-typescript';
 
 import { writeFile, mkdir } from "fs/promises";
@@ -41,7 +41,7 @@ const sources = [
 ];
 
 const exports = [];
-let extraPlugins;
+// let extraPlugins;
 for (let [i, src] of sources.entries()) {
     exports.push({
         input: `./src/${src}.js`,
@@ -52,7 +52,7 @@ for (let [i, src] of sources.entries()) {
         plugins: [
             createPackage(src),
             createCommonJsPackage(src),
-            terser()
+            // terser()
         ]
 
     }, {
