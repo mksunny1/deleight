@@ -6,7 +6,7 @@ This is now a group of 10 independent libraies that simplify web frontend develo
 
 Apart from this brief guide and the [documentation](https://mksunny1.github.io/deleight-api-docs/main), there are also some examples which can be used to understand how the parts fit together and to develop a feel for using deleight. To play with the exmples, you can run the included server with `npm start` and visit http://localhost:8000/docs/examples/index.html. The demos are also hosted online [here](https://mksunny1.github.io/deleight/docs/examples). We also have an entry in the [Krausest JS Frameworks Benchmarks](https://github.com/krausest/js-framework-benchmark).
 
-What follows is a brief description of the currently included libraries and how to include them in your projects. A list of removed libraries is also given for those who may like them. If you find yourself stuck or you have any questions about using deleight, please ask in the [discussions](https://github.com/mksunny1/deleight/discussions) area. It helps, to be able to access as much information as possible in one place. For other front-end related matters there are many excellent resources to pick from. notably [MDN](https://developer.mozilla.org/en-US/), [W3 schools](https://www.w3schools.com) and [Stackoverflow](https://stackoverflow.com).
+What follows is a brief description of the currently included libraries and how to include them in your projects. A list of removed libraries is also given for those who may like them. If you find yourself stuck or you have any questions about using deleight, please ask in the [discussions](https://github.com/mksunny1/deleight/discussions) area. This is not a large community at the moment.
 
 
 ## Removed libraries
@@ -275,8 +275,7 @@ import { Actribute } from "https://cdn.jsdelivr.net/npm/deleight/dist/actribute/
 // ...
 ```
 
-** NB: You can also simply copy the dist (or src) directory from the [GitHub repository]() nto your project and use like any 
-other files there. **
+** NB: You can also simply copy the [GitHub repository]() nto your project and use like any other files there. Deleight was meant from the start to be simple to integrate and use. **
 
 
 ## Contributing
@@ -286,10 +285,9 @@ If you like this, I invite you to contribute. You can contribute in many areas. 
 Thank you for contributing.
 
 ## Ongoing and Planned Work
-1. Improving the docs :memo:.
-2. Completing the site (*deleightjs.com*) :construction:.
-3. More examples :bento:.
-4. Fixing the logo :art:...
+1. Completing the site (*deleightjs.com*) :construction:.
+2. More examples :bento:.
+3. Fixing the logo :art:...
 
 ## Ideas
 

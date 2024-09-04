@@ -229,6 +229,8 @@ function esc(rawObject) {
     return new Proxy(rawObject, new EscTrap());
 }
 /**
+ * Escapes special HTML characters in the input (unsafe) string.
+ *
  * Credits 'bjornd' (https://stackoverflow.com/questions/6234773/can-i-escape-html-special-chars-in-javascript)
  *
  * @param {*} unsafe
@@ -262,6 +264,7 @@ exports.asyncTemplates = asyncTemplates;
 exports.createFragment = createFragment;
 exports.elements = elements;
 exports.esc = esc;
+exports.escapeHtml = escapeHtml;
 exports.get = get;
 exports.tag = tag;
 exports.template = template;

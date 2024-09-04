@@ -272,17 +272,19 @@ export function* elements(tagNames: string) {
  * 
  * @param {*} rawObject 
  */
-export function esc(rawObject: any) {
+export function escObject(rawObject: any) {
     return new Proxy(rawObject, new EscTrap());
 }
 
 /**
+ * Escapes special HTML characters in the input (unsafe) string.
+ * 
  * Credits 'bjornd' (https://stackoverflow.com/questions/6234773/can-i-escape-html-special-chars-in-javascript)
  * 
  * @param {*} unsafe 
  * @returns 
  */
-function escapeHtml(unsafe) {
+export function escString(unsafe: string) {
     return unsafe
          .replace(/&/g, "&amp;")
          .replace(/</g, "&lt;")
@@ -296,8 +298,8 @@ class EscTrap {
     get(target, p) {
         if (this.children.hasOwnProperty(p)) return this.children[p];
         const result = target[p];
-        if (typeof result === 'string') return this.children[p] = escapeHtml(result);
-        else if (typeof result === 'object') return this.children[p] = esc(result);
+        if (typeof result === 'string') return this.children[p] = escString(result);
+        else if (typeof result === 'object') return this.children[p] = escObject(result);
         else return this.children[p] = result;
     }
 }
