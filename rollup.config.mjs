@@ -1,5 +1,6 @@
 import dts from "rollup-plugin-dts";
 import copy from "rollup-plugin-copy";
+import { nodeResolve } from "@rollup/plugin-node-resolve";
 // import terser from "@rollup/plugin-terser";
 // import typescript from '@rollup/plugin-typescript';
 
@@ -50,6 +51,7 @@ for (let [i, src] of sources.entries()) {
             { format: "cjs", file: `./dist/${src}/cjs/${src}.js`},
         ],
         plugins: [
+            nodeResolve(),
             createPackage(src),
             createCommonJsPackage(src),
             // terser()
