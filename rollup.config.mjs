@@ -1,6 +1,5 @@
 import dts from "rollup-plugin-dts";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
-
 import { writeFile, mkdir } from "fs/promises";
 
 function createPackage(src) {

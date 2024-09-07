@@ -255,9 +255,11 @@ export const myEutility = {
 `npm i deleight`
 
 
-## Usage
+## Importing
 
 ### NPM
+
+#### EX Modules
 
 ```js
 import { act } from "deleight/apption";
@@ -266,10 +268,18 @@ import { Actribute } from "deleight/actribute";
 // ...
 ```
 
+#### CommonJS
+
+```js
+const apption = require("deleight/apption");
+const appliance = require("deleight/appliance");
+const Actribute = require("deleight/actribute").Actribute;
+```
+
 ### CDN
 
 ```js
-import { act } from "https://cdn.jsdelivr.net/npm/apption/dist/action.min.js";
+import { act } from "https://cdn.jsdelivr.net/npm/deleight/dist/apption/esm/apption.min.js";
 import { apply } from "https://cdn.jsdelivr.net/npm/deleight/dist/appliance/esm/appliance.min.js";
 import { Actribute } from "https://cdn.jsdelivr.net/npm/deleight/dist/actribute/esm/actribute.min.js";
 // ...
