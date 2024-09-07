@@ -1,6 +1,6 @@
 {
   "name": "deleight",
-  "version": "4.3.1",
+  "version": "4.3.2",
   "description": "A group of 10 libraries for writing accessible and joyfully interactive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
   "exports": {
@@ -84,12 +84,10 @@
   "license": "MIT",
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
     "express": "^4.19.2",
     "jsdom": "^24.0.0",
     "rollup": "^4.14.1",
-    "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-dts": "^6.1.0",
     "typedoc": "^0.25.13",
     "typescript": "^5.4.5"
