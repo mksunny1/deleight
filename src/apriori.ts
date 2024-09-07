@@ -256,6 +256,42 @@ export function* elements(tagNames: string) {
     for (let tagName of tagNames.replace(',', '').split(' ')) yield document.createElement(tagName.trim());
 }
 
+const eTrap = {
+    get(target: any, p: string) {
+        const element = document.createElement(p);
+        return (...args: any[]) => {
+            for (let arg of args) {
+                if (arg instanceof Node) element.appendChild(arg);              // append node
+                else if (typeof arg === 'string') element.append(arg);          // append text node
+                else if (arg instanceof Function) arg(element);                 // arbitrary setup
+                else if (typeof arg === 'object') Object.assign(element, arg);  // set properties
+            }
+            return element;
+        }
+    }
+}
+
+/**
+ * A simple proxy object for creating and 'setting up' a new element in one go.
+ * Can be nested to create and setup entire DOM trees. This is much more 
+ * powerful than the simple `elements` function which simply creates and returns 
+ * 1 or more elements.
+ * 
+ * @example
+ * import { e } from 'deleight/apriori';
+ * const tree = e.main(e.h1('Title',                               // stringd are appended
+ *                          h1 => console.log(h1, ' created')),    // functions are called with the new element
+ *                     e.section(e.h2('Section 1'),
+ *                               e.p('This is the first section', 
+ *                                   { className: 'text-centre' }  // objects are used to assign properties.
+ *                                  )
+ *                              )                                  // nodes are appended
+ *                    );
+ * document.appendChild(tree);
+ * 
+ */
+export const e = new Proxy({}, eTrap);
+
 /**
  * Returns an object which escapes properties sourced from it. Escaping markup is a key component of template rendering, 
  * so this is an important function to have here.

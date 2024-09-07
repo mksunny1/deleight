@@ -207,6 +207,44 @@ export function* elements(tagNames) {
     for (let tagName of tagNames.replace(',', '').split(' '))
         yield document.createElement(tagName.trim());
 }
+const eTrap = {
+    get(target, p) {
+        const element = document.createElement(p);
+        return (...args) => {
+            for (let arg of args) {
+                if (arg instanceof Node)
+                    element.appendChild(arg); // append node
+                else if (typeof arg === 'string')
+                    element.append(arg); // append text node
+                else if (arg instanceof Function)
+                    arg(element); // arbitrary setup
+                else if (typeof arg === 'object')
+                    Object.assign(element, arg); // set properties
+            }
+            return element;
+        };
+    }
+};
+/**
+ * A simple proxy object for creating and 'setting up' a new element in one go.
+ * Can be nested to create and setup entire DOM trees. This is much more
+ * powerful than the simple `elements` function which simply creates and returns
+ * 1 or more elements.
+ *
+ * @example
+ * import { e } from 'deleight/apriori';
+ * const tree = e.main(e.h1('Title',                               // stringd are appended
+ *                          h1 => console.log(h1, ' created')),    // functions are called with the new element
+ *                     e.section(e.h2('Section 1'),
+ *                               e.p('This is the first section',
+ *                                   { className: 'text-centre' }  // objects are used to assign properties.
+ *                                  )
+ *                              )                                  // nodes are appended
+ *                    );
+ * document.appendChild(tree);
+ *
+ */
+export const e = new Proxy({}, eTrap);
 /**
  * Returns an object which escapes properties sourced from it. Escaping markup is a key component of template rendering,
  * so this is an important function to have here.
@@ -223,7 +261,7 @@ export function* elements(tagNames) {
  *
  * @param {*} rawObject
  */
-export function esc(rawObject) {
+export function escObject(rawObject) {
     return new Proxy(rawObject, new EscTrap());
 }
 /**
@@ -234,7 +272,7 @@ export function esc(rawObject) {
  * @param {*} unsafe
  * @returns
  */
-export function escapeHtml(unsafe) {
+export function escString(unsafe) {
     return unsafe
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
@@ -249,9 +287,9 @@ class EscTrap {
             return this.children[p];
         const result = target[p];
         if (typeof result === 'string')
-            return this.children[p] = escapeHtml(result);
+            return this.children[p] = escString(result);
         else if (typeof result === 'object')
-            return this.children[p] = esc(result);
+            return this.children[p] = escObject(result);
         else
             return this.children[p] = result;
     }

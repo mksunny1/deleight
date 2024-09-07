@@ -148,6 +148,26 @@ declare const createFragment: (markup: string) => DocumentFragment | Element;
  */
 declare function elements(tagNames: string): Generator<HTMLElement, void, unknown>;
 /**
+ * A simple proxy object for creating and 'setting up' a new element in one go.
+ * Can be nested to create and setup entire DOM trees. This is much more
+ * powerful than the simple `elements` function which simply creates and returns
+ * 1 or more elements.
+ *
+ * @example
+ * import { e } from 'deleight/apriori';
+ * const tree = e.main(e.h1('Title',                               // stringd are appended
+ *                          h1 => console.log(h1, ' created')),    // functions are called with the new element
+ *                     e.section(e.h2('Section 1'),
+ *                               e.p('This is the first section',
+ *                                   { className: 'text-centre' }  // objects are used to assign properties.
+ *                                  )
+ *                              )                                  // nodes are appended
+ *                    );
+ * document.appendChild(tree);
+ *
+ */
+declare const e: any;
+/**
  * Returns an object which escapes properties sourced from it. Escaping markup is a key component of template rendering,
  * so this is an important function to have here.
  *
@@ -163,7 +183,7 @@ declare function elements(tagNames: string): Generator<HTMLElement, void, unknow
  *
  * @param {*} rawObject
  */
-declare function esc(rawObject: any): any;
+declare function escObject(rawObject: any): any;
 /**
  * Escapes special HTML characters in the input (unsafe) string.
  *
@@ -172,6 +192,6 @@ declare function esc(rawObject: any): any;
  * @param {*} unsafe
  * @returns
  */
-declare function escapeHtml(unsafe: string): string;
+declare function escString(unsafe: string): string;
 
-export { type IAsyncTemplates, type ITemplates, asyncTemplate, asyncTemplates, createFragment, elements, esc, escapeHtml, get, tag, template, templates };
+export { type IAsyncTemplates, type ITemplates, asyncTemplate, asyncTemplates, createFragment, e, elements, escObject, escString, get, tag, template, templates };
