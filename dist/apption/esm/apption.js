@@ -1,9 +1,4 @@
 /**
- * General app actions.
- *
- * @module
- */
-/**
  * Wraps a function that returns a real value to work with when an action is triggered.
  * ALl actions exported by this module ({@link act}, {@link call}, {@link set}, {@link del})
  * recognise instances of this type. This removes the need to hold references to concrete
@@ -623,6 +618,7 @@ const selectorTrap = {
  *
  */
 class Selector {
+    #proxy;
     constructor(treespace) {
         if (treespace)
             this.treespace = treespace;
@@ -660,6 +656,11 @@ class Selector {
         if (currentElement)
             currentElement.remove();
     }
+    proxy() {
+        if (!this.#proxy)
+            this.#proxy = new Proxy(this, selectorTrap);
+        return this.#proxy;
+    }
 }
 /**
  * Returns a proxy object that selects an element when a property is requested from it.
@@ -682,11 +683,10 @@ class Selector {
  *
  *
  * @param treespace
- * @param cls
  * @returns
  */
-function selector(treespace, cls = Selector) {
-    return new Proxy(new cls(treespace), selectorTrap);
+function selector(treespace) {
+    return new Selector(treespace).proxy();
 }
 /**
  * Returns a selection object that lazily represents a property with the name within the `treespace` element (or document).
@@ -742,11 +742,10 @@ class MemberSelector extends Selector {
  *
  * @param name
  * @param treespace
- * @param cls
  * @returns
  */
-function member(name, treespace, cls = MemberSelector) {
-    return new Proxy(new cls(name, treespace), selectorTrap);
+function member(name, treespace) {
+    return new MemberSelector(name, treespace).proxy();
 }
 /**
  * Returns a selection object that lazily represents an attribute with the name within the `treespace` element (or document).
@@ -798,11 +797,10 @@ class AttrSelector extends MemberSelector {
  *
  * @param name
  * @param treespace
- * @param cls
  * @returns
  */
-function attr(name, treespace, cls = AttrSelector) {
-    return member(name, treespace, cls || AttrSelector);
+function attr(name, treespace) {
+    return new AttrSelector(name, treespace).proxy();
 }
 /**
  * Returns a selection object that lazily represents a method with the name within the `treespace` element (or document).
@@ -825,12 +823,18 @@ function attr(name, treespace, cls = AttrSelector) {
  *
  */
 class MethodSelector extends Selector {
+    #proxy;
     constructor(name, treespace) {
         super(treespace);
         this.name = name;
     }
     call(key, ...args) {
         return super.get(key)?.[this.name](...args);
+    }
+    proxy() {
+        if (!this.#proxy)
+            this.#proxy = new Proxy(this, methodSelectorTrap);
+        return this.#proxy;
     }
 }
 const methodSelectorTrap = {
@@ -857,22 +861,34 @@ const methodSelectorTrap = {
  *
  * @param name
  * @param treespace
- * @param cls
  * @returns
  */
-function method(name, treespace, cls = MethodSelector) {
-    return new Proxy(new cls(name, treespace), methodSelectorTrap);
+function method(name, treespace) {
+    return new MethodSelector(name, treespace).proxy();
 }
 
 /**
- *
- * This module exports functions that wrap objects to perform many useful
- * transformations when their properties are fetched (get), set or deleted.
+ * Objects that transform values before they are sent to/from objects they wrap.
  *
  * @module
  */
 const transformerTrap = {
-    get([object, trans], p) {
+    get(transformer, p) {
+        return transformer.get(p);
+    },
+    set(transformer, p, value) {
+        transformer.set(p, value);
+        return true;
+    },
+};
+class Transformer {
+    #proxy;
+    constructor(object, trans) {
+        this.object = object;
+        this.trans = trans;
+    }
+    get(p) {
+        const { object, trans } = this;
         const result = object[p];
         if (result instanceof Function) { // method
             return (...args) => {
@@ -885,14 +901,19 @@ const transformerTrap = {
             };
         }
         return (trans && trans.get) ? trans.get(p, result) : result;
-    },
-    set([object, trans], p, value) {
+    }
+    set(p, value) {
+        const { object, trans } = this;
         if (trans && trans.set)
             value = trans.set(p, value);
         object[p] = value;
-        return true;
-    },
-};
+    }
+    proxy() {
+        if (!this.#proxy)
+            this.#proxy = new Proxy(this, transformerTrap);
+        return this.#proxy;
+    }
+}
 /**
  * Creates a transformer object which wraps the given object to
  * transform values passed to/from it.
@@ -910,24 +931,45 @@ const transformerTrap = {
  * @returns
  */
 function transformer(object, trans) {
-    return new Proxy([object, trans], transformerTrap);
+    return new Transformer(object, trans).proxy();
 }
 const argTrap = {
-    get([object, fn], p) {
-        fn(object);
-        return object[p];
+    get(arg, p) {
+        return arg.get(p);
     },
-    set([object, fn], p, value) {
-        object[p] = value;
-        fn(object);
+    set(arg, p, value) {
+        arg.set(p, value);
         return true;
     },
-    deleteProperty([object, fn], p) {
-        delete object[p];
-        fn(object);
+    deleteProperty(arg, p) {
+        arg.delete(p);
         return true;
     }
 };
+class Arg {
+    #proxy;
+    constructor(object, fn) {
+        this.object = object;
+        this.fn = fn;
+    }
+    get(p) {
+        this.fn(this.object);
+        return this.object[p];
+    }
+    set(p, value) {
+        this.object[p] = value;
+        return this.fn(this.object);
+    }
+    delete(p) {
+        delete this.object[p];
+        return this.fn(this.object);
+    }
+    proxy() {
+        if (!this.#proxy)
+            this.#proxy = new Proxy(this, argTrap);
+        return this.#proxy;
+    }
+}
 /**
  *
  * Returns a wrapper object which always invokes the function with the
@@ -951,11 +993,31 @@ const argTrap = {
  * @param fn
  */
 function arg(object, fn) {
-    return new Proxy([object, fn], argTrap);
+    return new Arg(object, fn).proxy();
 }
 const redirectTrap = {
-    get([map, remap], p) {
-        let q = remap?.[p];
+    get(red, p) {
+        return red.get(p);
+    },
+    set(red, p, value) {
+        red.set(p, value);
+        return true;
+    },
+    deleteProperty(red, p) {
+        red.delete(p);
+        return true;
+    }
+};
+class Redirect {
+    #proxy;
+    constructor(map, remap) {
+        this.map = map;
+        if (remap)
+            this.remap = remap;
+    }
+    get(p) {
+        const { map, remap } = this;
+        let q = (typeof p !== 'symbol') ? remap?.[p] : undefined;
         if (q === undefined)
             q = p;
         const object = map[p];
@@ -964,24 +1026,29 @@ const redirectTrap = {
             return (...args) => result.apply(object, args);
         }
         return result;
-    },
-    set([map, remap], p, value) {
-        let q = remap?.[p];
+    }
+    set(p, value) {
+        const { map, remap } = this;
+        let q = (typeof p !== 'symbol') ? remap?.[p] : undefined;
         if (q === undefined)
             q = p;
         const object = map[p];
         object[q] = value;
-        return true;
-    },
-    deleteProperty([map, remap], p) {
-        let q = remap?.[p];
+    }
+    delete(p) {
+        const { map, remap } = this;
+        let q = (typeof p !== 'symbol') ? remap?.[p] : undefined;
         if (q === undefined)
             q = p;
         const object = map[p];
         delete object[q];
-        return true;
     }
-};
+    proxy() {
+        if (!this.#proxy)
+            this.#proxy = new Proxy(this, redirectTrap);
+        return this.#proxy;
+    }
+}
 /**
  * Returns an object whose properties are drawn from multiple objects.
  *
@@ -1004,7 +1071,7 @@ const redirectTrap = {
  * @param remap
  */
 function redirect(map, remap) {
-    return new Proxy([map, remap], redirectTrap);
+    return new Redirect(map, remap).proxy();
 }
 
-export { Action, Args, ArrayActions, AttrSelector, CallAction, ChildrenActions, DelAction, Lazy, MemberSelector, MethodSelector, ObjectAction, Selector, SetAction, act, arg, attr, call, del, foreach, map, mapKeys, mapValues, member, method, redirect, reduce, selector, set, transformer, zip };
+export { Action, Arg, Args, ArrayActions, AttrSelector, CallAction, ChildrenActions, DelAction, Lazy, MemberSelector, MethodSelector, ObjectAction, Redirect, Selector, SetAction, Transformer, act, arg, attr, call, del, foreach, map, mapKeys, mapValues, member, method, redirect, reduce, selector, set, transformer, zip };
