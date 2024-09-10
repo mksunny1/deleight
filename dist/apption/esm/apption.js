@@ -127,8 +127,8 @@ function call(map, ...args) {
  * If any array or object is of type {@link Lazy}, it is first resolved to obtain the
  * array or object to work with.
  *
- * If the value to set is of type {@link Lazy}, its value method is called with the previous
- * property values for each object to compute the new values to be set.
+ * If the value to set is of type {@link Lazy}, its value method is called with the property key
+ * and previous value for each object to compute the new value to be set.
  *
  *
  * @example
@@ -139,7 +139,7 @@ function call(map, ...args) {
  * console.log(obj1);    // { a: 20, b: 2, c: 20}
  * console.log(obj2);    // { a: 1, b: 20, c: 3}
  *
- * set(actions, new Lazy(x => x * 2));
+ * set(actions, new Lazy((key, val) => val * 2));
  * console.log(obj1);    // { a: 40, b: 2, c: 40}
  * console.log(obj2);    // { a: 1, b: 40, c: 3}
  *
@@ -155,7 +155,7 @@ function set(map, value) {
             if (object instanceof Lazy)
                 object = object.value(key, value);
             if (value instanceof Lazy)
-                object[key] = value.value(object[key]);
+                object[key] = value.value(key, object[key]);
             else
                 object[key] = value;
         }

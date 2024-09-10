@@ -26,7 +26,7 @@ These are the current libraries bundled together in `deleight`. All ten librarie
 
 ### Apption
 
-Apption is a simple and pragmatic library for composing clean, efficient and succinct frontend applications. It exports several primitives for performing common actions in a typical web application. Further details can be found within its repository at https://github.com/mksunny1/apption. It consolidates some of the most useful patterns discovered from developing and using earlier libraries and from writing a lot of JavaScript code.
+Apption is a simple and pragmatic library for composing clean, efficient and succinct frontend applications. It exports several primitives for performing common actions in a typical web application. Further details can be found within its repository at https://github.com/mksunny1/apption. It consolidates some of the most useful patterns from developing and using earlier libraries and from writing a lot of JavaScript code.
 
 ```js
 import { call, ArrayActions, ChildrenActions } from 'deleight/apption';
