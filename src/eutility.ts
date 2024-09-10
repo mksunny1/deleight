@@ -69,7 +69,7 @@ const defaultRunContext = { running: false };
  * END symbol.
  *
  * @example
- * import { eventListener } from 'deleight/eutility';
+ * import { eventListener, onEnter } from 'deleight/eutility';
  * input.onkeyup = eventListener([onEnter, () => login(input.value), preventDefault]);
  * apply({
  *     '#loginButton': button => {

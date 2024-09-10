@@ -1,6 +1,6 @@
 {
   "name": "deleight",
-  "version": "4.4.0",
+  "version": "4.4.1",
   "description": "A group of 10 libraries for writing accessible and joyfully interactive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
   "exports": {
@@ -92,6 +92,6 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "apption": "^2.0.4"
+    "apption": "^2.1.2"
   }
 }

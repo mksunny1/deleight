@@ -107,6 +107,38 @@ function(parentElement, item) {
 [**API docs for *appliance***](https://mksunny1.github.io/deleight-api-docs/main/modules/appliance.html)
 
 
+### Apriori
+
+This is a fun library to use if you want to build DOM with JavaScript. It includes primitives for template creation, template rendering and document tree building. There are tools for building DOM from in-page resources or dynamically loaded ones. This gives us the flexibility to choose whatever works best for a project. Apriori can be used in both browser and server environments to generate DOM or render markup.
+
+```js
+import { get, template, e } from "deleight/apriori";
+
+// render markup:
+const myTemplate = template(await get("markup.html"));
+function(componentElement, ...args) {
+    componentElement.insertAdjacentHTML('beforeend', myTemplate(...args));
+}
+// build DOM:
+const mainElement = e.main(
+    e.h1(
+        'Title',                           // strings are appended
+        h1 => console.log(h1)              // functions are called with the element
+    ),
+    e.section(
+        e.h2('Section 1'),
+        e.p(
+            'This is the first section',
+            { className: 'text-centre' }   // objects are used to assign properties.
+        )
+    )                                      // nodes are appended
+);
+
+```
+
+[**API docs for *apriori***](https://mksunny1.github.io/deleight-api-docs/main/modules/apriori.html)
+
+
 ### Queryoperator
 
 This provides a painless SQLesque API for manipulating the DOM. The library exports `insert`, `set`, `update` and `remove` functions for bulk manipulation of things on the DOM. It is an efficient, consistent and simple API to use. See the examples and the API docs.
@@ -124,21 +156,6 @@ function(componentElement) {
 ```
 
 [**API docs for *queryoperator***](https://mksunny1.github.io/deleight-api-docs/main/modules/queryoperator.html)
-
-
-### Apriori
-
-This is a fun library to use if you want to build DOM with JavaScript. It includes primitives for template creation, template rendering and document tree building. There are tools for building DOM from in-page resources or dynamically loaded ones. This gives us the flexibility to choose whatever works best for a project.
-
-```js
-import { get, template } from "deleight/apriori";
-const myTemplate = template(await get("markup.html"));
-function(componentElement, ...args) {
-    componentElement.insertAdjacentHTML('beforeend', myTemplate(...args));
-}
-```
-
-[**API docs for *apriori***](https://mksunny1.github.io/deleight-api-docs/main/modules/apriori.html)
 
 
 ### Sophistry
@@ -193,9 +210,36 @@ With(document.createElement('button'))[SET]({
 [**API docs for *withly***](https://mksunny1.github.io/deleight-api-docs/main/modules/withly.html)
 
 
+### Eutility
+
+This provides some useful primitives for simiplifying event-related code. Note that the [apption](https://github.com/mksunny1/apption) library now exports primitives that should generally be preferred for compositional functions. Still the other features and the history means this library will continue to be a part of Deleight and we will work to improve it as much as possible. 
+
+We can use eutility for:
+
+- creating fewer event handlers by taking advantage of event bubbling
+- disabling event firing until a running handler completes and all their promises get resolved.
+- creating handlers for specific key events, like enter.
+- creating reusable handler guards to stop event handling at any point.
+- composing event handlers
+- creating *lazy* handlers whose functionality can be injected later
+- promoting handler reuse with different elements
+- etc.
+
+```js
+import { EventListener } from 'deleight/eutility'
+
+export const myEutility = {
+    listener: new EventListener((e, runContext) => console.log({e.target, runContext}))
+};
+
+```
+
+[**API docs for *eutility***](https://mksunny1.github.io/deleight-api-docs/main/modules/eutility.html)
+
+
 ### OneToMany
 
-*OneToMany* exports primitives to manipulate many objects simultaneously. There are methods for getting and setting properties and invoking object methods. It provides a potentially more extensible alternative to functions, although presently it is less performant and the usage pattern is not quite as natural. Note that this library has largely been superceded by [apption](https://github.com/mksunny1/apption). It is retained for historic reasons.
+*OneToMany* exports primitives to manipulate many objects simultaneously. There are methods for getting and setting properties and invoking object methods. It provides a potentially more extensible alternative to functions, although presently it is less performant and the usage pattern is not quite as natural. Note that this library has largely been superceded by [apption](https://github.com/mksunny1/apption). It is nowv deprecated and will be moved to a separate package..
 
 ```js
 import { One, wrap, args } from "deleight/onetomany";
@@ -222,30 +266,6 @@ wrappedOneArray.push(99, 100, 101, 102, 103, 104);
 
 [**API docs for *onetomany***](https://mksunny1.github.io/deleight-api-docs/main/modules/onetomany.html)
 
-
-### Eutility
-
-This provides some useful primitives for simiplifying event-related code. Note that the [apption](https://github.com/mksunny1/apption) library now exports primitives that should generally be preferred for compositional functions. Still the other features and the history means this library will continue to be a part of Deleight and we will work to improve it as much as possible.
-
-- composing event handlers
-- creating *lazy* handlers whose functionality can be injected later
-- promoting handler reuse with different elements
-- creating fewer event handlers by taking advantage of event bubbling
-- disabling event firing until a running handler completes and all their promises get resolved.
-- creating handlers for specific key events, like enter.
-- creating reusable handler guards to stop event handling at any point.
-- etc.
-
-```js
-import { EventListener } from 'deleight/eutility'
-
-export const myEutility = {
-    listener: new EventListener((e, runContext) => console.log({e.target, runContext}))
-};
-
-```
-
-[**API docs for *eutility***](https://mksunny1.github.io/deleight-api-docs/main/modules/eutility.html)
 
 
 ## Installation

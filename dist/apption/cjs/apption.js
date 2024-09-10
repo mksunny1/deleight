@@ -883,6 +883,24 @@ const transformerTrap = {
         return true;
     },
 };
+/**
+ * An object which wraps another object to
+ * transform values passed to/from it using the transformer object.
+ *
+ * @example
+ * import { Transformer } from 'apption'
+ * const obj = { a: 1, b: 2 };
+ * const trans = { get(val) {return val * 5} };
+ * const tObj = new Transformer(obj, trans);
+ * console.log(tObj.get('a'));    // 5
+ * console.log(tObj.get('b'));    // 10
+ * console.log(tObj.proxy().a);
+ * // 5. `new Transformer(obj, trans).proxy()` is equivalent to `transformer(obj, trans)`
+ *
+ * @param object
+ * @param trans
+ * @returns
+ */
 class Transformer {
     #proxy;
     constructor(object, trans) {
@@ -917,8 +935,8 @@ class Transformer {
     }
 }
 /**
- * Creates a transformer object which wraps the given object to
- * transform values passed to/from it.
+ * Creates a proxy of a `Transformer` instance whcich maps property and method accesses to
+ * `Transformer` methods.
  *
  * @example
  * import { transformer } from 'apption'
@@ -948,6 +966,30 @@ const argTrap = {
         return true;
     }
 };
+/**
+ *
+ * Returns a wrapper object which always invokes the function with the
+ * wrapped object after a property is set (`Arg.set(p, value)`) on or deleted (`Arg.delete(p)`)
+ * from it. The function will also be called before a property is retrieved (`Arg.get(p)`)
+ * from the object.
+ *
+ * This is useful for more complex transformations/computations that involve
+ * properties from multiple objects instead of a single one.
+ *
+ * @example
+ * import { arg } from 'apption'
+ * const obj = { a: 1, b: 2 };
+ * let storedValue;
+ * const fn = val => storedValue = val.a + val.b;
+ * const arg = new Arg(obj, fn);
+ * arg.set('a', 24);
+ * console.log(storedValue)     // 24+2 = 26.
+ * arg.set('b', 25);
+ * console.log(storedValue)     // 24+25 = 49.
+ *
+ * @param object
+ * @param fn
+ */
 class Arg {
     #proxy;
     constructor(object, fn) {
@@ -974,18 +1016,15 @@ class Arg {
 }
 /**
  *
- * Returns a wrapper object which always invokes the function with the
- * input object after a property is set on or deleted from it. The function
- * will also be called before a property is retrieved from the object. This is
- * useful for more complex transformations/computations that involve properties
- * from multiple objects instead of a single one.
+ * Creates a proxy of an `Arg` instance whcich maps property accesses to
+ * corresponding `Arg` methods.
  *
  * @example
  * import { arg } from 'apption'
  * const obj = { a: 1, b: 2 };
  * let storedValue;
  * const fn = val => storedValue = val.a + val.b;
- * const arg = (obj, fn);
+ * const arg = arg(obj, fn);
  * arg.a = 24;
  * console.log(storedValue)     // 24+2 = 26.
  * arg.b = 25;
@@ -1010,6 +1049,28 @@ const redirectTrap = {
         return true;
     }
 };
+/**
+ * Creates an object which reroutes property accesses (`get`, `set` and `delete`) to
+ * other objects.
+ *
+ * The keys in `Redirect.map` are the 'virtual' properties of the Redirect instance and
+ * the values are the source objects containing the real properties.
+ *
+ * The optional `Redirect.remap` object may be used to map a virtual property to
+ * a property with a different key in the source object. Any virtual properties not in
+ * `Redirect.remap` will naturally have the same key in the source object.
+ *
+ * @example
+ * import { redirect } from 'apption'
+ * const obj1 = { a: 1, b: 2 };
+ * const obj2 = { a: 3, b: 4 };
+ * const red = new Redirect({ c: obj1, d: obj2 }, {c: 'a', d: 'a'});
+ * console.log(red.get('c'))     // 1
+ * console.log(red.get('d'))     // 3
+ *
+ * @param map
+ * @param remap
+ */
 class Redirect {
     #proxy;
     constructor(map, remap) {
@@ -1052,14 +1113,7 @@ class Redirect {
     }
 }
 /**
- * Returns an object whose properties are drawn from multiple objects.
- *
- * The keys in `map` are the 'virtual' properties of the redirect object and
- * the values are the source objects containing the real properties.
- *
- * The optional `remap` object may be used to map virtual properties to
- * another property on the source object. Any virtual properties not in
- * `remap` will naturally have the same name in the source object.
+ * Creates a proxy of a Redirect instance so that we can use it like a normal object.
  *
  * @example
  * import { redirect } from 'apption'
