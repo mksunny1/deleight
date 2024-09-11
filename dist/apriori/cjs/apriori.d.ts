@@ -1,5 +1,5 @@
 /**
- * This module exports primitives for building DOM from text.
+ * This module exports primitives for building and/or setting up DOM in various ways.
  *
  * @module
  */
@@ -148,6 +148,44 @@ declare const createFragment: (markup: string) => DocumentFragment | Element;
  */
 declare function elements(tagNames: string): Generator<HTMLElement, void, unknown>;
 /**
+ * Sets up the specified element(s) with the given arguments.
+ *
+ * The values in `args` are interpreted as follows:
+ * 1. string, number and Node values are appended to the element
+ * 2. functions values are called with the element as the sole argument
+ * 3. object values are used to assign properties using `Object.assign`
+ *
+ * This function is also used internally to set up new elements created with
+ * {@link e}.
+ *
+ * Note that because of how Node appends work, any nodes `args` will end up
+ * appended only to the last element in `elements` (if they are more than one).
+ * Conversely, any fragments in `args` will have their nodes only
+ * appended to the first element in `elements`.
+ *
+ * @example
+ * import { setup, e } from 'deleight/apriori';
+ * const tree = document.querySelector('main');
+ * setup(
+ *     main,
+ *     e.h1('Title',
+ *          h1 => console.log(h1, ' created')
+ *     ),
+ *     e.section(
+ *         e.h2('Section 1'),
+ *         e.p(
+ *             'This is the first section',
+ *             { className: 'text-centre' }
+ *         )
+ *     )
+ * );
+ *
+ * @param elements the element(s) to setup
+ * @param args the setup arguments
+ * @returns this same function to support chaining multiple setup calls.
+ */
+declare function setup(elements: Element | Iterable<Element>, ...args: any[]): typeof setup;
+/**
  * A simple proxy object for creating and 'setting up' a new element in one go.
  * Can be nested to create and setup entire DOM trees. This is much more
  * powerful than the simple `elements` function which simply creates and returns
@@ -194,4 +232,4 @@ declare function escObject(rawObject: any): any;
  */
 declare function escString(unsafe: string): string;
 
-export { type IAsyncTemplates, type ITemplates, asyncTemplate, asyncTemplates, createFragment, e, elements, escObject, escString, get, tag, template, templates };
+export { type IAsyncTemplates, type ITemplates, asyncTemplate, asyncTemplates, createFragment, e, elements, escObject, escString, get, setup, tag, template, templates };

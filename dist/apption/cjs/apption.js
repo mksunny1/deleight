@@ -78,16 +78,44 @@ function act(operations, ...args) {
     for (let operation of operations) {
         if (operation instanceof Lazy)
             operation = operation.value(...args);
-        if (operation instanceof Array)
-            result = act(operation, ...args);
-        else if (operation instanceof Action)
+        if (operation instanceof Action)
             result = operation.act(...args);
-        else
+        else if (operation instanceof Function)
             result = operation(...args);
+        else
+            result = act(operation, ...args);
         if (result instanceof Args)
             args = result.value;
     }
     return result;
+}
+/**
+ * ActionMap allows us to use iterables (of key-value pairs)  in place of
+ * objects in `call`, `set` and `del` functions (and corresponding classes).
+ * This can be useful for building virtual objects which are only used with
+ * the calls but never held fully in memory at any time, improving memory
+ * performance.
+ *
+ * @example
+ * import { call, ActionMap } from 'apption'
+ * let arr1 = [1, 2, 3], arr2 = [1, 2, 3], arr3 = [1, 2, 3];
+ * const actions = new ActionMap([[ 'push', [arr1, arr3]], ['unshift', [arr2]]]);
+ * call(actions, 20, 21);
+ * console.log(arr1)   // [1, 2, 3, 20, 21]
+ * console.log(arr2)   // [20, 21, 1, 2, 3]
+ * console.log(arr3)   // [1, 2, 3, 20, 21]
+ *
+ */
+class ActionMap {
+    constructor(entries) {
+        this.entries = entries;
+    }
+}
+function entries(map) {
+    if (map instanceof ActionMap)
+        return map.entries;
+    else
+        return Object.entries(map);
 }
 /**
  * Calls specified methods in multiple objects.
@@ -109,7 +137,7 @@ function act(operations, ...args) {
  */
 function call(map, ...args) {
     let result, object;
-    for (let [key, objects] of Object.entries(map)) {
+    for (let [key, objects] of entries(map)) {
         if (objects instanceof Lazy)
             objects = objects.value(key, ...args);
         for (object of objects) {
@@ -150,7 +178,7 @@ function call(map, ...args) {
  */
 function set(map, value) {
     let object;
-    for (let [key, objects] of Object.entries(map)) {
+    for (let [key, objects] of entries(map)) {
         if (objects instanceof Lazy)
             objects = objects.value(key, value);
         for (object of objects) {
@@ -181,7 +209,7 @@ function del(map) {
     if (map instanceof Lazy)
         map = map.value();
     let object;
-    for (let [key, objects] of Object.entries(map)) {
+    for (let [key, objects] of entries(map)) {
         if (objects instanceof Lazy)
             objects = objects.value(key);
         for (object of objects) {
@@ -464,6 +492,16 @@ class ChildrenActions {
         this.element = element;
     }
 }
+/**
+ * A more semantic alias for ArrayActions which is a light array
+ * wrapper containing common array modification functions.
+ */
+const ApptionArray = ArrayActions;
+/**
+ * A more semantic alias for ChildrenActions which is an object
+ * providing a similar API to ApptionArray.
+ */
+const ChildrenArray = ChildrenActions;
 
 /**
  * Primitives for functionally creating and manipulating objects.
@@ -594,7 +632,7 @@ function foreach(object, callable) {
  *
  * @module
  */
-const selectorTrap = {
+const selectorHandler = {
     get(target, p) {
         return target.get(p);
     },
@@ -672,7 +710,7 @@ class Selector {
     }
     proxy() {
         if (!this.#proxy)
-            this.#proxy = new Proxy(this, selectorTrap);
+            this.#proxy = new Proxy(this, selectorHandler);
         return this.#proxy;
     }
 }
@@ -847,11 +885,11 @@ class MethodSelector extends Selector {
     }
     proxy() {
         if (!this.#proxy)
-            this.#proxy = new Proxy(this, methodSelectorTrap);
+            this.#proxy = new Proxy(this, methodSelectorHandler);
         return this.#proxy;
     }
 }
-const methodSelectorTrap = {
+const methodSelectorHandler = {
     get(target, p) {
         return (...args) => target.call(p, ...args);
     }
@@ -886,7 +924,7 @@ function method(name, treespace) {
  *
  * @module
  */
-const transformerTrap = {
+const transformerHandler = {
     get(transformer, p) {
         return transformer.get(p);
     },
@@ -942,7 +980,7 @@ class Transformer {
     }
     proxy() {
         if (!this.#proxy)
-            this.#proxy = new Proxy(this, transformerTrap);
+            this.#proxy = new Proxy(this, transformerHandler);
         return this.#proxy;
     }
 }
@@ -965,7 +1003,7 @@ class Transformer {
 function transformer(object, trans) {
     return new Transformer(object, trans).proxy();
 }
-const argTrap = {
+const argHandler = {
     get(arg, p) {
         return arg.get(p);
     },
@@ -1022,7 +1060,7 @@ class Arg {
     }
     proxy() {
         if (!this.#proxy)
-            this.#proxy = new Proxy(this, argTrap);
+            this.#proxy = new Proxy(this, argHandler);
         return this.#proxy;
     }
 }
@@ -1048,7 +1086,7 @@ class Arg {
 function arg(object, fn) {
     return new Arg(object, fn).proxy();
 }
-const redirectTrap = {
+const redirectHandler = {
     get(red, p) {
         return red.get(p);
     },
@@ -1120,7 +1158,7 @@ class Redirect {
     }
     proxy() {
         if (!this.#proxy)
-            this.#proxy = new Proxy(this, redirectTrap);
+            this.#proxy = new Proxy(this, redirectHandler);
         return this.#proxy;
     }
 }
@@ -1143,12 +1181,15 @@ function redirect(map, remap) {
 }
 
 exports.Action = Action;
+exports.ActionMap = ActionMap;
+exports.ApptionArray = ApptionArray;
 exports.Arg = Arg;
 exports.Args = Args;
 exports.ArrayActions = ArrayActions;
 exports.AttrSelector = AttrSelector;
 exports.CallAction = CallAction;
 exports.ChildrenActions = ChildrenActions;
+exports.ChildrenArray = ChildrenArray;
 exports.DelAction = DelAction;
 exports.Lazy = Lazy;
 exports.MemberSelector = MemberSelector;

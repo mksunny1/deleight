@@ -48,11 +48,11 @@ export function With(obj) {
                 arg(proxy);
         return proxy;
     }, { obj });
-    const proxy = new Proxy(target, trap);
+    const proxy = new Proxy(target, handler);
     target.proxy = proxy;
     return proxy;
 }
-const trap = {
+const handler = {
     get(target, p) {
         if (p === ASSIGN) {
             return (...objs) => {

@@ -1,5 +1,5 @@
 /**
- * This module exports primitives for building DOM from text.
+ * This module exports primitives for building and/or setting up DOM in various ways.
  * 
  * @module
  */
@@ -256,16 +256,62 @@ export function* elements(tagNames: string) {
     for (let tagName of tagNames.replace(',', '').split(' ')) yield document.createElement(tagName.trim());
 }
 
-const eTrap = {
+/**
+ * Sets up the specified element(s) with the given arguments.
+ * 
+ * The values in `args` are interpreted as follows:
+ * 1. string, number and Node values are appended to the element
+ * 2. functions values are called with the element as the sole argument
+ * 3. object values are used to assign properties using `Object.assign`
+ * 
+ * This function is also used internally to set up new elements created with 
+ * {@link e}.
+ * 
+ * Note that because of how Node appends work, any nodes `args` will end up 
+ * appended only to the last element in `elements` (if they are more than one).
+ * Conversely, any fragments in `args` will have their nodes only 
+ * appended to the first element in `elements`.
+ * 
+ * @example
+ * import { setup, e } from 'deleight/apriori';
+ * const tree = document.querySelector('main');
+ * setup(
+ *     main, 
+ *     e.h1('Title', 
+ *          h1 => console.log(h1, ' created')
+ *     ),
+ *     e.section(
+ *         e.h2('Section 1'),
+ *         e.p(
+ *             'This is the first section', 
+ *             { className: 'text-centre' }
+ *         )
+ *     )
+ * );
+ * 
+ * @param elements the element(s) to setup
+ * @param args the setup arguments
+ * @returns this same function to support chaining multiple setup calls.
+ */
+export function setup(elements: Element|Iterable<Element>, ...args: any[]) {
+    if (elements instanceof Element) elements = [elements];
+    for (let element of elements) {
+        for (let arg of args) {
+            if (typeof arg === 'number') arg = `${arg}`;
+            if (arg instanceof Node) element.appendChild(arg);              // append node
+            else if (typeof arg === 'string') element.append(arg);          // append text node
+            else if (arg instanceof Function) arg(element);                 // arbitrary setup
+            else if (typeof arg === 'object') Object.assign(element, arg);  // set properties
+        }
+    }
+    return setup;
+}
+
+const eHandler = {
     get(target: any, p: string) {
         const element = document.createElement(p);
         return (...args: any[]) => {
-            for (let arg of args) {
-                if (arg instanceof Node) element.appendChild(arg);              // append node
-                else if (typeof arg === 'string') element.append(arg);          // append text node
-                else if (arg instanceof Function) arg(element);                 // arbitrary setup
-                else if (typeof arg === 'object') Object.assign(element, arg);  // set properties
-            }
+            setup(element, ...args);
             return element;
         }
     }
@@ -290,7 +336,7 @@ const eTrap = {
  * document.appendChild(tree);
  * 
  */
-export const e = new Proxy({}, eTrap);
+export const e = new Proxy(setup, eHandler);
 
 /**
  * Returns an object which escapes properties sourced from it. Escaping markup is a key component of template rendering, 

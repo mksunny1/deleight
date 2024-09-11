@@ -4,7 +4,7 @@ import { elements } from "../../src/apriori.js";
 import { JSDOM } from "jsdom";
 
 
-describe("apriori.createFragment", () => {
+describe("apriori.elements", () => {
     const window = new JSDOM(`<!DOCTYPE html><body></body>`).window;
     const document = window.document;
 

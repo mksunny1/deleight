@@ -1,10 +1,10 @@
 import { describe, it } from "node:test";
 import { strict as assert } from "node:assert";
-import { e } from "../../src/apriori.js";
+import { setup, e } from "../../src/apriori.js";
 import { JSDOM } from "jsdom";
 
 
-describe("apriori.e", () => {
+describe("apriori.setup", () => {
     const window = new JSDOM(`<!DOCTYPE html><body></body>`).window;
     const document = window.document;
 
@@ -12,9 +12,10 @@ describe("apriori.e", () => {
     globalThis.Node = window.Node
     globalThis.Element = window.Element
 
-    it("Should create and setup the specified elements", async (t) => {
+    it("Should setup the specified elements", async (t) => {
         let tagName = '';
-        const tree = e.main(
+        const tree = document.createElement('main');
+        setup(tree,
             e.h1(
                 'Title',                               // stringd are appended
                 h1 => tagName = h1.tagName),    // functions are called with the new element

@@ -111,12 +111,12 @@ export function With<T>(obj: T): IRecursive<T> {
         },
         { obj },
     );
-    const proxy = new Proxy<IRecursive<T>>(target as any, trap);
+    const proxy = new Proxy<IRecursive<T>>(target as any, handler);
     target.proxy = proxy;
     return proxy;
 }
 
-const trap = {
+const handler = {
     get(target: any, p: string | number | symbol) {
         if (p === ASSIGN) {
             return (...objs: any[]) => {
