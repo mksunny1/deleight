@@ -40,7 +40,7 @@ If you use NPM to build your frontend, you can bring anything from the whole Del
 ```js
 import { dom, Generator } from 'deleight';
 const apply = dom.apply;
-const { range, map, chain } Generator;
+const { range, map, chain } = Generator;
 
 ```
 
