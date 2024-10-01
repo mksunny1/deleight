@@ -1,59 +1,58 @@
 {
   "name": "deleight",
-  "version": "4.6.0",
-  "description": "A group of 10 libraries for writing accessible and joyfully interactive web applications with traditional HTML, CSS and JavaScript.",
+  "version": "5.0.0",
+  "description": "A library with 9 modules for writing more expressive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
   "exports": {
-    "./apption": {
-      "require": "./dist/apption/cjs/apption.js",
-      "default": "./dist/apption/esm/apption.js"
+    ".": {
+      "require": "./dist/cjs/deleight.js",
+      "default": "./dist/esm/deleight.js"
     },
-    "./appliance": {
-      "require": "./dist/appliance/cjs/appliance.js",
-      "default": "./dist/appliance/esm/appliance.js"
+    "./css": {
+      "require": "./dist/cjs/css/css.js",
+      "default": "./dist/esm/css/css.js"
     },
-    "./actribute": {
-      "require": "./dist/actribute/cjs/actribute.js",
-      "default": "./dist/actribute/esm/actribute.js"
+    "./dom": {
+      "require": "./dist/cjs/dom/dom.js",
+      "default": "./dist/esm/dom/dom.js"
     },
-    "./eutility": {
-      "require": "./dist/eutility/cjs/eutility.js",
-      "default": "./dist/eutility/esm/eutility.js"
+    "./function": {
+      "require": "./dist/cjs/function/function.js",
+      "default": "./dist/esm/function/function.js"
     },
-    "./generational": {
-      "require": "./dist/generational/cjs/generational.js",
-      "default": "./dist/generational/esm/generational.js"
+    "./generators": {
+      "require": "./dist/cjs/generators/generators.js",
+      "default": "./dist/esm/generators/generators.js"
     },
-    "./apriori": {
-      "require": "./dist/apriori/cjs/apriori.js",
-      "default": "./dist/apriori/esm/apriori.js"
+    "./lists": {
+      "require": "./dist/cjs/lists/lists.js",
+      "default": "./dist/esm/lists/lists.js"
     },
-    "./sophistry": {
-      "require": "./dist/sophistry/cjs/sophistry.js",
-      "default": "./dist/sophistry/esm/sophistry.js"
+    "./object": {
+      "require": "./dist/cjs/object/object.js",
+      "default": "./dist/esm/object/object.js"
     },
-    "./queryoperator": {
-      "require": "./dist/queryoperator/cjs/queryoperator.js",
-      "default": "./dist/queryoperator/esm/queryoperator.js"
+    "./process": {
+      "require": "./dist/cjs/process/process.js",
+      "default": "./dist/esm/process/process.js"
     },
-    "./onetomany": {
-      "require": "./dist/onetomany/cjs/onetomany.js",
-      "default": "./dist/onetomany/esm/onetomany.js"
+    "./proxy": {
+      "require": "./dist/cjs/proxies/proxies.js",
+      "default": "./dist/esm/proxies/proxies.js"
     },
-    "./withly": {
-      "require": "./dist/withly/cjs/withly.js",
-      "default": "./dist/withly/esm/withly.js"
+    "./template": {
+      "require": "./dist/cjs/template/template.js",
+      "default": "./dist/esm/template/template.js"
     }
   },
   "scripts": {
     "test": "node --experimental-modules --test",
     "otest": "node --test-only --experimental-modules --test",
     "wtest": "node --experimental-modules --test --watch",
-    "doc": "npx typedoc --out ./docs//api/deleight-api-docs/main ./src/*.ts",
+    "doc": "npx typedoc --out ./docs/api/deleight-api-docs/main ./src/*.ts",
     "compile": "npx tsc",
-    "build": "npx tsc && rollup -c",
-    "dist": "rollup -c",
-    "start": "node server.cjs"
+    "compile-cjs": "npx tsc tsconfig.cjs.json",
+    "build": "npx tsc && npx tsc --build tsconfig.cjs.json"
   },
   "repository": {
     "type": "git",
@@ -62,40 +61,37 @@
   "homepage": "https://mksunny1.github.io/deleight-api-docs/main",
   "keywords": [
     "frontend",
-    "HTML",
-    "CSS",
-    "JavaScript",
+    "html",
+    "css",
+    "javascript",
+    "typescript",
     "library",
     "framework",
     "vanilla",
+    "deleight",
+    "flexibility",
+    "performance",
+    "components",
     "reactivity",
-    "accessibility",
-    "tradition",
-    "Deleight",
-    "Apption",
-    "Actribute",
-    "Appliance",
-    "Reftype",
-    "QueryOperator",
-    "Sophistry",
-    "Apriori",
-    "OneToMany",
-    "Generational",
-    "Eutility",
-    "withly"
+    "functions",
+    "objects",
+    "properties",
+    "methods",
+    "array",
+    "dom",
+    "proxy",
+    "generators",
+    "navigation",
+    "resources",
+    "templates",
+    "routing"
   ],
   "author": "Mark Sun",
   "license": "MIT",
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^15.2.3",
     "express": "^4.19.2",
     "jsdom": "^24.0.0",
-    "rollup": "^4.14.1",
-    "rollup-plugin-dts": "^6.1.0",
     "typedoc": "^0.25.13",
     "typescript": "^5.4.5"
-  },
-  "dependencies": {
-    "apption": "^2.1.3"
   }
 }

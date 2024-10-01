@@ -1,0 +1,52 @@
+/**
+ * A few important functions for expressively and efficiently
+ * working with elements on a web page.
+ *
+ * The functions here include:
+ *
+ * 5. {@link listener} an {@link apply} component (function) used to declaratively
+ * attach listeners to specified elements within a tree.
+ *
+ * 6. {@link setter} an {@link apply} component (function) used to declaratively
+ * set the values of element properties within a tree.
+ *
+ * 7. {@link assigner} an {@link apply} component (function) used to declaratively
+ * set element sub-properties within a tree.
+ *
+ * 8. {@link attrSetter} an {@link apply} component (function) used to declaratively
+ * set the values of element attributes within a tree.
+ *
+ *
+ * @module
+ */
+import { assign } from "../../object/operations/operations.js";
+/**
+ * Creates a function to be called with listener functions to return `apply
+ * @param event
+ * @param options
+ * @returns
+ */
+export function listener(event, options) {
+    return (listener) => (elements, key) => {
+        for (let element of elements)
+            element.addEventListener(event, listener, options);
+    };
+}
+export function setter(prop) {
+    return (value) => (elements, key) => {
+        for (let element of elements)
+            element[prop] = value;
+    };
+}
+export function assigner(value) {
+    return (elements, key) => {
+        for (let element of elements)
+            assign(element, [value]);
+    };
+}
+export function attrSetter(name) {
+    return (value) => (elements, key) => {
+        for (let element of elements)
+            element.setAttribute(name, value);
+    };
+}

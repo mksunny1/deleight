@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "ESNext",
+    "moduleResolution": "Node",
+    "useDefineForClassFields": false,
+    "outDir": "dist/cjs",
+    "declaration": true
+  },
+  "include": ["src/*.ts", "src/*/*.ts", "src/*/*/*.ts", "src/*/*/*/*.ts", "src/*/*/*/*/*.ts"],
+}

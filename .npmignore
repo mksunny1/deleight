@@ -1,8 +1,10 @@
 src
+src-old
 docs
-test
-.github
-tsconfig.json
-server.cjs
-rollup.config.mjs
 website
+node_modules
+.github
+.gitignore
+.npmignore
+tsconfig.json
+tsconfig.cjs.json

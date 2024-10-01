@@ -2,7 +2,10 @@
   "compilerOptions": {
     "module": "esnext",
     "target": "ESNext",
-    "moduleResolution": "Bundler"
+    "moduleResolution": "Bundler",
+    "useDefineForClassFields": false,
+    "outDir": "dist/esm",
+    "declaration": true
   },
-  "include": ["src/*.ts"]
+  "include": ["src/*.ts", "src/*/*.ts", "src/*/*/*.ts", "src/*/*/*/*.ts", "src/*/*/*/*/*.ts"]
 }
