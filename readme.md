@@ -1,6 +1,6 @@
 # Deleight
 
-Deleight is a library now comprising 9 modules designed to improve expressiveness without the compromising simplicity, performance, flexibility and sheer elegance of pure JavaScript. We achieve this by creating higher level functions, classes and objects which can get more done with less code than standard JavaScript primitives. These new primitives have been assembled into multiple submodules based on functionality and dependency so that you can include only the parts you need in your projects. The whole architecture means we can benefit from more expressiveness without compromising the sheer power and freedom of vanilla JavaScript.
+Deleight is a library now comprising 9 modules designed to improve expressiveness without compromising simplicity, performance, flexibility and sheer elegance of pure JavaScript. We achieve this by creating higher level functions, classes and objects which can get more done with less code than standard JavaScript primitives. These new primitives have been assembled into multiple submodules based on functionality and dependency so that you can include only the parts you need in your projects. The whole architecture means you can benefit from more expressiveness without compromising the sheer power and freedom of vanilla JavaScript.
 
 
 ## Usage
@@ -17,7 +17,7 @@ apply({
 });
 ```
 
-Deleight has been written in TypeScript. Using TypeScript can help to provide more guarantees about runtime perfornce because of the type enforcements and other helpful things at compile time. Also most of the primitives are well tested and have been further enhanced from earlier versions of Deleight. Deleight was already among the best performing frameworks in the [Krausest frameworks benchmark](https://github.com/krausest/js-framework-benchmark) before majore work to restructure and improve the whole ibrary for *Deleight 5*.
+Deleight has been written in TypeScript. Using TypeScript helps to provide more guarantees about runtime perfornce because of the type enforcements and other helpful things at compile time. Also most of the primitives are well tested and have been further enhanced from earlier versions of Deleight. Deleight was already among the best performing frameworks in the [Krausest frameworks benchmark](https://github.com/krausest/js-framework-benchmark) before major work to restructure and improve the whole ibrary for *Deleight 5*.
 
 
 ## Installation
