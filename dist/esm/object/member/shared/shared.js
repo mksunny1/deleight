@@ -14,7 +14,7 @@ export class Mapper {
  * {@link sets} function.
  *
  * @example
- * import { set, M } from 'deleight/object/members/shared'
+ * import { set, M } from 'deleight/object/sharedmember'
  * let obj1 = { a: 20, b: 2, c: 20}, obj2 = { a: 1, b: 20, c: 3};
  * const objects = { a: [obj1], b: [obj2], c: [obj1] };
  *
@@ -34,7 +34,7 @@ export function M(value) {
  * The `map` argument maps property keys to iterables of objects (or functions that return such iterables).
  *
  * @example
- * import { get } from 'deleight/object/members/shared'
+ * import { get } from 'deleight/object/sharedmember'
  * let obj1 = { a: 1, b: 2, c: 3 }, obj2 = { a: 1, b: 2, c: 3 };
  * const objects = { a: [obj1], b: [obj2], c: [obj1] };
  * const vals = get(objects);  // { a: [1], b: [2], c: [3] }
@@ -66,7 +66,7 @@ function* getIter(key, targets) {
  *
  *
  * @example
- * import { set } from 'deleight/object/members/shared'
+ * import { set } from 'deleight/object/sharedmember'
  * let obj1 = { a: 1, b: 2, c: 3 }, obj2 = { a: 1, b: 2, c: 3 };
  * const objects = { a: [obj1], b: [obj2], c: [obj1] };
  * set(objects, 20);
@@ -95,7 +95,7 @@ export function sets(object, value) {
  * Calls specified methods in multiple objects.
  *
  * @example
- * import { call } from 'deleight/object/members/shared'
+ * import { call } from 'deleight/object/sharedmember'
  * let arr1 = [1, 2, 3], arr2 = [1, 2, 3], arr3 = [1, 2, 3];
  * const objects = { push: [arr1, arr3], unshift: [arr2] };
  * call(objects, 20, 21);
@@ -122,7 +122,7 @@ export function calls(object, ...args) {
  * Deletes specified properties from different objects.
  *
  * @example
- * import { del } from 'deleight/object/members/shared'
+ * import { del } from 'deleight/object/sharedmember'
  * let obj1 = { a: 1, b: 2, c: 3 }, obj2 = { a: 1, b: 2, c: 3 };
  * del({ a: [obj1], b: [obj2], c: [obj1] });
  * console.log(obj1);    // { b: 2 }

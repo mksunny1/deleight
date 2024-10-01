@@ -1,6 +1,6 @@
 {
   "name": "deleight",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "A library with 9 modules for writing more expressive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
   "exports": {
@@ -16,9 +16,33 @@
       "require": "./dist/cjs/dom/dom.js",
       "default": "./dist/esm/dom/dom.js"
     },
+    "./dom/apply": {
+      "require": "./dist/cjs/dom/apply/apply.js",
+      "default": "./dist/esm/dom/apply/apply.js"
+    },
+    "./dom/components": {
+      "require": "./dist/cjs/dom/components/components.js",
+      "default": "./dist/esm/dom/components/components.js"
+    },
+    "./dom/fragment": {
+      "require": "./dist/cjs/dom/fragment/fragment.js",
+      "default": "./dist/esm/dom/fragment/fragment.js"
+    },
+    "./dom/process": {
+      "require": "./dist/cjs/dom/process/process.js",
+      "default": "./dist/esm/dom/process/process.js"
+    },
     "./function": {
       "require": "./dist/cjs/function/function.js",
       "default": "./dist/esm/function/function.js"
+    },
+    "./function/context": {
+      "require": "./dist/cjs/function/context/context.js",
+      "default": "./dist/esm/function/context/context.js"
+    },
+    "./function/return": {
+      "require": "./dist/cjs/function/return/return.js",
+      "default": "./dist/esm/function/return/return.js"
     },
     "./generators": {
       "require": "./dist/cjs/generators/generators.js",
@@ -28,9 +52,41 @@
       "require": "./dist/cjs/lists/lists.js",
       "default": "./dist/esm/lists/lists.js"
     },
+    "./lists/array": {
+      "require": "./dist/cjs/lists/array/array.js",
+      "default": "./dist/esm/lists/array/array.js"
+    },
+    "./lists/element": {
+      "require": "./dist/cjs/lists/element/element.js",
+      "default": "./dist/esm/lists/element/element.js"
+    },
     "./object": {
       "require": "./dist/cjs/object/object.js",
       "default": "./dist/esm/object/object.js"
+    },
+    "./object/apply": {
+      "require": "./dist/cjs/object/apply/apply.js",
+      "default": "./dist/esm/object/apply/apply.js"
+    },
+    "./object/deepmember": {
+      "require": "./dist/cjs/object/member/deep/deep.js",
+      "default": "./dist/esm/object/member/deep/deep.js"
+    },
+    "./object/member": {
+      "require": "./dist/cjs/object/member/own/own.js",
+      "default": "./dist/esm/object/member/own/own.js"
+    },
+    "./object/operations": {
+      "require": "./dist/cjs/object/operations/operations.js",
+      "default": "./dist/esm/object/operations/operations.js"
+    },
+    "./object/process": {
+      "require": "./dist/cjs/object/process/process.js",
+      "default": "./dist/esm/object/process/process.js"
+    },
+    "./object/sharedmember": {
+      "require": "./dist/cjs/object/member/shared/shared.js",
+      "default": "./dist/esm/object/member/shared/shared.js"
     },
     "./process": {
       "require": "./dist/cjs/process/process.js",
@@ -39,6 +95,22 @@
     "./proxy": {
       "require": "./dist/cjs/proxies/proxies.js",
       "default": "./dist/esm/proxies/proxies.js"
+    },
+    "./proxy/alias": {
+      "require": "./dist/cjs/proxies/alias/alias.js",
+      "default": "./dist/esm/proxies/alias/alias.js"
+    },
+    "./proxy/scope": {
+      "require": "./dist/cjs/proxies/scope/scope.js",
+      "default": "./dist/esm/proxies/scope/scope.js"
+    },
+    "./proxy/selector": {
+      "require": "./dist/cjs/proxies/selector/selector.js",
+      "default": "./dist/esm/proxies/selector/selector.js"
+    },
+    "./proxy/wrapper": {
+      "require": "./dist/cjs/proxies/wrapper/wrapper.js",
+      "default": "./dist/esm/proxies/wrapper/wrapper.js"
     },
     "./template": {
       "require": "./dist/cjs/template/template.js",

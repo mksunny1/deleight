@@ -4,15 +4,16 @@
  * accelerate web development without sacrificing simplicity, flexibility,
  * code comprehension or performance.
  *
- * All the tools provided by Deleight are thin wrappers around regular JavaScript.
+ * All the tools provided by Deleight are lightweight so that you can mix freely
+ * with regular JavaScript.
  * With Deleight, you write regular JavaScript (or TypeScript) apps and reach for
  * the tools when you need them. Deleight does not enforce a way to build apps, but
- * instead help you to build well structured and easy-to-maintain apps naturally.
+ * instead helps you to build well structured and easy-to-maintain apps naturally.
  *
  * There is no mental overhead to using Deleight and there is no learning curve.
- * You can learn and use any part of Deleight entirely on their own. Therefore
+ * You can learn and use any part of Deleight entirely on its own. Therefore
  * you can immediately see gains in expressiveness from the moment you bring the
- * library into your project. Deleight is a library but has all the usefulness of
+ * library into your project. Deleight is a library but has all the benefits of
  * a framework.
  *
  * The decoupling of the different components of deleight also means that you never
@@ -23,9 +24,9 @@
  * - You can finish your projects earlier gaining an advantage in the market
  * - You can easily upgrade or replace individual components, with other components or
  * with plain JavaScript
- * - Your projects will be very comprehensibe and fun to maintain
+ * - Your projects will be comprehensible and fun to maintain
  * - Deleight itself is easy to maintain because of the architecture. It will likely
- * be relevant for a very long time.
+ * be relevant for a long time.
  *
  * Module Guide.
  *
