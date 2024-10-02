@@ -3,8 +3,7 @@
     "module": "esnext",
     "target": "ESNext",
     "moduleResolution": "Bundler",
-    "useDefineForClassFields": false,
-    "declaration": true
+    "useDefineForClassFields": false
   },
   "include": ["src/*.ts", "src/*/*.ts", "src/*/*/*.ts", "src/*/*/*/*.ts", "src/*/*/*/*/*.ts"]
 }
