@@ -38,7 +38,7 @@ exports.forEach = forEach;
  * @example
  * import { forEachAsync } from 'deleight/generators';
  * async function* asyncGen() {
- *    for (let i of (range(10))) yield i;
+ *    yield *range(10);
  * }
  * forEachAsync(asyncGen(), ()=> console.log(i));
  *
@@ -273,7 +273,7 @@ function* next(it, count, firstValue) {
 }
 exports.next = next;
 /**
- * Returns a generator of generators over the next 'count' items of
+ * Returns a generator of arrays with the next 'count' items of
  * the given iterable. In other words, this function will partition the
  * input iterable with each partition containing `count` items.
  *
@@ -289,7 +289,7 @@ function* forNext(it, count) {
     const it2 = forceIterator(it);
     let nextItem = it2.next();
     while (!nextItem.done) {
-        yield next(it2, count, nextItem.value);
+        yield [...next(it2, count, nextItem.value)];
         nextItem = it2.next();
     }
 }

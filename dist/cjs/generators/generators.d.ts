@@ -30,7 +30,7 @@ export declare function forEach<T>(it: Iterable<any>, action: (item: any, i?: nu
  * @example
  * import { forEachAsync } from 'deleight/generators';
  * async function* asyncGen() {
- *    for (let i of (range(10))) yield i;
+ *    yield *range(10);
  * }
  * forEachAsync(asyncGen(), ()=> console.log(i));
  *
@@ -152,7 +152,7 @@ export declare function repeat<T>(it: Iterable<T> | (() => Iterable<T>), times?:
  */
 export declare function next(it: Iterable<any> | Iterator<any>, count: number, firstValue?: any): Generator<any, void, unknown>;
 /**
- * Returns a generator of generators over the next 'count' items of
+ * Returns a generator of arrays with the next 'count' items of
  * the given iterable. In other words, this function will partition the
  * input iterable with each partition containing `count` items.
  *
@@ -164,7 +164,7 @@ export declare function next(it: Iterable<any> | Iterator<any>, count: number, f
  * @param { Iterable<any> } it
  * @param { number } count
  */
-export declare function forNext(it: Iterable<any>, count: number): Generator<Generator<any, void, unknown>, void, unknown>;
+export declare function forNext(it: Iterable<any>, count: number): Generator<any[], void, unknown>;
 /**
  * Returns a generator over the items of all the input args (iterables), starting from
  * the zero index to the maximum index of the smallest arg.
@@ -196,7 +196,7 @@ export declare function zipFlat(...its: Iterable<any>[]): Generator<any, void, u
  *
  * @param its
  */
-export declare function zip(...its: Iterable<any>[]): Generator<Generator<any, void, unknown>, void, unknown>;
+export declare function zip(...its: Iterable<any>[]): Generator<any[], void, unknown>;
 /**
  * Returns an unordered/random generator over the input itrable.
  * Note that this is forced to materialize the input before running.

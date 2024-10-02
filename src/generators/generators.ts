@@ -35,7 +35,7 @@ export function forEach<T>(it: Iterable<any>, action: (item: any, i?: number) =>
  * @example
  * import { forEachAsync } from 'deleight/generators';
  * async function* asyncGen() {
- *    for (let i of (range(10))) yield i;
+ *    yield *range(10);
  * }
  * forEachAsync(asyncGen(), ()=> console.log(i));
  * 
@@ -255,7 +255,7 @@ export function* next(it: Iterable<any> | Iterator<any>, count: number, firstVal
 }
 
 /**
- * Returns a generator of generators over the next 'count' items of 
+ * Returns a generator of arrays with the next 'count' items of 
  * the given iterable. In other words, this function will partition the 
  * input iterable with each partition containing `count` items.
  * 
@@ -271,7 +271,7 @@ export function* forNext(it: Iterable<any>, count: number) {
     const it2 = forceIterator(it);
     let nextItem: IteratorResult<any, any> = it2.next();
     while (!nextItem.done) {
-        yield next(it2, count, nextItem.value)
+        yield [...next(it2, count, nextItem.value)]
         nextItem = it2.next();
     }
 }

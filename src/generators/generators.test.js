@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import { strict as assert } from "node:assert";
-import { forceIterator, range, items, repeat, zipFlat, zip, next, forNext, random, map, filter, reduce, chain, forEach, forAsyncEach } from "./generators.js";  
+import { forceIterator, range, items, repeat, zipFlat, zip, next, forNext, random, map, filter, reduce, chain, forEach, forEachAsync } from "./generators.js";  
 // product
 
 describe("map", () => {
@@ -43,14 +43,14 @@ describe("forEach", () => {
 });
 
 
-describe("forAsyncEach", async() => {
+describe("forEachAsync", async() => {
     async function* af(start, end) {
         yield* range(start, end);
     }
 
     it("Should iterate the async generator", async (t) => {
         let val = 3; 
-        assert.deepEqual((await forAsyncEach(af(1, 4), (item) => val += item)) || val, 9);
+        assert.deepEqual((await forEachAsync(af(1, 4), (item) => val += item)) || val, 9);
     });
 });
 
