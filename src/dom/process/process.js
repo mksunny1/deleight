@@ -1,42 +1,11 @@
 /**
- * A few important functions for expressively and efficiently
- * working with elements on a web page. The library assumes that
- * the elements already exist in the DOM or can be loaded as markup
- * from a remote link.
- *
- * The functions here include:
- *
- * 1. {@link createFragment} used to more succinctly create document fragments
- * from markup text.
- *
- * 2. {@link loadFragment} used to load markup from a remote link and build
- * a document fragment from it.
- *
- * 3. {@link processElement} used to apply functions to elements which specify them
+ * Exports {@link process} used to apply functions to elements which specify them
  * as components using special attributes.
- *
- * 4. {@link apply} used to map elements within a tree to components (functions)
- * that will be called with them.
- *
- * 5. {@link listen} an {@link apply} component (function) used to declaratively
- * attach listeners to specified elements within a tree.
- *
- * 6. {@link set} an {@link apply} component (function) used to declaratively
- * set the values of element properties within a tree.
- *
- * 7. {@link assign} an {@link apply} component (function) used to declaratively
- * set element sub-properties within a tree.
- *
- * 8. {@link attr} an {@link apply} component (function) used to declaratively
- * set the values of element attributes within a tree.
- *
- * 9. {@link setContext} used to enforce 'single-run' behavior of functions to
- * prevent unintended repeat operations.
  *
  *
  * @module
  */
-import { process } from "../../object/process/process.js";
+import { process as baseProcess } from "../../object/process/process.js";
 function processAction(action, options) {
     return (elements, key) => {
         const currentElement = elements[key];
@@ -65,7 +34,7 @@ function processAction(action, options) {
                     if (value instanceof Function)
                         value([currentElement], attr);
                     else
-                        processElement(currentElement, value, options); // process with nested components
+                        process(currentElement, value, options); // process with nested components
                 }
             }
         }
@@ -119,6 +88,25 @@ function processAction(action, options) {
  * This will usually improve performance.
  *
  * @example
+ * import { process } from 'deleight/dom/process';
+ * const comps = {
+ *  comp1: ([element], attr, singleContext) => element.textContent = attr.value,
+ *  comp2: ([element], attr, singleContext) => element.style.left = singleContext[attr.value])
+ * };
+ * document.body.innerHTML = `
+ *     <header></header>
+ *      <article c-comp1='I replace all the children here anyway' >  <!-- using a raw value -->
+ *          <p>[comp1] is not applied to me</p>
+ *          <p>[comp1] is not applied to me</p>
+ *     </article>
+ *     <article o-comp2='a'>   <!-- using a prop -->
+ *          <p c-comp2>[comp2] is applied to me!</p>
+ *          <p c-comp2>[comp2] is applied to me!/p>
+ *          <p c-comp2>[comp2] is not applied to me!</p>
+ *     </article>
+ * `;
+ * const data = { a: '100px', b: 2, c: 3 };
+ * process(document.body, comps, { args: [data] });
  *
  *
  * @param element
@@ -126,10 +114,10 @@ function processAction(action, options) {
  * @param options
  * @returns
  */
-export function processElement(element, action, options) {
+export function process(element, action, options) {
     if (element instanceof DocumentFragment) {
         for (let child of element.children)
-            processElement(child, action, options);
+            process(child, action, options);
     }
-    return process(element.children, processAction(action, options), ...(options?.args || []));
+    return baseProcess(element.children, processAction(action, options), ...(options?.args || []));
 }

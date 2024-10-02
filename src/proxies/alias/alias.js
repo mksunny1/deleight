@@ -40,8 +40,6 @@ const handler = {
  * @param remap
  */
 export class Alias {
-    map;
-    remap;
     #proxy;
     constructor(map, remap) {
         this.map = map;

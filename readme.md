@@ -39,6 +39,7 @@ import { range, map, chain } from 'deleight/generators';
 
 If you use NPM with a bundler to build your frontend, you can bring anything from the whole package into your files like this:
 
+**ESM**
 ```js
 import { dom, Generator } from 'deleight';
 const apply = dom.apply;
@@ -48,7 +49,8 @@ const { range, map, chain } = Generator;
 
 or 
 
-```cjs
+**CommonJS**
+```js
 const { dom, Generator } = require('deleight');
 const apply = dom.apply;
 const { range, map, chain } = Generator;
@@ -60,7 +62,7 @@ const { range, map, chain } = Generator;
 
 Deleight is easy to learn. Both the modules and the primitives in them are self-containing. In editors like VS Code, simply importing a function or a class will be all you need to learn what it does and how to use it. 
 
-You will find many examples (still adding) that show the code in action. Beyond this, you only need a bit of context about what a particular module entails so that you know when you need it and what to expect when you reach for it. You can learn a single function or class and benefit from that. There is no need to learn Deleight from the top down. Still an [API documentation](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.html) is available if you prefer. 
+You will find many examples (still adding) that show the code in action. Beyond this, you only need a bit of context about what a particular module entails so that you know when you need it and what to expect when you reach for it. You can learn a single function or class and benefit from that. There is no need to learn Deleight from the top down. The API documentation is available [here](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.html).
 
 
 ## Modules

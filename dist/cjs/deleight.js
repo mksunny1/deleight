@@ -29,45 +29,6 @@
  * - Deleight itself is easy to maintain because of the architecture. It will likely
  * be relevant for a long time.
  *
- * Module Guide.
- *
- * 1. css (Deleight.css) (deleight/css)
- *
- * 2. dom (Deleight.dom) (deleight/dom)
- * 2.1. apply (Deleight.dom) (deleight/dom/apply)
- * 2.2. components (Deleight.dom) (deleight/dom/components)
- * 2.3. fragment (Deleight.dom) (deleight/dom/fragment)
- * 2.4. process (Deleight.dom) (deleight/dom/process)
- *
- * 3. function (Deleight.function) (deleight/function)
- * 3.1. Context (Deleight.function) (deleight/function/context)
- * 3.2. Return (Deleight.function) (deleight/function/return)
- *
- * 4. generators (Deleight.Generator) (deleight/generators)
- *
- * 5. lists (Deleight.List) (deleight/lists)
- * 5.1. Array (Deleight.List) (deleight/lists/array)
- * 5.2. Element (Deleight.List) (deleight/lists/element)
- *
- * 6. object (Deleight.object) (deleight/object)
- * 6.1. apply (Deleight.object) (deleight/object/apply)
- * 6.2. deepMember (Deleight.object) (deleight/object/deepmember)
- * 6.3. member (Deleight.object) (deleight/object/member)
- * 6.4. operations (Deleight.object) (deleight/object/operations)
- * 6.5. process (Deleight.object) (deleight/object/process)
- * 6.6. sharedMember (Deleight.object) (deleight/object/sharedmember)
- *
- * 7. Process (Deleight.process)  (deleight/process)
- *
- * 8. proxies (Deleight.Proxy)  (deleight/proxy)
- * 8.1. Alias (Deleight.Proxy)  (deleight/proxy/alias)
- * 8.2. Scope (Deleight.Proxy)  (deleight/proxy/scope)
- * 8.3. Selector (Deleight.Proxy)  (deleight/proxy/selector)
- * 8.4. Wrapper (Deleight.Proxy)  (deleight/proxy/wrapper)
- *
- * 9. template (Deleight.template)  (deleight/template)
- *
- *
  *
  * @module
  *

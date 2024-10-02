@@ -1,6 +1,6 @@
 {
   "name": "deleight",
-  "version": "5.0.4",
+  "version": "5.1.0",
   "description": "A library with 9 modules for writing more expressive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
   "exports": {
@@ -124,7 +124,7 @@
     "doc": "npx typedoc --out ./docs/api/deleight-api-docs/main ./src/*.ts",
     "compile": "npx tsc",
     "compile-cjs": "npx tsc tsconfig.cjs.json",
-    "build": "npx tsc && npx tsc --build tsconfig.cjs.json"
+    "build": "npx tsc && npx tsc --build tsconfig.cjs.json && npx tsc --build tsconfig.test.json"
   },
   "repository": {
     "type": "git",

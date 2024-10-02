@@ -1,5 +1,6 @@
 /**
- * Objects that select and manipulate elements when their properties or methods are accessed.
+ * Objects that select and manipulate elements when their properties or
+ * methods are accessed.
  *
  * @module
  */
@@ -25,7 +26,7 @@ const selectorHandler = {
  * Selector instances are used as the target of the proxy object returned by {@link selector}
  *
  * @example
- * import { Selector } from 'deleight/proxies/selector';
+ * import { Selector } from 'deleight/proxy/selector';
  * document.body.innerHTML = `
  * <div>I am a div</div>
  * <p>I am a paragraph</p>
@@ -41,7 +42,6 @@ const selectorHandler = {
  *
  */
 export class Selector {
-    treespace;
     #proxy;
     constructor(treespace) {
         if (treespace)
@@ -95,7 +95,7 @@ export class Selector {
  * number keys.
  *
  * @example
- * import { selector } from 'deleight/proxies/selector';
+ * import { selector } from 'deleight/proxy/selector';
  * document.body.innerHTML = `
  * <div>I am a div</div>
  * <p>I am a paragraph</p>
@@ -121,7 +121,7 @@ export function selector(treespace) {
  * MemberSelector instances are used as the target of the proxy object returned by {@link member}
  *
  * @example
- * import { MemberSelector } from 'deleight/proxies/selector';
+ * import { MemberSelector } from 'deleight/proxy/selector';
  * document.body.innerHTML = `
  * <div>I am a div</div>
  * <p>I am a paragraph</p>
@@ -133,7 +133,6 @@ export function selector(treespace) {
  *
  */
 export class MemberSelector extends Selector {
-    name;
     constructor(name, treespace) {
         super(treespace);
         this.name = name;
@@ -154,7 +153,7 @@ export class MemberSelector extends Selector {
  * updates or deletes the property correspondingly.
  *
  * @example
- * import { member } from 'deleight/proxies/selector';
+ * import { member } from 'deleight/proxy/selector';
  * document.body.innerHTML = `
  * <div>I am a div</div>
  * <p>I am a paragraph</p>
@@ -181,7 +180,7 @@ export function member(name, treespace) {
  * AttrSelector instances are also used as the target of the proxy object returned by {@link attr}
  *
  * @example
- * import { attr } from 'deleight/proxies/selector';
+ * import { attr } from 'deleight/proxy/selector';
  * document.body.innerHTML = `
  * <div>I am a div</div>
  * <p class="main">I am a paragraph</p>
@@ -209,7 +208,7 @@ export class AttrSelector extends MemberSelector {
  * updates or removes the attribute correspondingly.
  *
  * @example
- * import { attr } from 'apption';
+ * import { attr } from 'deleight/proxy/selector';
  * document.body.innerHTML = `
  * <div>I am a div</div>
  * <p class="main">I am a paragraph</p>
@@ -235,7 +234,7 @@ export function attr(name, treespace) {
  * This is used as the target of the proxy object returned by {@link method}
  *
  * @example
- * import { MethodSelector } from 'apption';
+ * import { MethodSelector } from 'deleight/proxy/selector';
  * document.body.innerHTML = `
  * <div>I am a div</div>
  * <p>I am a paragraph</p>
@@ -248,7 +247,6 @@ export function attr(name, treespace) {
  *
  */
 export class MethodSelector extends Selector {
-    name;
     #proxy;
     constructor(name, treespace) {
         super(treespace);
@@ -273,7 +271,7 @@ const methodSelectorHandler = {
  * Calling its methods calls the corresponding method in the specified element.
  *
  * @example
- * import { method } from 'apption';
+ * import { method } from 'deleight/proxy/selector';
  * document.body.innerHTML = `
  * <div>I am a div</div>
  * <p>I am a paragraph</p>

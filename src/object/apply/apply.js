@@ -7,7 +7,7 @@
  *
  * @module
  */
-import { ownKeys } from "../members/own/own.js";
+import { ownKeys } from "../member/own/own.js";
 /**
  * Performs the actions given as object property values with the specified target and
  * the corresponding property key. If an action returns a value, the value will
@@ -39,7 +39,7 @@ import { ownKeys } from "../members/own/own.js";
  * apply({ a: f1, c: { d: f3, e: f2 } }, object);
  * // object === { a: 2, b: 2, c: { d: 4, e: 15 } };
  *
- * @param object
+ * @param actions
  * @param target
  * @param options
  *

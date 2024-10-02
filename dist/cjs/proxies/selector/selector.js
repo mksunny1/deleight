@@ -1,6 +1,7 @@
 "use strict";
 /**
- * Objects that select and manipulate elements when their properties or methods are accessed.
+ * Objects that select and manipulate elements when their properties or
+ * methods are accessed.
  *
  * @module
  */

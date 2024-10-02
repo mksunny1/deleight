@@ -41,8 +41,6 @@ export function isAsyncGenerator(value) {
     return value && value[Symbol.asyncIterator]?.() === value;
 }
 export class Process {
-    values;
-    arrayScope;
     constructor(values, arrayScope) {
         this.values = values;
         if (arrayScope)
@@ -83,9 +81,7 @@ export class Process {
 export function process(code) {
     return new Process(code);
 }
-export const fac = process;
 export class Closer {
-    runner;
     constructor(runner) {
         this.runner = runner;
     }
@@ -126,8 +122,6 @@ export function $(runner) {
  *
  */
 export class Step {
-    priority;
-    endBy;
     constructor(priority = 0) {
         this.priority = priority;
     }
@@ -146,7 +140,7 @@ export class Step {
      *
      *
      * @param env
-     * @param index
+     * @param parent
      */
     *run(env, parent) {
         yield* this.runWith(env, this.getValues(env));
@@ -222,8 +216,7 @@ export function defineSteps(type) {
     return [runner1, runner1, runner, runner];
 }
 export const [r, run, R, Run] = defineSteps(Step); // literal runners
-class Fn {
-    value;
+export class FunctionValue {
 }
 /**
  * Call to wrap functions to use them as literal arguments in WithStep
@@ -233,7 +226,7 @@ class Fn {
  * @returns
  */
 export function fn(f) {
-    const f2 = new Fn();
+    const f2 = new FunctionValue();
     f2.value = f;
     return f2;
 }
@@ -272,7 +265,7 @@ export class WithStep extends Step {
                     args.push(result);
             }
             else if (value !== undefined) {
-                args.push(value instanceof Fn ? value.value : value);
+                args.push(value instanceof FunctionValue ? value.value : value);
             }
         }
         if (result !== undefined)
@@ -295,7 +288,7 @@ export class PipeStep extends Step {
                 args = [result = value(...args)];
             }
             else if (value !== undefined && args instanceof Array) {
-                args.push(value instanceof Fn ? value.value : value);
+                args.push(value instanceof FunctionValue ? value.value : value);
             }
         }
         if (result)
@@ -313,7 +306,6 @@ export const [p, pipe, P, Pipe] = defineSteps(PipeStep);
  *
  */
 export class FuncStep extends Step {
-    interpreter;
     constructor(interpreter, priority = 0) {
         super(priority);
         this.interpreter = interpreter;
@@ -518,7 +510,6 @@ export const [n, nullr, N, Nullr] = defineSteps(NullStep);
  *
  */
 export class EarlyStep extends Step {
-    values;
     constructor(values, priority = 0) {
         super(priority);
         this.values = values;
@@ -548,8 +539,6 @@ export const e = est;
  *
  */
 export class StepTemplate {
-    values;
-    map;
     constructor(values, map) {
         this.values = values;
         this.map = map;

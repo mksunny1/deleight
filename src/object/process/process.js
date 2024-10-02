@@ -7,7 +7,7 @@
  *
  * @module
  */
-import { ownKeys } from "../members/own/own.js";
+import { ownKeys } from "../member/own/own.js";
 /**
  * Performs the specified action with all object keys.
  *

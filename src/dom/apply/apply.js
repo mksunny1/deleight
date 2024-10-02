@@ -1,4 +1,11 @@
-import { apply } from "../../object/apply/apply.js";
+/**
+ * Exports {@link apply} used to apply functions to elements selected with
+ * a getter from an element tree.
+ *
+ *
+ * @module
+ */
+import { apply as baseApply } from "../../object/apply/apply.js";
 import { mapValues } from "../../object/operations/operations.js";
 export const selectAll = (element, selectors) => element.querySelectorAll(selectors);
 export const selectFirst = (element, selectors) => element.querySelector(selectors);
@@ -58,19 +65,28 @@ export const defaultGetter = getter();
  * invoking the component functions by using a mapper option.
  *
  * @example
- *
+ * import { apply } from 'deleight/dom/apply';
+ * import { map, range, forEach, zip } from 'deleight/generators';
+ * apply({
+ *     main: ([main]) => {
+ *         const newContent = map(range(101, 120), i => `My index is  now ${i}`);
+ *         const lastChildren = map(main.children, c => c.lastElementChild);
+ *         forEach(zip(lastChildren, newContent), ([el, c]) => el.textContent = c);
+ *         // set(lastChildren,  {textContent: newContent});
+ *     }
+ * });
  *
  * @param components
  * @param target
- * @param selector
+ * @param options
  * @returns
  */
-export function applyComponents(components, target, options) {
+export function apply(components, target, options) {
     if (!target)
         target = document.body;
     const getter = options?.getter || defaultGetter;
     const mappedComponents = mapValues(components, (options?.mapper || applyMapper)(getter));
-    return apply(mappedComponents, target, { args: options?.args, getter: getter });
+    return baseApply(mappedComponents, target, { args: options?.args, getter: getter });
 }
 function applyFunction(components, getter) {
     const innerApplyFunction = (elements, key, ...args) => {

@@ -1,7 +1,7 @@
 /**
  * This module exports many useful generators for JS applications. 
  * There are generators for most array methods like `map` and `filter`, 
- * along many others drawn from  other languages that make heavy use 
+ * along many those drawn from other languages that make heavy use 
  * of generators, like Python. 
  * 
  * Generators are very useful for improving performance as they help to 
@@ -10,114 +10,103 @@
  * libraries in the 
  * [JS framework benchmarks](https://github.com/krausest/js-frameworks-benchmark)
  * 
- * API Table of Contents
- * 
- * {@link range}
- * {@link forceIterator}
- * {@link forEach}
- * {@link forAsyncEach}
- * {@link forNext}
- * {@link next}
- * {@link items}
- * {@link random}
- * {@link repeat}
- * {@link map}
- * {@link filter}
- * {@link reduce}
- * {@link chain}
- * {@link zipFlat}
- * {@link zip}
- * (product: Still buggy. Not yet exported)
- * 
  * 
  * @module
  */
 
 /**
- * Perform the given action for all items of the iterable.
+ * Performs the given action for all items of the iterable.
  * 
  * @example
+ * import { forEach } from 'deleight/generators';
+ * forEach(range(10), ()=> console.log(i));
  * 
- * 
- * @param iter 
+ * @param it 
  * @param action 
  */
-export function forEach<T>(iter: Iterable<any>, action: (item: any, i?: number) => T) {
+export function forEach<T>(it: Iterable<any>, action: (item: any, i?: number) => T) {
     let i = 0;
-    for (let item of iter) action(item, i++);
+    for (let item of it) action(item, i++);
 }
 
 /**
- * Perform the given action for all items of the async iterable.
+ * Performs the given action for all items of the async iterable.
  * 
  * @example
+ * import { forEachAsync } from 'deleight/generators';
+ * async function* asyncGen() {
+ *    for (let i of (range(10))) yield i;
+ * }
+ * forEachAsync(asyncGen(), ()=> console.log(i));
  * 
- * 
- * @param iter 
+ * @param it 
  * @param action 
  */
-export async function forAsyncEach<T>(iter: AsyncIterable<any>, action: (item: any, i?: number) => T) {
+export async function forEachAsync<T>(it: AsyncIterable<any>, action: (item: any, i?: number) => T) {
     let i = 0;
-    for await (let item of iter) action(item, i++);
+    for await (let item of it) action(item, i++);
 }
 
 /**
  * Maps the values of the iterable to other values using the given mapper.
  * 
  * @example
+ * import { map } from 'deleight/generators';
+ * map(range(10), i=> 2 * i);
  * 
- * 
- * @param iter 
+ * @param it 
  * @param mapper 
  */
-export function* map<T>(iter: Iterable<any>, mapper: (item: any, i?: number) => T): Iterable<T> {
+export function* map<T>(it: Iterable<any>, mapper: (item: any, i?: number) => T): Iterable<T> {
     let i = 0;
-    for (let item of iter) yield mapper(item, i++);
+    for (let item of it) yield mapper(item, i++);
 }
 
 /**
  * Filters the values of the iterable using the given test function.
  * 
  * @example
+ * import { filter } from 'deleight/generators';
+ * filter(range(10), i=> 2 < i);
  * 
- * 
- * @param iter 
+ * @param it 
  * @param test 
  */
-export function* filter<T>(iter: Iterable<any>, test: (item: any, i?: number) => boolean): Iterable<T> {
+export function* filter<T>(it: Iterable<any>, test: (item: any, i?: number) => boolean): Iterable<T> {
     let i = 0;
-    for (let item of iter) if (test(item, i++)) yield item;
+    for (let item of it) if (test(item, i++)) yield item;
 }
 
 /**
- * Reduces the the iterable using the given reducer function.
+ * Reduces the iterable using the given reducer function.
  * 
  * @example
+ * import { reduce } from 'deleight/generators';
+ * reduce(range(10), ((r, i) => r * i), 3);
  * 
- * 
- * @param iter 
+ * @param it 
  * @param reducer 
  */
-export function reduce<T>(iter: Iterable<any>, reducer: (value: any, item: any, i?: number) => boolean, value?: any): T {
+export function reduce<T>(it: Iterable<any>, reducer: (value: any, item: any, i?: number) => boolean, value?: any): T {
     let i = 0;
-    for (let item of iter) value = reducer(value, item, i++);
+    for (let item of it) value = reducer(value, item, i++);
     return value
 }
 
 /**
- * Chain multiple iterables...
+ * Chains multiple iterables...
  *
  * @example
  * import { chain } from 'deleight/generators';
- * for (let i of chain(range(10, range(15)))) {
+ * for (let i of chain(range(10), range(15))) {
  *      console.log(i);    // 0, 1, 2, 3,...9, 0, 1, 2, ..., 14
  * }
  *
- * @param  {...any[]} args
+ * @param its
  */
-export function* chain<T>(...args: Iterable<any>[]): Iterable<T> {
+export function* chain<T>(...its: Iterable<any>[]): Iterable<T> {
     let item: T;
-    for (let arg of args) {
+    for (let arg of its) {
         for (item of arg) yield item;
     }
 }
@@ -128,27 +117,27 @@ export function* chain<T>(...args: Iterable<any>[]): Iterable<T> {
  * @example
  * 
  * 
- * @param args 
+ * @param its 
  */
-function* product<T extends any[]>(...args: (Iterable<any> | (() => Iterable<any>))[]): Iterator<T, void, unknown> {
+function* product<T extends any[]>(...its: (Iterable<any> | (() => Iterable<any>))[]): Iterator<T, void, unknown> {
     const breaker = Symbol();
-    const its = args.map(arg => repeat(arg, -1, breaker));
+    const its2 = its.map(arg => repeat(arg, -1, breaker));
 
-    let c2 = args.length - 1, c1: number;
+    let c2 = its.length - 1, c1: number;
     let it: Iterator<any, void, unknown>, value: any;
     
-    let item = its.map(it => it.next().value) as T;
+    let item = its2.map(it => it.next().value) as T;
     for (let value of item) if (value === breaker) return;    // empty.
     while (true) {
         yield item;
-        it = its[c2];
+        it = its2[c2];
         while ((value = it.next().value) !== breaker) {
             item[c2] = value; 
             yield item;
         }
         c1 = c2;
         do {
-            it = its[--c1];
+            it = its2[--c1];
             value = it.next().value;
         } while (value === breaker && c1 > 0)
         if (c1 >= 0 && value !== breaker) item[c1] = value;
@@ -156,19 +145,18 @@ function* product<T extends any[]>(...args: (Iterable<any> | (() => Iterable<any
     }
 }
 
-
 /**
- * Forcs any iterable to become an iterator. Will throw 
+ * Forces any iterable or iterator to become an iterator. Will throw 
  * if this is not possible.
  * 
  * @example
- * import { iter } from 'deleight/generators';
- * const it = iter([1, 2, 3, 4, 5]);
+ * import { forceIterator } from 'deleight/generators';
+ * const it = forceIterator([1, 2, 3, 4, 5]);
  * 
- * @param { any } it 
+ * @param it 
  */
-export function forceIterator(it: any): Iterator<any> {
-    return (Reflect.get(it, 'next') instanceof Function) ? it : it[Symbol.iterator]()
+export function forceIterator(it: Iterable<any> | Iterator<any>): Iterator<any> {
+    return it[Symbol.iterator]?.() || it;
 }
 
 /**
@@ -201,11 +189,11 @@ export function* range(start: number, end?: number, step?: number){
  * const tenth = []...items(range(1000), range(0, 1000, 10))];
  * // selects every 10th item in the array.
  *
- * @param {any} arrayLike
+ * @param {any} it
  * @param {Iterable<any>} index
  */
-export function* items(arrayLike: any, index: Iterable<number>) {
-    for (let i of index) yield arrayLike[i];
+export function* items(it: any, index: Iterable<number>) {
+    for (let i of index) yield it[i];
 }
 
 /**
@@ -218,48 +206,46 @@ export function* items(arrayLike: any, index: Iterable<number>) {
  * const repeated = [...repeat([1, 2, 3], 4)];
  * // [1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3]
  * 
- * @param {Iterable<any>} what 
+ * @param {Iterable<any>} it 
  * @param {number} [times] 
  */
-export function* repeat<T>(what: Iterable<T> | (() => Iterable<T>), times: number = -1, ...extras: any[]) {
+export function* repeat<T>(it: Iterable<T> | (() => Iterable<T>), times: number = -1, ...extras: any[]) {
     let item: any;
-    if (times !== 1 && !(what instanceof Array) && !(what instanceof Function)) {
-        what = [...what];
+    if (times !== 1 && !(it instanceof Array) && !(it instanceof Function)) {
+        it = [...it];
     }
     let what2: Iterable<T>;
     if (times < 0) {
         while (true) {
-            what2 = (what instanceof Function)? what(): what;
+            what2 = (it instanceof Function)? it(): it;
             for (item of what2) yield item;
         }
     } else for (let i = 0; i < times; i++) {
-        what2 = (what instanceof Function)? what(): what;
+        what2 = (it instanceof Function)? it(): it;
         for (item of what2) yield item;
         for (item of extras) yield item;
     }
 }
 
 /**
- * Returns an iterator over the next 'count' items of the iterator. 
- * 
- * Note that, for performance reasons, this only accepts an 
- * iterator as the 'it' argument. You can convert any iterable to an 
- * iterator using the {@link forceIterator} function as shown in the following 
- * example.
+ * Returns a Generator over the next 'count' items of the iterable or iterator. 
+ * In most cases you will call this function with an iterator.
  * 
  * If a firstValue is specified, it will be yielded first.
  * 
  * @example
- * import { next, iter } from 'deleight/generators';
- * const it = iter([1, 'a', 2, 'b', 3, 'c', 4, 'd']);
+ * import { next, forceIterator } from 'deleight/generators';
+ * const it = forceIterator([1, 'a', 2, 'b', 3, 'c', 4, 'd']);
  * const [num1, let1] = next(it, 2);  // (1, 'a')
  * const [num2, let2] = next(it, 2);  // (2, 'b')
  * 
- * @param {Iterator<any>} it 
- * @param {number} count 
- * @param { any } [firstValue]
+ * @param it 
+ * @param count 
+ * @param firstValue
  */
-export function* next(it: Iterator<any>, count: number, firstValue?: any) {
+export function* next(it: Iterable<any> | Iterator<any>, count: number, firstValue?: any) {
+    it = forceIterator(it);
+
     let count2 = count;
     if (firstValue) {
         yield firstValue;
@@ -269,8 +255,9 @@ export function* next(it: Iterator<any>, count: number, firstValue?: any) {
 }
 
 /**
- * Returns an iterator of iterators over the next 'count' items of 
- * the given iterable
+ * Returns a generator of generators over the next 'count' items of 
+ * the given iterable. In other words, this function will partition the 
+ * input iterable with each partition containing `count` items.
  * 
  * @example
  * import { forNext } from 'deleight/generators';
@@ -284,36 +271,34 @@ export function* forNext(it: Iterable<any>, count: number) {
     const it2 = forceIterator(it);
     let nextItem: IteratorResult<any, any> = it2.next();
     while (!nextItem.done) {
-        yield [...next(it2, count, nextItem.value)]
+        yield next(it2, count, nextItem.value)
         nextItem = it2.next();
     }
 }
 
 /**
- * Returns an iterator over the items of all the input iterators, starting from
- * the zero index to the maximum index of the first argument. The
- * effective length of the iterator is the multiple of the length of thr smallest
- * iterator and the number of iterators (number of args).
- *
- * Can be used to join arrays in a way not supported by `concat`, `push`, etc.
- * To pass an array as an iterator, call array.values().
+ * Returns a generator over the items of all the input args (iterables), starting from
+ * the zero index to the maximum index of the smallest arg. 
+ * 
+ * The effective length of the generator is the multiple of the length of the smallest
+ * arg and the number of args.
  *
  * @example
  * import { zipFlat } from 'deleight/generators';
- * for (let i of zip(range(10, range(15)))) {
- *      console.log(i);    // (0, 0, 1, 1, 2, 2, .... till smallest iterable (10) is exhausted.
+ * for (let i of zipFlat(range(10), range(15))) {
+ *      console.log(i);    // (0, 0, 1, 1, 2, 2, .... till range(10) is exhausted.
  * }
  *
- * @param  {...any[]} args
+ * @param its
  */
-export function* zipFlat(...args: any[]) {
-    const count = args.length;
-    args = args.map(arg => forceIterator(arg));
+export function* zipFlat(...its: Iterable<any>[]) {
+    const count = its.length;
+    const itArgs = its.map(arg => forceIterator(arg));
 
     let i: number, nextItem: IteratorResult<any, any>;
     while (true) {
         for (i = 0; i < count; i++) {
-            nextItem = args[i].next();
+            nextItem = itArgs[i].next();
             if (nextItem.done) return;
             else yield nextItem.value;
         }
@@ -321,31 +306,32 @@ export function* zipFlat(...args: any[]) {
 }
 
 /**
- * Returns an iterator over the items of all the input iterators, starting from
- * the zero index to the maximum index of the first argument. The
- * effective length of the iterator is the multiple of the length of thr smallest
- * iterator and the number of iterators (number of args).
- *
- * Can be used to join arrays in a way not supported by `concat`, `push`, etc.
+ * Returns a generator over the combined items of all the input args (iterables), 
+ * starting from the zero index to the maximum index of the smallest arg. 
+ * 
+ * The effective length of the generator is the length of the smallest input
+ * iterable.
  *
  * @example
  * import { zip } from 'deleight/generators';
- * for (let i of zip(range(10, range(15)))) {
- *      console.log(i);    // (0, 0), (1, 1), (2, 2), .... till smallest iterable (10) is exhausted.
+ * for (let i of zip(range(10), range(15))) {
+ *      console.log(i);    // (0, 0), (1, 1), (2, 2), .... till range(10) is exhausted.
  * }
  *
- * @param  {...any[]} args
+ * @param its
  */
-export function* zip(...args: any[]) {
-    yield* forNext(zipFlat(...args), args.length);
+export function* zip(...its: Iterable<any>[]) {
+    yield* forNext(zipFlat(...its), its.length);
 }
 
 /**
- * Returns an unordered/random iterator over the input array..
+ * Returns an unordered/random generator over the input itrable. 
+ * Note that this is forced to materialize the input before running.
+ * 
  *
  * @example
- * import { uItems } from 'deleight/generators';
- * const unOrdered = uItems([1, 2, 3, 4]);  // [4, 1, 3, 2]
+ * import { random } from 'deleight/generators';
+ * const unOrdered = random([1, 2, 3, 4]);  // probably [4, 1, 3, 2]
  *
  * @param it The iterable to get items from
  * @param count The number of items to return. All items are returned if 

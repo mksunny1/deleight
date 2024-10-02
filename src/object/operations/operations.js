@@ -8,7 +8,7 @@
  *
  * @module
  */
-import { ownKeys } from "../members/own/own.js";
+import { ownKeys } from "../member/own/own.js";
 /**
  * Converts an iterable of key-value pairs into an object. This is
  * the inverse of `Object.entries`. it is a bit similar to {@link zip}
@@ -19,8 +19,7 @@ import { ownKeys } from "../members/own/own.js";
  * const obj = object([['a', 1], ['b', 2], ['c', 3]]);
  * console.log(obj)   // { a: 1, b: 2, c: 3 }
  *
- * @param keys
- * @param values
+ * @param pairs
  * @returns
  */
 export function object(pairs) {
@@ -165,7 +164,7 @@ export function reduce(object, reducer, result = null) {
  *
  * @param target
  * @param sources
- * @param getter
+ * @param options
  */
 export function assign(target, sources, options) {
     const getter = options?.getter, setter = options?.setter;
