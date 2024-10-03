@@ -71,7 +71,7 @@ You will find many examples (still adding) that show the code in action. Beyond 
 
 ### [css](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.css.html)
 
-Primitives to help with loading and using stylesheets. Using **css**, you can 
+Primitives for loading and using stylesheets. Using **css**, you can 
 
 - create `CSSStyleSheet` instances from CSS files or text
 - extract `CSSStyleSheet` objects from a document tree from `<style>` and `<link>` elements, optionally removing them from the tree
@@ -103,7 +103,7 @@ Objects implementing an array-like mutation interface so they can be used togeth
 
 Many important primitives for manipulating objects or getting stuff done with them. The `apply` and `process` functions of the **dom** module use the object versions under the hood. There are also **sharedmember** and **deepmember** sub-modules for respectively accessing members in multiple objects and members deep within an object. 
 
-Uing **sharedmember**, you can add more structure and concision in your code. Using **deepmember**, you can help trivially implement things like routing.
+Uing **sharedmember**, you can add more structure and concision in your code by manipulating multiple objects with a single action. Using **deepmember**, you can trivially implement things like routing. Async deep member access can be used to access server data like other objects on the client.
 
 ```js
 import { call } from 'deleight/object/deepmember'
@@ -137,10 +137,9 @@ function router(newHash) {
 
 Exports a `Process` class that converts every iterable into a callable, providing they contain one or more `Step` objects. A `Step` provides the interpretations for the values in the iterable after it, up to the next step with equal or lower priority.
 
-Many simple steps have been implemented to do things like call functions with the same scope and arguments, pipe functions, access properties on multiple objects, spread and compact values, etc. 
+Many simple steps have been implemented to do things like call functions with the same scope and arguments, chain functions, access properties on multiple objects, spread and compact values, etc. 
 
-Think of a `Process` here as a function whose lines are as items in an array. We can manipulate them however we want. We can also define the meaning of 
-all the keywords. It is helpful for creating DSLs or generating code on the fly, such as from markup.
+Think of a `Process` here as a function whose lines are as items in an array. We can manipulate them however we want. We can also define the meaning of all the keywords. Process is meant for generating and modifying code on the fly without using Function constructor. We can use it to setup reactivity among other things.
 
 ### [proxy](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.Proxy.html)
 
