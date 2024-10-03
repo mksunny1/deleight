@@ -162,3 +162,4 @@ export function asyncTemplates(templateStr: string, argNames: Array<string> = ['
 
     return (arr, ...args) => f(asyncTag, arr, ...args);
 }
+

@@ -133,5 +133,6 @@ out
 # project-specific
 docs/api
 src-old
+dist
 
 
