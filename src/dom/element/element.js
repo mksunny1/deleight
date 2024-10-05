@@ -16,8 +16,17 @@ const CHILDREN = 1;
  *
  * @example
  * import { render } from 'deleight/dom'
- * const rendered = render({
- *     main: [{ class: 'right bg' }, 'text content or children array']
+ * // create a component:
+ * const items = it => it.map(num => ({li: [{}, num]}));
+ *
+ * // use a component:
+ * const ul = render({
+ *     ul: [{ class: 'list1' }, items([1,2,3,4,5,6,7,8,9])]
+ * });
+ *
+ * // reuse a component:
+ * const ol = render({
+ *     ol: [{ class: 'list2' }, items([1,2,3,4,5,6,7,8,9,10])]
  * });
  *
  * @param iElement
@@ -35,8 +44,18 @@ export function render(iElement) {
  *
  * @example
  * import { build } from 'deleight/dom'
- * const built = build({
- *     main: [{ class: 'right bg' }, 'text content or children array']
+ *
+ * // create a component:
+ * const items = it => it.map(num => ({li: [{}, num]}));
+ *
+ * // use a component:
+ * const ul = build({
+ *     ul: [{ class: 'list1' }, items([1,2,3,4,5,6,7,8,9])]
+ * });
+ *
+ * // reuse a component:
+ * const ol = build({
+ *     ol: [{ class: 'list2' }, items([1,2,3,4,5,6,7,8,9,10])]
  * });
  *
  *
