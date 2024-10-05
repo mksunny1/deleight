@@ -90,11 +90,13 @@ Many standard components have been included for creating event handlers, setting
 
 ### [function](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.function.html)
 
-Currently exports 2 primitives:
+Currently exports 3 primitives:
 
 1. A `Return` function which creates an object that represents the return value of calling a function. Accessing members will first call the wrapped function to get the object which will be accessed instead.
 
 2. A `setContext` function which wraps a function with another one to include the given `context` object in its scope. `setContext` can be called on multiple functions to effectively make them run mutually exclusively. This can be useful, for example, in event handlers that create network requests so they do not unnecessarily repeat the requests.
+
+3. `cache` to wrap a function to cache and return the first result. `cache#reset` method can be used for reset. 
 
 ### [generators](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.Generator.html)
 
