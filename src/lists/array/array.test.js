@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test'
 import { strict as assert } from 'node:assert'
-import { ArrayList } from '../array.js'
+import { ArrayList } from './array.js'
 
 describe("ArrayList", () => {
     const array = [];

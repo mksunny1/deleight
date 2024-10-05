@@ -1,6 +1,11 @@
 /**
- * Shorthand for creating a DocumentFragment from markup.
- *
+ * htmldom
+ * Functions for building DOM from HTML text or file.
+ */
+
+/**
+ * Shorthand for creating a DocumentFragment from HTML text.
+ * 
  * @example
  * import { createFragment } from 'inherent';
  * const frag1 = createFragment(`
@@ -9,14 +14,15 @@
  *`)
  * // <p>Para 1</p><p>Para 2</p>
  *
- * @param markup The `outerHTML` of what to create
- * @returns
+ * @param html The `outerHTML` of what to create
+ * @returns 
  */
-export function createFragment(markup) {
+export function createFragment(html: string) {
     const temp = document.createElement('template');
-    temp.innerHTML = markup;
+    temp.innerHTML = html;
     return temp.content;
 }
+
 /**
  * Fetches markup from a remote link and creates a document fragment out of it.
  *
@@ -29,6 +35,7 @@ export function createFragment(markup) {
  * @param init The request init used with `fetch`
  * @returns A promise that resolves to the document fragment.
  */
-export async function loadFragment(href, init) {
+export async function loadFragment(href: string, init: RequestInit) {
     return fetch(href, init).then(r => r.text()).then(t => createFragment(t));
 }
+

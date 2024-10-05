@@ -4,5 +4,6 @@
  */
 export * from './apply/apply.js';
 export * from './components/components.js';
-export * from './fragment/fragment.js';
+export * from './element/element.js';
+export * from './html/html.js';
 export * from './process/process.js';

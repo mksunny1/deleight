@@ -12,7 +12,7 @@ import { apply } from 'deleight/dom/apply';
 import { map, range, forEach, zip } from 'deleight/generators';
 
 apply({
-    main: ([main]) => {
+    main: (main) => {
         const newContent = map(range(101, 120), i => `My index is  now ${i}`);
         const lastChildren = map(main.children, c => c.lastElementChild);
         forEach(zip(lastChildren, newContent), ([el, c]) => el.textContent = c);
@@ -80,7 +80,13 @@ Primitives for loading and using stylesheets. Using **css**, you can
 
 ### [dom](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.dom.html)
 
-Primitives for working with the DOM. Using **dom**, we can apply components to elements either by matching with selectors or by specifying the components with attributes. Many standard components have been included for creating event handlers, setting attributes and setting and assigning properties.
+Primitives for building and working with the DOM. Using **dom**, we can:
+- build elements from HTML text and files ([html]())
+- build elements (or their HTML text) from objects  ([element]())
+- apply components to elements by matching with selectors ([apply]())
+- apply components to elements by specifying them with attributes ([process]()). 
+
+Many standard components have been included for creating event handlers, setting attributes and setting and assigning properties (components).
 
 ### [function](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.function.html)
 

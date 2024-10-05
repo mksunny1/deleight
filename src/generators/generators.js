@@ -14,6 +14,20 @@
  * @module
  */
 /**
+ * Similar to `Array.flat`.
+ *
+ * @param it
+ */
+export function* flat(it) {
+    for (let item of it) {
+        if ((typeof item === 'object' || item instanceof Function) && Reflect.has(item, Symbol.iterator)) {
+            yield* flat(item);
+        }
+        else
+            yield item;
+    }
+}
+/**
  * Performs the given action for all items of the iterable.
  *
  * @example

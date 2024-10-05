@@ -1,6 +1,6 @@
 {
   "name": "deleight",
-  "version": "5.1.4",
+  "version": "5.2.0",
   "description": "A library with 9 modules for writing more expressive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
   "exports": {
@@ -24,9 +24,13 @@
       "require": "./dist/cjs/dom/components/components.js",
       "default": "./dist/esm/dom/components/components.js"
     },
-    "./dom/fragment": {
-      "require": "./dist/cjs/dom/fragment/fragment.js",
-      "default": "./dist/esm/dom/fragment/fragment.js"
+    "./dom/element": {
+      "require": "./dist/cjs/dom/element/element.js",
+      "default": "./dist/esm/dom/element/element.js"
+    },
+    "./dom/html": {
+      "require": "./dist/cjs/dom/html/html.js",
+      "default": "./dist/esm/dom/html/html.js"
     },
     "./dom/process": {
       "require": "./dist/cjs/dom/process/process.js",
@@ -161,6 +165,8 @@
   "author": "Mark Sun",
   "license": "MIT",
   "devDependencies": {
+    "@types/jsdom": "^21.1.7",
+    "@types/node": "^22.7.4",
     "express": "^4.19.2",
     "jsdom": "^24.0.0",
     "typedoc": "^0.25.13",

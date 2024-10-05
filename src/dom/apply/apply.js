@@ -19,9 +19,6 @@ export const selectFirst = (element, selectors) => element.querySelector(selecto
  * 2. If the key is a string, the given selector (or `querySelectorAll` fallback)
  * is used to retrieve the value(s).
  *
- * 3. Whatever is obtained from either 1 or 2 is coerced into an `Interable<Element>`
- * (if it was no already one) to ensure consistency of the result type.
- *
  * @example
  *
  *
@@ -30,23 +27,15 @@ export const selectFirst = (element, selectors) => element.querySelector(selecto
  * @param selector
  * @returns
  */
-export function get(target, key, selector = selectAll) {
+export function get(target, key, selector = selectFirst) {
     if (typeof key === 'number') {
         if (key < 0)
             key = target.children.length + key;
-        return [target.children[key]];
+        return target.children[key];
     }
     else if (typeof key === 'string') {
-        const result = selector(target, key);
-        if (Reflect.has(result, Symbol.iterator))
-            return result;
-        else if (result instanceof Element)
-            return [result];
-        else
-            return [];
+        return selector(target, key);
     }
-    else
-        return [];
 }
 function getter(selector) {
     return (target, key) => get(target, key, selector);
@@ -68,7 +57,7 @@ export const defaultGetter = getter();
  * import { apply } from 'deleight/dom/apply';
  * import { map, range, forEach, zip } from 'deleight/generators';
  * apply({
- *     main: ([main]) => {
+ *     main: (main) => {
  *         const newContent = map(range(101, 120), i => `My index is  now ${i}`);
  *         const lastChildren = map(main.children, c => c.lastElementChild);
  *         forEach(zip(lastChildren, newContent), ([el, c]) => el.textContent = c);
@@ -87,6 +76,32 @@ export function apply(components, target, options) {
     const getter = options?.getter || defaultGetter;
     const mappedComponents = mapValues(components, (options?.mapper || applyMapper)(getter));
     return baseApply(mappedComponents, target, { args: options?.args, getter: getter });
+}
+/**
+ * Similar to {@link apply} but uses {@link selectAll} (instead of
+ * the default {@link selectFirst}) to match elements.
+ *
+ * import { applyAll } from 'deleight/dom/apply';
+ * import { map, range, forEach, zip } from 'deleight/generators';
+ * apply({
+ *     applyAll: ([main]) => {
+ *         const newContent = map(range(101, 120), i => `My index is  now ${i}`);
+ *         const lastChildren = map(main.children, c => c.lastElementChild);
+ *         forEach(zip(lastChildren, newContent), ([el, c]) => el.textContent = c);
+ *         // set(lastChildren,  {textContent: newContent});
+ *     }
+ * });
+ *
+ * @param components
+ * @param target
+ * @param options
+ * @returns
+ */
+export function applyAll(components, target, options) {
+    if (!options)
+        options = {};
+    options.getter = getter(selectAll);
+    return apply(components, target, options);
 }
 function applyFunction(components, getter) {
     const innerApplyFunction = (elements, key, ...args) => {

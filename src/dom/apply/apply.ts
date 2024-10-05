@@ -38,9 +38,6 @@ export const selectFirst = (element: Element | DocumentFragment, selectors: stri
  * 2. If the key is a string, the given selector (or `querySelectorAll` fallback) 
  * is used to retrieve the value(s).
  * 
- * 3. Whatever is obtained from either 1 or 2 is coerced into an `Interable<Element>` 
- * (if it was no already one) to ensure consistency of the result type.
- * 
  * @example
  * 
  * 
@@ -49,16 +46,13 @@ export const selectFirst = (element: Element | DocumentFragment, selectors: stri
  * @param selector 
  * @returns 
  */
-export function get(target: Element | DocumentFragment, key: IKey, selector: ISelector = selectAll): Iterable<Element> {
+export function get(target: Element | DocumentFragment, key: IKey, selector: ISelector = selectFirst): Element | Iterable<Element> {
     if (typeof key === 'number') {
         if (key < 0) key = target.children.length + key;
-        return [target.children[key]];
+        return target.children[key];
     } else if (typeof key === 'string') {
-        const result = selector(target, key);
-        if (Reflect.has(result, Symbol.iterator)) return result as Iterable<Element>;
-        else if (result instanceof Element) return [result]
-        else return [];
-    } else return []
+        return selector(target, key);
+    }
 }
 function getter(selector?: ISelector) {
     return (target: Element | DocumentFragment, key: IKey) => get(target, key, selector);
@@ -81,7 +75,7 @@ export const defaultGetter = getter();
  * import { apply } from 'deleight/dom/apply';
  * import { map, range, forEach, zip } from 'deleight/generators';
  * apply({
- *     main: ([main]) => {
+ *     main: (main) => {
  *         const newContent = map(range(101, 120), i => `My index is  now ${i}`);
  *         const lastChildren = map(main.children, c => c.lastElementChild);
  *         forEach(zip(lastChildren, newContent), ([el, c]) => el.textContent = c);
@@ -99,6 +93,32 @@ export function apply<T>(components: T, target?: Element | DocumentFragment, opt
     const getter = options?.getter || defaultGetter;
     const mappedComponents = mapValues(components, (options?.mapper || applyMapper)(getter));
     return baseApply(mappedComponents as IActions, target, { args: options?.args, getter: getter });
+}
+
+/**
+ * Similar to {@link apply} but uses {@link selectAll} (instead of 
+ * the default {@link selectFirst}) to match elements.
+ * 
+ * import { applyAll } from 'deleight/dom/apply';
+ * import { map, range, forEach, zip } from 'deleight/generators';
+ * apply({
+ *     applyAll: ([main]) => {
+ *         const newContent = map(range(101, 120), i => `My index is  now ${i}`);
+ *         const lastChildren = map(main.children, c => c.lastElementChild);
+ *         forEach(zip(lastChildren, newContent), ([el, c]) => el.textContent = c);
+ *         // set(lastChildren,  {textContent: newContent});
+ *     }
+ * });
+ * 
+ * @param components 
+ * @param target 
+ * @param options 
+ * @returns 
+ */
+export function applyAll<T>(components: T, target?: Element | DocumentFragment, options?: IApplyOptions) {
+    if (!options) options = {};
+    options.getter = getter(selectAll);
+    return apply(components, target, options);
 }
 
 function applyFunction<T>(components: IApplyComponents<T>, getter: typeof defaultGetter) {

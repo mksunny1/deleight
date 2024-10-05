@@ -22,7 +22,7 @@ describe("processElement", () => {
     `;
 
         const comps = [];
-        const comp = ([node]) => comps.push(node.tagName);
+        const comp = (node) => comps.push(node.tagName);
         process(body, {comp});
 
         assert.equal(comps.length, 1);
@@ -39,7 +39,7 @@ describe("processElement", () => {
 
         const comps = [];
         const aProps = { a: 1, b: { c: 1, d: 2 }, e: 3 };
-        const comp = ([node], attr) => comps.push([node.textContent.trim(), ...attr.value.split(' ').map(v => aProps[v])]);
+        const comp = (node, attr) => comps.push([node.textContent.trim(), ...attr.value.split(' ').map(v => aProps[v])]);
         process(body, { comp });
 
         assert.equal(comps.length, 1);
@@ -57,7 +57,7 @@ describe("processElement", () => {
     `;
 
         const comps = [];
-        const comp = ([node]) => comps.push(node.tagName);
+        const comp = (node) => comps.push(node.tagName);
         process(body, {comp});
 
         assert.equal(comps.length, 1);
@@ -76,7 +76,7 @@ describe("processElement", () => {
     `;
 
         const comps = [];
-        const comp = ([node]) => comps.push(node.tagName);
+        const comp = (node) => comps.push(node.tagName);
         process(body, {comp});
 
         assert.equal(comps.length, 4);
@@ -94,7 +94,7 @@ describe("processElement", () => {
     `;
 
         const comps = [];
-        const comp = ([node]) => comps.push(node.tagName);
+        const comp = (node) => comps.push(node.tagName);
         process(body, {comp});
 
         assert.equal(comps.length, 1);
@@ -111,7 +111,7 @@ describe("processElement", () => {
     `;
 
         const comps = [];
-        const comp = ([node]) => comps.push(node.tagName);
+        const comp = (node) => comps.push(node.tagName);
         process(body, {comp});
 
         assert.equal(comps.length, 2);
@@ -127,7 +127,7 @@ describe("processElement", () => {
     `;
 
         const comps = [];
-        const comp = ([node]) => comps.push(node.tagName);
+        const comp = (node) => comps.push(node.tagName);
         process(body, {comp}, { prefix: "a-" });
 
         assert.equal(comps.length, 1);
@@ -142,7 +142,7 @@ describe("processElement", () => {
     <article>I am not a component</article>
     `;
         const comps = [];
-        const comp = ([node]) => comps.push(node.tagName);
+        const comp = (node) => comps.push(node.tagName);
         process(body, comp);
         assert.equal(comps.length, 4);
         assert.equal(comps[0], 'DIV');

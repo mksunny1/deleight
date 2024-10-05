@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import { strict as assert } from "node:assert";
-import { apply } from "./apply.js";
+import { apply, applyAll } from "./apply.js";
 import { JSDOM } from "jsdom";
 
 describe("apply", () => {
@@ -19,7 +19,7 @@ describe("apply", () => {
     <div>I am a div</div>
     `;
     apply({
-            div: divs => assert.equal(divs[0].textContent, 'I am a div')
+            div: div => assert.equal(div.textContent, 'I am a div')
         });
     });
 
@@ -29,7 +29,7 @@ describe("apply", () => {
     `;
         let f1 = 0, f2 = 0;
         apply({
-            div: [divs => f1++, divs => f2++]
+            div: [div => f1++, div => f2++]
         });
         assert.equal(f1, 1);
         assert.equal(f2, 1);
@@ -44,10 +44,10 @@ describe("apply", () => {
     `;
 
     apply({
-            div: divs => assert.equal(divs[0].textContent, 'I am a div'),
-            p: ps => assert.equal(ps[0].textContent, 'I am a paragraph'),
-            article: articles => assert.equal(articles[0].textContent, 'I am an article'),
-            section: sections => assert.equal(sections[0].textContent, 'I am a section')
+            div: div => assert.equal(div.textContent, 'I am a div'),
+            p: p => assert.equal(p.textContent, 'I am a paragraph'),
+            article: article => assert.equal(article.textContent, 'I am an article'),
+            section: section => assert.equal(section.textContent, 'I am a section')
         });
     });
 
@@ -61,10 +61,10 @@ describe("apply", () => {
     `;
 
     apply({
-            div: divs => assert.equal(divs[0].textContent, 'I am a div'),
-            p: ps => assert.equal(ps[0].textContent, 'I am a paragraph'),
-            [-1]: articles => assert.equal(articles[0].textContent, 'I am an article'),
-            2: sections => assert.equal(sections[0].textContent, 'I am a section')
+            div: div => assert.equal(div.textContent, 'I am a div'),
+            p: p => assert.equal(p.textContent, 'I am a paragraph'),
+            [-1]: article => assert.equal(article.textContent, 'I am an article'),
+            2: section => assert.equal(section.textContent, 'I am a section')
         }, body);
     });
 
@@ -79,7 +79,7 @@ describe("apply", () => {
     <section>I am a section</section>
     `;
 
-    apply({
+    applyAll({
             div: (divs) => assert.equal(divs.length, 2),
             p: (ps) => assert.equal(ps.length, 1),
             article: (articles) => assert.equal(articles.length, 0),
@@ -102,7 +102,7 @@ describe("apply", () => {
     `;
 
         const main = body.querySelector('main');
-        apply({
+        applyAll({
             div: (divs) => assert.equal(divs.length, 0),
             p: (ps) => assert.equal(ps.length, 1),
             article: (articles) => assert.equal(articles.length, 0),
@@ -123,7 +123,7 @@ describe("apply", () => {
     <section>I am a section</section>
     `;
 
-    apply({
+    applyAll({
             main: {
                 div: (divs) => assert.equal(divs.length, 0),
                 p: (ps) => assert.equal(ps.length, 1),

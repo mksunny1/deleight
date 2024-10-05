@@ -2,7 +2,7 @@
 
 import { describe, it } from 'node:test'
 import { strict as assert } from 'node:assert'
-import { zip, map, mapKeys, mapValues, reduce, object, repeat, assign } from './operations.js'
+import { zip, map, mapKeys, mapValues, reduce, object, assign } from './operations.js'
 
 describe('object.object', async t1 => {
     await it('Should combine an array of key value pairs', async t2 => {

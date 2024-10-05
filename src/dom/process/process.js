@@ -13,7 +13,7 @@ function processAction(action, options) {
         const length = prefix.length;
         let name, value, isOpen = true;
         if (action instanceof Function) {
-            action([currentElement], '*');
+            action(currentElement);
         }
         else {
             for (let attr of currentElement.attributes) {
@@ -32,7 +32,7 @@ function processAction(action, options) {
                         continue;
                     }
                     if (value instanceof Function)
-                        value([currentElement], attr);
+                        value(currentElement, attr);
                     else
                         process(currentElement, value, options); // process with nested components
                 }
@@ -67,8 +67,8 @@ function processAction(action, options) {
  * compronent prefix (given as the `options.prefix` argument or `c-` by default).
  *
  * When a component is matched, it is called with the matching element and attribute
- * as its first 2 arguments. The element is placed in a 1-item array for consistency
- * with {@link apply} so that the same components work with both functions (in most cases).
+ * as its first 2 arguments.
+ *
  * If `options.args` is provided, its items will form the
  * remaining arguments passed to the component.
  *
@@ -90,8 +90,8 @@ function processAction(action, options) {
  * @example
  * import { process } from 'deleight/dom/process';
  * const comps = {
- *  comp1: ([element], attr, singleContext) => element.textContent = attr.value,
- *  comp2: ([element], attr, singleContext) => element.style.left = singleContext[attr.value])
+ *  comp1: (element, attr, singleContext) => element.textContent = attr.value,
+ *  comp2: (element, attr, singleContext) => element.style.left = singleContext[attr.value])
  * };
  * document.body.innerHTML = `
  *     <header></header>

@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test'
 import { strict as assert } from 'node:assert'
 import { JSDOM } from "jsdom";
-import { createStyle, loadStyle, popStyles, selectAll, selectFirst, StyleSheet } from '../src/sophistry.js'
+import { createStyle, loadStyle, popStyles, selectAll, selectFirst, StyleSheet } from './css.js'
 
 const window = new JSDOM(`<!DOCTYPE html><body></body>`).window;
 const document = window.document;
