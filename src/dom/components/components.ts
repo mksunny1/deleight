@@ -19,6 +19,8 @@
  * The functions are used to build components which can be used with {@link apply}, 
  * {@link process} or {@link Dom}.
  * 
+ * Pending tests. Please report bugs.
+ * 
  * @module
  */
 
@@ -31,6 +33,8 @@ export interface IComponent {
 
 /**
  * Creates a function to be called with listener functions to return `apply
+ * Pending tests. Please report bugs.
+ * 
  * @param event 
  * @param options 
  * @returns 
@@ -42,6 +46,16 @@ export function listener(event: keyof HTMLElementEventMap, options?: AddEventLis
     }
 }
 
+/**
+ * Sets a property on 1 or more elements. 
+ * 
+ * Pending tests. Please report bugs.
+ * 
+ * @example
+ * 
+ * @param prop 
+ * @returns 
+ */
 export function setter(prop: keyof Element) {
     return (value: any) => (elements: Element | Iterable<Element>, key: IKey) => {
         if (elements instanceof Element) elements = [elements];
@@ -51,7 +65,9 @@ export function setter(prop: keyof Element) {
 
 /**
  * Returns a component for setting multiple element properties or 
- * nested properties (such as properties within Element.style
+ * nested properties (such as properties within Element.style.
+ * 
+ * Pending tests. Please report bugs.
  * 
  * @example
  * )
@@ -68,6 +84,8 @@ export function assigner(value: object) {
 /**
  * Returns a component for setting single element attributes.
  * 
+ * Pending tests. Please report bugs.
+ * 
  * @example
  * 
  * @param name 
@@ -82,6 +100,8 @@ export function attrSetter(name: string) {
 
 /**
  * Returns a component for setting multiple element attributes.
+ * 
+ * Pending tests. Please report bugs.
  * 
  * @example
  * 

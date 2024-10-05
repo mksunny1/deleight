@@ -10,10 +10,7 @@
  * the same function it wraps artificially enriched with the properties 
  * of the object(s) it returns when called.
  * 
- * API Table of Contents
- * 
- * {@link Return}
- * {@link R}
+ * Pending tests. Please report bugs.
  * 
  * @module
  */

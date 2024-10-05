@@ -15,7 +15,10 @@
  */
 
 /**
- * Similar to `Array.flat`.
+ * Similar to `Array.flat`. Pending tests. Please report bugs.
+ * 
+ * @example
+ * 
  * 
  * @param it 
  */

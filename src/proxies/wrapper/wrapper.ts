@@ -7,6 +7,8 @@
  * before and/or after object actions or performing arbitrary 
  * operations before and/or after object member access.
  * 
+ * Pending tests. Please report bugs.
+ * 
  * @example
  * 
  * 

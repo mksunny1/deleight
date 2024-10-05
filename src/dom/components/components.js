@@ -19,11 +19,15 @@
  * The functions are used to build components which can be used with {@link apply},
  * {@link process} or {@link Dom}.
  *
+ * Pending tests. Please report bugs.
+ *
  * @module
  */
 import { assign } from "../../object/operations/operations.js";
 /**
  * Creates a function to be called with listener functions to return `apply
+ * Pending tests. Please report bugs.
+ *
  * @param event
  * @param options
  * @returns
@@ -36,6 +40,16 @@ export function listener(event, options) {
             element.addEventListener(event, listener, options);
     };
 }
+/**
+ * Sets a property on 1 or more elements.
+ *
+ * Pending tests. Please report bugs.
+ *
+ * @example
+ *
+ * @param prop
+ * @returns
+ */
 export function setter(prop) {
     return (value) => (elements, key) => {
         if (elements instanceof Element)
@@ -46,7 +60,9 @@ export function setter(prop) {
 }
 /**
  * Returns a component for setting multiple element properties or
- * nested properties (such as properties within Element.style
+ * nested properties (such as properties within Element.style.
+ *
+ * Pending tests. Please report bugs.
  *
  * @example
  * )
@@ -64,6 +80,8 @@ export function assigner(value) {
 /**
  * Returns a component for setting single element attributes.
  *
+ * Pending tests. Please report bugs.
+ *
  * @example
  *
  * @param name
@@ -79,6 +97,8 @@ export function attrSetter(name) {
 }
 /**
  * Returns a component for setting multiple element attributes.
+ *
+ * Pending tests. Please report bugs.
  *
  * @example
  *

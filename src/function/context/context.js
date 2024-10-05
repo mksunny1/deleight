@@ -11,6 +11,8 @@
  * The function will simply ignore calls before it is ready to run
  * again, returning `undefined`.
  *
+ * Pending tests. Please report bugs.
+ *
  * @example
  *
  *
