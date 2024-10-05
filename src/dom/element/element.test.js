@@ -23,15 +23,15 @@ describe("render", () => {
 
 describe("build", () => {
     it("Should build an element from an IElement", async (t) => {
-        // create a component:
+        // create a template:
         const items = it => it.map(num => ({li: [{}, num]}));
 
-        // use a component (1):
+        // use a template (1):
         const built1 = build({
             ul: [{ class: 'list1' }, items([1,2,3,4,5,6,7,8,9])]
         });
 
-        // use a component (2):
+        // use a template (2):
         const built2 = build({
             ol: [{ class: 'list2' }, items([1,2,3,4,5,6,7,8,9,10])]
         });

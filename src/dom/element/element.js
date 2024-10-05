@@ -16,15 +16,15 @@ const CHILDREN = 1;
  *
  * @example
  * import { render } from 'deleight/dom'
- * // create a component:
+ * // create a template:
  * const items = it => it.map(num => ({li: [{}, num]}));
  *
- * // use a component:
+ * // use a template:
  * const ul = render({
  *     ul: [{ class: 'list1' }, items([1,2,3,4,5,6,7,8,9])]
  * });
  *
- * // reuse a component:
+ * // reuse a template:
  * const ol = render({
  *     ol: [{ class: 'list2' }, items([1,2,3,4,5,6,7,8,9,10])]
  * });
@@ -45,15 +45,15 @@ export function render(iElement) {
  * @example
  * import { build } from 'deleight/dom'
  *
- * // create a component:
+ * // create a template:
  * const items = it => it.map(num => ({li: [{}, num]}));
  *
- * // use a component:
+ * // use a template:
  * const ul = build({
  *     ul: [{ class: 'list1' }, items([1,2,3,4,5,6,7,8,9])]
  * });
  *
- * // reuse a component:
+ * // reuse a template:
  * const ol = build({
  *     ol: [{ class: 'list2' }, items([1,2,3,4,5,6,7,8,9,10])]
  * });
