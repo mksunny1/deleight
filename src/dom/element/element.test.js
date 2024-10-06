@@ -24,7 +24,7 @@ describe("render", () => {
 describe("build", () => {
     it("Should build an element from an IElement", async (t) => {
         // create a template:
-        const items = it => it.map(num => ({li: [{}, num]}));
+        const items = it => it.map(num => ({li: num}));
 
         // use a template (1):
         const built1 = build({
