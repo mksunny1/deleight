@@ -44,8 +44,11 @@ export function object(pairs) {
  */
 export function zip(keys, values) {
     const result = {};
-    for (let i = 0; i < keys.length; i++)
-        result[keys[i]] = values?.[i];
+    const keysIt = keys[Symbol.iterator]();
+    const valuesIt = values[Symbol.iterator]();
+    let key;
+    while (!(key = keysIt.next()).done)
+        result[key.value] = valuesIt.next().value;
     return result;
 }
 /**

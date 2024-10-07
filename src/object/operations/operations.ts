@@ -51,9 +51,12 @@ export function object<T>(pairs: Iterable<[IKey, any]>): T {
  * @param values 
  * @returns 
  */
-export function zip<T>(keys: IKey[], values?: any[]): T {
+export function zip<T>(keys: Iterable<IKey>, values?: Iterable<any>): T {
     const result: T = {} as T;
-    for (let i = 0; i < keys.length; i++) result[keys[i]] = values?.[i];
+    const keysIt = keys[Symbol.iterator]();
+    const valuesIt = values[Symbol.iterator]();
+    let key: IteratorResult<IKey>;
+    while (!(key = keysIt.next()).done) result[key.value] = valuesIt.next().value;
     return result;
 }
 
