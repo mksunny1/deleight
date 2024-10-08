@@ -158,5 +158,8 @@ Many useful proxies including `Alias` and `Scope` which are virtual objects that
 Functions for creating template functions from pre-existing text, such as those loaded from files. This is important because JS template literals must be created 'immediately'. Created templates can be either sync or async, return a single rendered text or an iterable of rendered text or promises that resolve to rendered text.
 
 
-Deleight has matured a lot in a short time. This has meant many large-scale changes over the last couple of months. For some, this may raise questions about the stability of the project. However, Deleight of today is already so powerful and minimal that you rarely need to worry about ongoing support. Also the current structure could be stable for a long time, because we have done a lot of work to find the best primitives we know for the different tasks.
+## Contributing
+
+We need you. See our [Contributing guide](/CONTRIBUTING.md) for the many ways you can contribute to this project. Everyone is welcome. Cheers...
+
 
