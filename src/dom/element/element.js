@@ -16,12 +16,25 @@ const CHILDREN = 1;
  *
  * @example
  * import { render } from 'deleight/dom'
- * // create a template:
+ * // create a template 1:
  * const items = it => it.map(num => ({li: [{}, num]}));
  *
- * // use a template:
+ * // create a template 2:
+ * const footer = year => `<footer>&copy; ${year}</footer>`;
+ *
+ * // use templates:
  * const ul = render({
- *     ul: [{ class: 'list1' }, items([1,2,3,4,5,6,7,8,9])]
+ *     main: [
+ *         {},              // attributes
+ *         [                // children
+ *             // object form:
+ *             { ul: [{ class: 'list1' }, items([1,2,3,4,5,6,7,8,9])] },
+ *
+ *             // text form:
+ *             footer(1991)
+ *         ]
+ *     ]
+ *
  * });
  *
  * // reuse a template:
@@ -44,18 +57,35 @@ export function render(iElement) {
  *
  * @example
  * import { build } from 'deleight/dom'
+ * // create a template 1:
+ * const items = it => it.map(num => ({li: num}));   // you can abbreviate simple elements
  *
- * // create a template:
- * const items = it => it.map(num => ({li: num}));
+ * // create a template 2:
+ * const footer = year => `<footer>&copy; ${year}</footer>`;
  *
- * // use a template:
+ * // use templates:
  * const ul = build({
- *     ul: [{ class: 'list1' }, items([1,2,3,4,5,6,7,8,9])]
+ *     main: [
+ *         {},              // attributes
+ *         [                // children
+ *             // object form:
+ *             { ul: [{ class: 'list1' }, items([1,2,3,4,5,6,7,8,9])] },
+ *
+ *             // text form:
+ *             footer(1991)
+ *         ]
+ *     ]
+ *
  * });
  *
  * // reuse a template:
  * const ol = build({
- *     ol: [{ class: 'list2' }, items([1,2,3,4,5,6,7,8,9,10])]
+ *     ol: [
+ *             { class: 'list2' },                              // attributes
+ *             items([1,2,3,4,5,6,7,8,9,10]),                   // children
+ *             ol => ol.onclick = console.log.bind(console),    // component
+ *             // further components separated by comma...
+ *     ]
  * });
  *
  *

@@ -22,7 +22,7 @@ import { ownKeys } from "../member/own/own.js";
  * 
  * 
  * @example
- * import { process } from 'deleight/object/actions'
+ * import { process } from 'deleight/object/process'
  * let count = 0;
  * process({ a: 1, b: 2, c: 3 }, (obj, key) => count += (obj[key] * obj[key]));
  * console.log(count)    // 14

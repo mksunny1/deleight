@@ -81,10 +81,10 @@ Primitives for loading and using stylesheets. Using **css**, you can
 ### [dom](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.dom.html)
 
 Primitives for building and working with the DOM. Using **dom**, we can:
-- build elements from HTML text and files ([html]())
-- build elements (or their HTML text) from objects  ([element]())
-- apply components to elements by matching with selectors ([apply]())
-- apply components to elements by specifying them with attributes ([process]()). 
+- build elements from HTML text and files
+- build elements (or their HTML text) from objects
+- apply components to elements by matching with selectors
+- apply components to elements by specifying them with attributes
 
 Many standard components have been included for creating event handlers, setting attributes and setting and assigning properties (components).
 

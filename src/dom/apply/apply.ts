@@ -99,6 +99,7 @@ export function apply<T>(components: T, target?: Element | DocumentFragment, opt
  * Similar to {@link apply} but uses {@link selectAll} (instead of 
  * the default {@link selectFirst}) to match elements.
  * 
+ * @example
  * import { applyAll } from 'deleight/dom/apply';
  * import { map, range, forEach, zip } from 'deleight/generators';
  * apply({

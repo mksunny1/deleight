@@ -30,7 +30,7 @@ import { ownKeys } from "../member/own/own.js";
  * when implementing other functions that use Apply in their operations.
  *
  * @example
- * import { apply } from 'deleight/object/actions'
+ * import { apply } from 'deleight/object/apply'
  * const object = { a: 1, b: 2, c: { d: 4, e: 5 } };
  * const f1 = (obj, key) => obj[key] *= 2;
  * const f2 = (obj, key) => obj[key] *= 3;
