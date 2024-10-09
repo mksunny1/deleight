@@ -17,7 +17,7 @@ export interface IAttrs {
 }
 
 export type IElement = {
-    [key in keyof HTMLElementTagNameMap]?: string | number | [IAttrs, (IElement | string | number)[] | string | number, ...IComponent[]]
+    [key in keyof HTMLElementTagNameMap]?: string | number | [IAttrs, (IElement | string | number)[] | string | number, ...(IComponent | object)[]]
 }
 
 const ATTRS = 0;
@@ -108,6 +108,7 @@ export function render(iElement: IElement): string {
 export function build(iElement: IElement) {
     for (let [tag, content] of Object.entries(iElement)) {
         const element = document.createElement(tag);
+        let comp: IComponent | object;
         if (typeof content !== 'object') {
             element.textContent = content as string;
         } else {
@@ -119,7 +120,9 @@ export function build(iElement: IElement) {
             else element.textContent = children as string;
 
             for (let i = 2; i < content.length; i++) {
-                (content[i] as IComponent)(element);
+                comp = content[i] as any;
+                if (comp instanceof Function) comp(element);
+                else Object.assign(element, comp);
             }
         }
         return element;

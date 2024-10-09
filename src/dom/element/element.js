@@ -95,6 +95,7 @@ export function render(iElement) {
 export function build(iElement) {
     for (let [tag, content] of Object.entries(iElement)) {
         const element = document.createElement(tag);
+        let comp;
         if (typeof content !== 'object') {
             element.textContent = content;
         }
@@ -108,7 +109,11 @@ export function build(iElement) {
             else
                 element.textContent = children;
             for (let i = 2; i < content.length; i++) {
-                content[i](element);
+                comp = content[i];
+                if (comp instanceof Function)
+                    comp(element);
+                else
+                    Object.assign(element, comp);
             }
         }
         return element;
