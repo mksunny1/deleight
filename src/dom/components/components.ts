@@ -116,7 +116,7 @@ export function attrsSetter<T extends object>(values: T) {
 }
 
 /**
- * Set the selected members as properties on the element using the names 
+ * Returns a component that sets the selected members as properties on the element using the keys 
  * associated with the `selectorAttr`.
  * 
  * @example
@@ -125,11 +125,26 @@ export function attrsSetter<T extends object>(values: T) {
  * @param selectorAttr 
  * @returns 
  */
-export function selectMembers(selectorAttr = 'm-ember') {
+export function selectorSetter(selectorAttr = 'm-ember') {
     return (element: Element) => {
-        const selected = element.querySelectorAll(`*[${selectorAttr}]`);
-        for (let item of selected) element[item.getAttribute(selectorAttr)] = item;
+        selectMembers(element, selectorAttr);
     }
+}
+
+/**
+ * Sets the selected members as properties on the element using the keys 
+ * associated with the `selectorAttr`.
+ * 
+ * @example
+ * 
+ * 
+ * @param selectorAttr 
+ * @returns 
+ */
+export function selectMembers<T extends object>(element: Element, selectorAttr = 'm-ember') {
+    const selected = element.querySelectorAll(`*[${selectorAttr}]`);
+    for (let item of selected) element[item.getAttribute(selectorAttr)] = item;
+    return element as Element & T;
 }
 
 

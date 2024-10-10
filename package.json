@@ -1,6 +1,6 @@
 {
   "name": "deleight",
-  "version": "5.2.12",
+  "version": "5.2.13",
   "description": "A library with 9 modules for writing more expressive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
   "exports": {
