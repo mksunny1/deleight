@@ -114,13 +114,22 @@ export function attrsSetter(values) {
                 element.setAttribute(k, v);
     };
 }
-// implement these later:
 /**
- * Sets attributes on 1 or more elements.
+ * Set the selected members as properties on the element using the names
+ * associated with the `selectorAttr`.
  *
- * @param elements
+ * @example
+ *
+ *
+ * @param selectorAttr
+ * @returns
  */
-function setAttrs(elements) {
+export function selectMembers(selectorAttr = 'm-ember') {
+    return (element) => {
+        const selected = element.querySelectorAll(`*[${selectorAttr}]`);
+        for (let item of selected)
+            element[item.getAttribute(selectorAttr)] = item;
+    };
 }
 /**
  * Components for setting up reactivity

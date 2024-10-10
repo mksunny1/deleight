@@ -115,15 +115,21 @@ export function attrsSetter<T extends object>(values: T) {
     }
 }
 
-// implement these later:
-
 /**
- * Sets attributes on 1 or more elements.
+ * Set the selected members as properties on the element using the names 
+ * associated with the `selectorAttr`.
  * 
- * @param elements 
+ * @example
+ * 
+ * 
+ * @param selectorAttr 
+ * @returns 
  */
-function setAttrs(elements: Element | Iterable<Element>) {
-
+export function selectMembers(selectorAttr = 'm-ember') {
+    return (element: Element) => {
+        const selected = element.querySelectorAll(`*[${selectorAttr}]`);
+        for (let item of selected) element[item.getAttribute(selectorAttr)] = item;
+    }
 }
 
 
