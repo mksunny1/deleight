@@ -1,6 +1,6 @@
 
 export interface IContext {
-    running: boolean;
+    running?: boolean;
 }
 /**
  * Wraps a function to ensure that it does not start running if the value of 
@@ -23,7 +23,9 @@ export interface IContext {
  * @param fn 
  * @returns 
  */
-export function setContext<T extends any[], U>(fn: (...args: T) => U, context: IContext) {
+export function setContext<T extends any[], U>(fn: (...args: T) => U, context?: IContext) {
+    if (!context) context = { running: false };
+    else if (context.running === undefined) context.running = false;
     return (...args: T) => {
         if (context.running) return;
         context.running = true;

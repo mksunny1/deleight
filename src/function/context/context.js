@@ -20,6 +20,10 @@
  * @returns
  */
 export function setContext(fn, context) {
+    if (!context)
+        context = { running: false };
+    else if (context.running === undefined)
+        context.running = false;
     return (...args) => {
         if (context.running)
             return;
