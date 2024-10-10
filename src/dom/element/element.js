@@ -49,7 +49,7 @@ export function render(iElement) {
     let children;
     return Object.entries(iElement).map(([tag, content]) => `
 <${tag} ${content instanceof Array ? Object.entries(content[ATTRS]).map(([name, val]) => `${name}="${val}"`).join(' ') : ''}>
-    ${content instanceof Array ? (!((children = content[CHILDREN]) instanceof Array)) ? children : children.map(item => (typeof item === 'object') ? render(item) : item).join('') : content}
+    ${content instanceof Array ? (!((children = content[CHILDREN]) instanceof Array)) ? children : children.map(item => (typeof item === 'object') ? render(item) : item).join('') : (typeof content === 'object') ? render(content) : content}
 </${tag}>`)[0] || '';
 }
 /**
@@ -98,6 +98,9 @@ export function build(iElement) {
         let comp;
         if (typeof content !== 'object') {
             element.textContent = content;
+        }
+        else if (!(content instanceof Array)) {
+            element.appendChild(build(content));
         }
         else {
             for (let [name, value] of Object.entries(content[ATTRS])) {

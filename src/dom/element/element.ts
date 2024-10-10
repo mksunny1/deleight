@@ -17,7 +17,7 @@ export interface IAttrs {
 }
 
 export type IElement = {
-    [key in keyof HTMLElementTagNameMap]?: string | number | [IAttrs, (IElement | string | number)[] | string | number, ...(IComponent | object)[]]
+    [key in keyof HTMLElementTagNameMap]?: string | number | IElement | [IAttrs, (IElement | string | number)[] | string | number, ...(IComponent | object)[]]
 }
 
 const ATTRS = 0;
@@ -58,10 +58,10 @@ const CHILDREN = 1
  * @returns 
  */
 export function render(iElement: IElement): string {
-    let children: (IElement | string | number)[] | string | number;
+    let children: (IElement | string | number)[] | string | number | IElement;
     return Object.entries(iElement).map(([tag, content]) => `
 <${tag} ${content instanceof Array? Object.entries(content[ATTRS]).map(([name, val]) => `${name}="${val}"`).join(' '): ''}>
-    ${content instanceof Array? (!((children = content[CHILDREN]) instanceof Array))? children: children.map(item => (typeof item === 'object')? render(item): item).join(''): content}
+    ${content instanceof Array? (!((children = content[CHILDREN]) instanceof Array))? children: children.map(item => (typeof item === 'object')? render(item): item).join(''): (typeof content === 'object')? render(content): content}
 </${tag}>`)[0] || '';
 }
 
@@ -111,6 +111,8 @@ export function build(iElement: IElement) {
         let comp: IComponent | object;
         if (typeof content !== 'object') {
             element.textContent = content as string;
+        } else if (!(content instanceof Array)) {
+            element.appendChild(build(content));
         } else {
             for (let [name, value] of Object.entries(content[ATTRS])) {
                 element.setAttribute(name, value);
