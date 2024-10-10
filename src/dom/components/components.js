@@ -33,7 +33,7 @@ import { assign } from "../../object/operations/operations.js";
  * @returns
  */
 export function listener(event, options) {
-    return (listener) => (elements, key) => {
+    return (listener) => (elements) => {
         if (elements instanceof Element)
             elements = [elements];
         for (let element of elements)
@@ -47,15 +47,15 @@ export function listener(event, options) {
  *
  * @example
  *
- * @param prop
+ * @param key
  * @returns
  */
-export function setter(prop) {
-    return (value) => (elements, key) => {
+export function setter(key) {
+    return (value) => (elements) => {
         if (elements instanceof Element)
             elements = [elements];
         for (let element of elements)
-            element[prop] = value;
+            element[key] = value;
     };
 }
 /**
@@ -70,7 +70,7 @@ export function setter(prop) {
  * @returns
  */
 export function assigner(value) {
-    return (elements, key) => {
+    return (elements) => {
         if (elements instanceof Element)
             elements = [elements];
         for (let element of elements)
@@ -88,7 +88,7 @@ export function assigner(value) {
  * @returns
  */
 export function attrSetter(name) {
-    return (value) => (elements, key) => {
+    return (value) => (elements) => {
         if (elements instanceof Element)
             elements = [elements];
         for (let element of elements)
@@ -106,7 +106,7 @@ export function attrSetter(name) {
  * @returns
  */
 export function attrsSetter(values) {
-    return (elements, key) => {
+    return (elements) => {
         if (elements instanceof Element)
             elements = [elements];
         for (let element of elements)
@@ -121,4 +121,58 @@ export function attrsSetter(values) {
  * @param elements
  */
 function setAttrs(elements) {
+}
+/**
+ * Components for setting up reactivity
+ */
+/**
+ * A component that simply adds the element (or a wrapper around it) to an object used with primitives from
+ * the object/sharedmember module
+ *
+ * @example
+ *
+ * @param to
+ * @param key
+ * @param wrapper
+ * @returns
+ */
+export function bind(to, key, wrapper) {
+    return (elements) => {
+        if (elements instanceof Element)
+            elements = [elements];
+        if (!to.hasOwnProperty(key))
+            to[key] = [];
+        if (wrapper)
+            elements = Array.prototype.map.call(elements, wrapper);
+        to[key].push(...elements);
+    };
+}
+const attrHandler = {
+    set(target, key, value) {
+        if (typeof key === 'string')
+            target.setAttribute(key, value);
+        return true;
+    }
+};
+/**
+ * A wrapper used with {@link bind} to make the binding set attributes
+ * instead of properties on the bound element.
+ *
+ * @example
+ *
+ * @param element
+ */
+export function attr(element) {
+    return new Proxy(element, attrHandler);
+}
+/**
+ * A wrapper used with {@link bind} to bind an element
+ * property (such as style) instead of the element itself
+ *
+ * @example
+ *
+ * @param element
+ */
+export function prop(element, key) {
+    return element[key];
 }

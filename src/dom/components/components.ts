@@ -40,7 +40,7 @@ export interface IComponent {
  * @returns 
  */
 export function listener(event: keyof HTMLElementEventMap, options?: AddEventListenerOptions) {
-    return (listener: EventListener) => (elements: Element | Iterable<Element>, key: IKey) => {
+    return (listener: EventListener) => (elements: Element | Iterable<Element>) => {
         if (elements instanceof Element) elements = [elements];
         for (let element of elements) element.addEventListener(event, listener, options);
     }
@@ -53,13 +53,13 @@ export function listener(event: keyof HTMLElementEventMap, options?: AddEventLis
  * 
  * @example
  * 
- * @param prop 
+ * @param key 
  * @returns 
  */
-export function setter(prop: keyof Element) {
-    return (value: any) => (elements: Element | Iterable<Element>, key: IKey) => {
+export function setter(key: IKey) {
+    return (value: any) => (elements: Element | Iterable<Element>) => {
         if (elements instanceof Element) elements = [elements];
-        for (let element of elements) element[prop as IKey] = value;
+        for (let element of elements) element[key] = value;
     }
 }
 
@@ -75,7 +75,7 @@ export function setter(prop: keyof Element) {
  * @returns 
  */
 export function assigner(value: object) {
-    return (elements: Element | Iterable<Element>, key: IKey) => {
+    return (elements: Element | Iterable<Element>) => {
         if (elements instanceof Element) elements = [elements];
         for (let element of elements) assign(element, [value]);
     }
@@ -92,7 +92,7 @@ export function assigner(value: object) {
  * @returns 
  */
 export function attrSetter(name: string) {
-    return (value: any) => (elements: Element | Iterable<Element>, key: IKey) => {
+    return (value: any) => (elements: Element | Iterable<Element>) => {
         if (elements instanceof Element) elements = [elements];
         for (let element of elements) element.setAttribute(name, value);
     }
@@ -109,7 +109,7 @@ export function attrSetter(name: string) {
  * @returns 
  */
 export function attrsSetter<T extends object>(values: T) {
-    return (elements: Element | Iterable<Element>, key: IKey) => {
+    return (elements: Element | Iterable<Element>) => {
         if (elements instanceof Element) elements = [elements];
         for (let element of elements) for (let [k, v] of Object.entries(values)) element.setAttribute(k, v);
     }
@@ -125,3 +125,60 @@ export function attrsSetter<T extends object>(values: T) {
 function setAttrs(elements: Element | Iterable<Element>) {
 
 }
+
+
+/**
+ * Components for setting up reactivity
+ */
+
+/**
+ * A component that simply adds the element (or a wrapper around it) to an object used with primitives from 
+ * the object/sharedmember module
+ * 
+ * @example
+ * 
+ * @param to 
+ * @param key 
+ * @param wrapper
+ * @returns 
+ */
+export function bind<T extends object, U = any>(to: T, key: IKey, wrapper?: (element: Element) => U) {
+    return (elements: Element | Iterable<Element>) => {
+        if (elements instanceof Element) elements = [elements];
+        if (!to.hasOwnProperty(key)) to[key] = []
+        if (wrapper) elements = Array.prototype.map.call(elements, wrapper) as any[];
+        to[key].push(...elements);
+    }
+}
+
+const attrHandler = {
+    set(target: Element, key: IKey, value: any) {
+        if (typeof key === 'string') target.setAttribute(key, value);
+        return true;
+    }
+}
+
+/**
+ * A wrapper used with {@link bind} to make the binding set attributes 
+ * instead of properties on the bound element.
+ * 
+ * @example
+ * 
+ * @param element 
+ */
+export function attr(element: Element) {
+    return new Proxy(element, attrHandler);
+}
+
+/**
+ * A wrapper used with {@link bind} to bind an element 
+ * property (such as style) instead of the element itself
+ * 
+ * @example
+ * 
+ * @param element 
+ */
+export function prop(element: Element, key: keyof Element) {
+    return element[key];
+}
+
