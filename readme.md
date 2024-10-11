@@ -147,7 +147,7 @@ Exports a `Process` class that converts every iterable into a callable, providin
 
 Many simple steps have been implemented to do things like call functions with the same scope and arguments, chain functions, access properties on multiple objects, spread and compact values, etc. 
 
-Think of a `Process` here as a function whose lines are as items in an array. We can manipulate them however we want. We can also define the meaning of all the keywords. Process is meant for generating and modifying code on the fly without using Function constructor. We can use it to setup reactivity among other things.
+Think of a `Process` here as a function whose lines are as items in an array. We can manipulate them however we want. We can also define the meaning of all the keywords. Process is meant for generating and modifying code on the fly without using Function constructor. We can use it to setup reactivity and more general declarative programming.
 
 ### [proxy](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.Proxy.html)
 
