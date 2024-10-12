@@ -15,6 +15,7 @@
  * @module
  */
 
+import { realKey } from "../../object/member/own/own.js";
 import { IKey, IReturns } from "../../types.js";
 
 /**
@@ -22,7 +23,8 @@ import { IKey, IReturns } from "../../types.js";
  * for 'holding' objects deeply nested within other objects.
  * 
  * @example
- * import { get } from 'deleight/object/actions'
+ * import { gets } from 'deleight/object/shared'
+ * import { object } from 'deleight/object/operations'
  * import { R } from 'deleight/proxies/return'
  * 
  * const obj1 = { a: 1, b: 2, c: 3 };
@@ -30,7 +32,7 @@ import { IKey, IReturns } from "../../types.js";
  * const obj3 = R(() => obj2.some.path);
  * 
  * const objects = { a: [obj1], b: [obj3], c: [obj1] };
- * const vals = get(objects);  // { a: [1], b: [2], c: [3] }
+ * const vals = object(gets(objects));  // { a: (1), b: (2), c: (3) }
  * 
  */
 export function Return<T extends object>(fn: IReturns<T>) {
@@ -45,18 +47,18 @@ export const R = Return;
 const fHandler = {
     get(target: IReturns<any>, p: IKey) {
         const object = target();
-        const result = object[p];
+        const result = object[realKey(p)];
         if (result instanceof Function) return result.bind(object);
         else return result;
     },
     set(target: IReturns<any>, p: IKey, value: any) {
         const object = target();
-        object[p] = value;
+        object[realKey(p)] = value;
         return true;
     },
     deleteProperty(target: IReturns<any>, p: IKey) {
         const object = target();
-        delete object[p];
+        delete object[realKey(p)];
         return true;
     },
     ownKeys(target: IReturns<any>) {

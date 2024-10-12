@@ -1,6 +1,6 @@
 {
   "name": "deleight",
-  "version": "5.3.0",
+  "version": "5.3.2",
   "description": "A library with 9 modules for writing more expressive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
   "exports": {
@@ -44,9 +44,17 @@
       "require": "./dist/cjs/function/function.js",
       "default": "./dist/esm/function/function.js"
     },
+    "./function/cache": {
+      "require": "./dist/cjs/function/cache/cache.js",
+      "default": "./dist/esm/function/cache/cache.js"
+    },
     "./function/context": {
       "require": "./dist/cjs/function/context/context.js",
       "default": "./dist/esm/function/context/context.js"
+    },
+    "./function/dynamic": {
+      "require": "./dist/cjs/function/dynamic/dynamic.js",
+      "default": "./dist/esm/function/dynamic/dynamic.js"
     },
     "./function/return": {
       "require": "./dist/cjs/function/return/return.js",

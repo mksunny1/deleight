@@ -14,12 +14,14 @@
  *
  * @module
  */
+import { realKey } from "../../object/member/own/own.js";
 /**
  * Represents the return value of a function as an object. It is often useful
  * for 'holding' objects deeply nested within other objects.
  *
  * @example
- * import { get } from 'deleight/object/actions'
+ * import { gets } from 'deleight/object/shared'
+ * import { object } from 'deleight/object/operations'
  * import { R } from 'deleight/proxies/return'
  *
  * const obj1 = { a: 1, b: 2, c: 3 };
@@ -27,7 +29,7 @@
  * const obj3 = R(() => obj2.some.path);
  *
  * const objects = { a: [obj1], b: [obj3], c: [obj1] };
- * const vals = get(objects);  // { a: [1], b: [2], c: [3] }
+ * const vals = object(gets(objects));  // { a: (1), b: (2), c: (3) }
  *
  */
 export function Return(fn) {
@@ -40,7 +42,7 @@ export const R = Return;
 const fHandler = {
     get(target, p) {
         const object = target();
-        const result = object[p];
+        const result = object[realKey(p)];
         if (result instanceof Function)
             return result.bind(object);
         else
@@ -48,12 +50,12 @@ const fHandler = {
     },
     set(target, p, value) {
         const object = target();
-        object[p] = value;
+        object[realKey(p)] = value;
         return true;
     },
     deleteProperty(target, p) {
         const object = target();
-        delete object[p];
+        delete object[realKey(p)];
         return true;
     },
     ownKeys(target) {
