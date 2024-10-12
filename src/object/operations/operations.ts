@@ -23,17 +23,36 @@ export interface IAssignOptions {
  * the inverse of `Object.entries`. it is a bit similar to {@link zip} 
  * but the object is created by joining in the other axis.
  * 
+ * Values that map to the same keys are combined into an array. The check 
+ * for this incurs a performance penalty. If you are sure there are 
+ * no repetitions, pass the `noRepeat` flag (as a truthy value) 
+ * to skip the checks.
+ * 
  * @example
  * import { object } from 'deleight/object/operations'
  * const obj = object([['a', 1], ['b', 2], ['c', 3]]);   
  * console.log(obj)   // { a: 1, b: 2, c: 3 }
  * 
  * @param pairs  
- * @returns 
+ * @param noRepeat
+ * @returns the created object
  */
-export function object<T>(pairs: Iterable<[IKey, any]>): T {
+export function object<T>(pairs: Iterable<[IKey, any]>, noRepeat = false): T {
     const result: T = {} as T;
-    for (let pair of pairs) result[pair[0]] = pair[1];
+    const repeated = new Set();
+    if (noRepeat) {
+        for (let [key, value] of pairs) result[key] = value;
+    } else {
+        for (let [key, value] of pairs) {
+            if (result.hasOwnProperty(key)) {
+                if (!repeated.has(key)) {
+                    repeated.add(key);
+                    result[key] = [result[key]]
+                }
+                result[key].push(value);
+            } else result[key] = value; 
+        }
+    }
     return result;
 }
 
@@ -41,6 +60,11 @@ export function object<T>(pairs: Iterable<[IKey, any]>): T {
  * Combine `keys` with corresponding items in `values` to form and return an object.
  * `values` could be `undefined` may not have items corresponding to some keys but 
  * all keys must be provided.
+ * 
+ * Values that map to the same keys are combined into an array. The check 
+ * for this incurs a performance penalty. If you are sure there are 
+ * no repetitions, pass the `noRepeat` flag (as a truthy value) 
+ * to skip the checks.
  * 
  * @example
  * import { zip } from 'deleight/object/operations'
@@ -51,12 +75,32 @@ export function object<T>(pairs: Iterable<[IKey, any]>): T {
  * @param values 
  * @returns 
  */
-export function zip<T>(keys: Iterable<IKey>, values?: Iterable<any>): T {
+export function zip<T>(keys: Iterable<IKey>, values?: Iterable<any>, noRepeat = false): T {
+    if (!values) values = [];
     const result: T = {} as T;
+    const repeated = new Set();
     const keysIt = keys[Symbol.iterator]();
     const valuesIt = values[Symbol.iterator]();
-    let key: IteratorResult<IKey>;
-    while (!(key = keysIt.next()).done) result[key.value] = valuesIt.next().value;
+    let key: IteratorResult<IKey>, keyValue: IKey;
+    let value: any;
+    
+    if (noRepeat) {
+        while (!(key = keysIt.next()).done) {
+            result[key.value] = valuesIt.next().value;
+        }
+    } else {
+        while (!(key = keysIt.next()).done) {
+            keyValue = key.value;
+            value = valuesIt.next().value;
+            if (result.hasOwnProperty(keyValue)) {
+                if (!repeated.has(key)) {
+                    repeated.add(key);
+                    result[keyValue] = [result[keyValue]]
+                }
+                result[keyValue].push(value);
+            } else result[keyValue] = value; 
+        }
+    }
     return result;
 }
 
@@ -198,15 +242,36 @@ export function assign(target: any, sources: any[], options?: IAssignOptions) {
 
 /**
  * Recursively fetches the same property from the object until the fetched 
- * value matches the `until` condition or there is nothing left to fetch.
+ * value matches the `test` condition or there is nothing left to fetch.
+ * 
+ * @example
+ * 
  * 
  * @param object 
  * @param key 
- * @param until 
+ * @param test 
  * @returns 
  */
-export function getUntil(object: object, key: IKey, until: ICallable) {
+export function getUntil(object: object, key: IKey, test: ICallable) {
     const value = object[key];
-    if (until(value)) return value;
-    else if (typeof value === 'object') return getUntil(value, key, until);
+    if (test(value)) return value;
+    else if (typeof value === 'object') return getUntil(value, key, test);
+}
+
+/**
+ * Recursively fetches the same property from the object while the fetched 
+ * value passes the test or there is nothing left to fetch.
+ * 
+ * @example
+ * 
+ * 
+ * @param object 
+ * @param key 
+ * @param test 
+ * @returns 
+ */
+export function getWhile(object: object, key: IKey, test: ICallable) {
+    const value = object[key];
+    if (!test(value)) return value;
+    else if (typeof value === 'object') return getWhile(value, key, test);
 }

@@ -64,6 +64,25 @@ export async function forEachAsync(it, action) {
         action(item, i++);
 }
 /**
+ * Converts the async iterable to a promise that resolves to an
+ * array.
+ *
+ * @example
+ * import { forAwait } from 'deleight/generators';
+ * async function* asyncGen() {
+ *    yield *range(10);
+ * }
+ * await forAwait(asyncGen());    // [0, 1, ..., 9]
+ *
+ * @param it
+ */
+export async function forAwait(it) {
+    const result = [];
+    for await (let item of it)
+        result.push(item);
+    return result;
+}
+/**
  * Maps the values of the iterable to other values using the given mapper.
  *
  * @example

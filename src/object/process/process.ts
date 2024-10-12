@@ -39,3 +39,23 @@ export function process<T extends object, U = any>(object: T, action: IObjectCal
     }
     return object;
 }
+
+/**
+ * Run the action over all the property keys of the object, optionally 
+ * including further args in the call. This is effectively {@link process} 
+ * without the recursion.
+ * 
+ * @example
+ * 
+ * 
+ * @param object 
+ * @param action 
+ * @param args 
+ * @returns 
+ */
+export function forEach<T extends object, U = any>(object: T, action: IObjectCallable<T, U>, ...args: any[]) {
+    for (let key of ownKeys(object)) {
+        action(object, key, ...args);
+    }
+    return object;
+}

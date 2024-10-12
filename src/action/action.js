@@ -1,34 +1,36 @@
 /**
- * Exports the {@link Process} type along with many useful {@link Step}
- * types which are used to create 'live' functions
- * which are both very expressive, more controllable and mutable almost
- * without a performance penalty. The flow is easier to track as it is
+ * Exports the {@link Action} type along with many useful {@link Step}
+ * types which are used to create 'live' functions.
+ *
+ * Actions are very expressive, more controllable and mutable almost
+ * without any performance penalty. The flow is easy to track as it is
  * declarative. You can create new step types which interpret your code
  * at speed.
  *
- * Processes can be used for:
+ * Actions can be used for:
  *
- * 1. declarative programming - You can use Process for simple things
- * like a piping and passing the same arguments to different functions.
+ * 1. regular code - You can use Actions to implement common patterns
+ * like function chaining and passing the same arguments to multiple functions.
  *
- * 2. reactivity - You can manipulate many objects at the same time with a
- * concise syntax.
+ * 2. declarative programming - You can build up code for the same action in
+ * multiple places, allowing you to be more declarative in how you write code.
+ * This is a powerful feature for reactivity.
  *
  * 3. implementing other libraries that will generate code on the fly - You can
- * create and modify processes easily, unlike regular functions.
+ * create and modify actions easily without parsing and compiling from
+ * string (unlike Function constructor). This allows you to maintain a consistently
+ * good performance throughout your code.
  *
  * 4. custom DSLs - You can write your own steps to interpret code however you
  * like. for example your own markup language
  *
- * 5. etc - You can use Process for many other use cases we havent yet
- * mentioned or envisaged
+ * 5. etc - You can probably do other cool things with Actions that we havent yet
+ * to mention or envisage.
  *
- * Process can be used in any JavaScript environment as it has no
- * platform dependencies. It is also performant and lightweight.
+ * Actions can be used in any JavaScript environment as it has no
+ * platform dependencies. It is of course performant and lightweight.
  *
- * API Table of Contents
- *
- *
+ * Currently this module has not been fully tested.
  *
  * @module
  *
@@ -40,13 +42,13 @@ export function isGenerator(value) {
 export function isAsyncGenerator(value) {
     return value && value[Symbol.asyncIterator]?.() === value;
 }
-export class Process {
+export class Action {
     constructor(values, arrayScope) {
         this.values = values;
         if (arrayScope)
             this.arrayScope = arrayScope;
     }
-    getStatements(scope, ...args) {
+    getValues(scope, ...args) {
         return Reflect.has(this.values, Symbol.iterator) ? this.values[Symbol.iterator]() : Object.values(this.values);
     }
     getScope(...args) {
@@ -54,7 +56,7 @@ export class Process {
     }
     start(scope, ...args) {
         const env = {
-            values: this.getStatements(scope, ...args),
+            values: this.getValues(scope, ...args),
             scope, args
         };
         // nb: First item must be a runner.
@@ -78,8 +80,8 @@ export class Process {
         return this.callWith(this.getScope(...args), ...args);
     }
 }
-export function process(code) {
-    return new Process(code);
+export function action(code) {
+    return new Action(code);
 }
 export class Closer {
     constructor(runner) {
@@ -99,9 +101,9 @@ export function $(runner) {
 /**
  * Interpretes values and returns replacement values.
  *
- * A process is simply an array of different values. Steps are some
+ * An action is simply an array of different values. Steps are some
  * of these values that provide interpretations for the values following
- * them (up until the next termination step or the end of the process).
+ * them (up until the next termination step or the end of the action).
  *
  * A simple policy is adopted to resolve situations when a step encounters
  * another while collecting the values it runs with:
@@ -131,7 +133,7 @@ export class Step {
      * with those returned by {@link Step#runWith}.
      *
      * This method concludes by starting the next step, if there is
-     * one. Not starting the next step can cause the process to end
+     * one. Not starting the next step can cause the action to end
      * prematurely. This should be noted if overriding this method in
      * a subclass. It is best to override {@link Step#runWith} if you
      * just want to implement the step's own behaviour.
@@ -242,7 +244,7 @@ export function fn(f) {
  * if it is not undefined.
  *
  * All yielded values effectively replace the step
- * and all its input values in the list of values used in the rest of the process
+ * and all its input values in the list of values used in the rest of the action
  *
  * All other values are used to build the args for
  * the next function encountered.
@@ -274,8 +276,8 @@ export class WithStep extends Step {
 }
 export const [w, withr, W, Withr] = defineSteps(WithStep);
 /**
- * The pipe step used to interprete values as part of a 'piping' process
- * where the return value of one function is used as the argument for the next.
+ * The pipe step used to interprete values as chained functions (or extra
+ * arguments to them).
  *
  * @example
  *
@@ -327,7 +329,7 @@ export function func(interpreter) {
 }
 export const f = Func;
 /**
- * Values are fetched from the process arguments during this step.
+ * Values are fetched from the action arguments during this step.
  *
  * @example
  *
@@ -347,7 +349,7 @@ export class ArgsStep extends Step {
 }
 export const [a, args, A, Args] = defineSteps(ArgsStep);
 /**
- * A single process value (iterable) is spread into multiple process values
+ * A single action value (iterable) is spread into multiple action values
  * during this step.
  *
  * @example
@@ -368,7 +370,7 @@ export class ManyStep extends Step {
 }
 export const [m, many, M, Many] = defineSteps(ManyStep);
 /**
- * Multiple process values are collected into a single value (iterable)
+ * Multiple action values are collected into a single value (iterable)
  * during this step.
  *
  * @example
@@ -515,7 +517,7 @@ export class EarlyStep extends Step {
         this.values = values;
     }
     *runWith(env, values) {
-        const ef = process(chain(this.values, values));
+        const ef = action(chain(this.values, values));
         yield* ef.genWith(env.scope, ...env.args);
     }
 }

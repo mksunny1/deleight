@@ -14,24 +14,51 @@ import { ownKeys } from "../member/own/own.js";
  * the inverse of `Object.entries`. it is a bit similar to {@link zip}
  * but the object is created by joining in the other axis.
  *
+ * Values that map to the same keys are combined into an array. The check
+ * for this incurs a performance penalty. If you are sure there are
+ * no repetitions, pass the `noRepeat` flag (as a truthy value)
+ * to skip the checks.
+ *
  * @example
  * import { object } from 'deleight/object/operations'
  * const obj = object([['a', 1], ['b', 2], ['c', 3]]);
  * console.log(obj)   // { a: 1, b: 2, c: 3 }
  *
  * @param pairs
- * @returns
+ * @param noRepeat
+ * @returns the created object
  */
-export function object(pairs) {
+export function object(pairs, noRepeat = false) {
     const result = {};
-    for (let pair of pairs)
-        result[pair[0]] = pair[1];
+    const repeated = new Set();
+    if (noRepeat) {
+        for (let [key, value] of pairs)
+            result[key] = value;
+    }
+    else {
+        for (let [key, value] of pairs) {
+            if (result.hasOwnProperty(key)) {
+                if (!repeated.has(key)) {
+                    repeated.add(key);
+                    result[key] = [result[key]];
+                }
+                result[key].push(value);
+            }
+            else
+                result[key] = value;
+        }
+    }
     return result;
 }
 /**
  * Combine `keys` with corresponding items in `values` to form and return an object.
  * `values` could be `undefined` may not have items corresponding to some keys but
  * all keys must be provided.
+ *
+ * Values that map to the same keys are combined into an array. The check
+ * for this incurs a performance penalty. If you are sure there are
+ * no repetitions, pass the `noRepeat` flag (as a truthy value)
+ * to skip the checks.
  *
  * @example
  * import { zip } from 'deleight/object/operations'
@@ -42,13 +69,35 @@ export function object(pairs) {
  * @param values
  * @returns
  */
-export function zip(keys, values) {
+export function zip(keys, values, noRepeat = false) {
+    if (!values)
+        values = [];
     const result = {};
+    const repeated = new Set();
     const keysIt = keys[Symbol.iterator]();
     const valuesIt = values[Symbol.iterator]();
-    let key;
-    while (!(key = keysIt.next()).done)
-        result[key.value] = valuesIt.next().value;
+    let key, keyValue;
+    let value;
+    if (noRepeat) {
+        while (!(key = keysIt.next()).done) {
+            result[key.value] = valuesIt.next().value;
+        }
+    }
+    else {
+        while (!(key = keysIt.next()).done) {
+            keyValue = key.value;
+            value = valuesIt.next().value;
+            if (result.hasOwnProperty(keyValue)) {
+                if (!repeated.has(key)) {
+                    repeated.add(key);
+                    result[keyValue] = [result[keyValue]];
+                }
+                result[keyValue].push(value);
+            }
+            else
+                result[keyValue] = value;
+        }
+    }
     return result;
 }
 /**
@@ -190,17 +239,39 @@ export function assign(target, sources, options) {
 }
 /**
  * Recursively fetches the same property from the object until the fetched
- * value matches the `until` condition or there is nothing left to fetch.
+ * value matches the `test` condition or there is nothing left to fetch.
+ *
+ * @example
+ *
  *
  * @param object
  * @param key
- * @param until
+ * @param test
  * @returns
  */
-export function getUntil(object, key, until) {
+export function getUntil(object, key, test) {
     const value = object[key];
-    if (until(value))
+    if (test(value))
         return value;
     else if (typeof value === 'object')
-        return getUntil(value, key, until);
+        return getUntil(value, key, test);
+}
+/**
+ * Recursively fetches the same property from the object while the fetched
+ * value passes the test or there is nothing left to fetch.
+ *
+ * @example
+ *
+ *
+ * @param object
+ * @param key
+ * @param test
+ * @returns
+ */
+export function getWhile(object, key, test) {
+    const value = object[key];
+    if (!test(value))
+        return value;
+    else if (typeof value === 'object')
+        return getWhile(value, key, test);
 }

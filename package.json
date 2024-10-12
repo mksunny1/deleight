@@ -1,12 +1,16 @@
 {
   "name": "deleight",
-  "version": "5.2.15",
+  "version": "5.3.0",
   "description": "A library with 9 modules for writing more expressive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
   "exports": {
     ".": {
       "require": "./dist/cjs/deleight.js",
       "default": "./dist/esm/deleight.js"
+    },
+    "./action": {
+      "require": "./dist/cjs/action/action.js",
+      "default": "./dist/esm/action/action.js"
     },
     "./css": {
       "require": "./dist/cjs/css/css.js",
@@ -72,7 +76,7 @@
       "require": "./dist/cjs/object/apply/apply.js",
       "default": "./dist/esm/object/apply/apply.js"
     },
-    "./object/deepmember": {
+    "./object/deep": {
       "require": "./dist/cjs/object/member/deep/deep.js",
       "default": "./dist/esm/object/member/deep/deep.js"
     },
@@ -88,13 +92,13 @@
       "require": "./dist/cjs/object/process/process.js",
       "default": "./dist/esm/object/process/process.js"
     },
-    "./object/sharedmember": {
+    "./object/shared": {
       "require": "./dist/cjs/object/member/shared/shared.js",
       "default": "./dist/esm/object/member/shared/shared.js"
     },
-    "./process": {
-      "require": "./dist/cjs/process/process.js",
-      "default": "./dist/esm/process/process.js"
+    "./object/sharedasync": {
+      "require": "./dist/cjs/object/member/shared/async.js",
+      "default": "./dist/esm/object/member/shared/async.js"
     },
     "./proxy": {
       "require": "./dist/cjs/proxies/proxies.js",

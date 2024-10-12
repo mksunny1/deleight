@@ -2,21 +2,26 @@
 
 import { describe, it } from 'node:test'
 import { strict as assert } from 'node:assert'
-import { M, gets, sets, calls, dels } from './shared.js'
+import { gets, sets, calls, dels } from './shared.js'
+import { M} from './mapper.js'
 
 describe('gets', async t1 => {
     await it('Should correctly get a simple map of properties', async t2 => {
         let obj1 = { a: 1, b: 2, c: 3 }, obj2 = { a: 18, b: 77, c: 83 };
-        assert.deepEqual(gets({
+        const result = [...gets({
             a: [obj1], b: [obj2], c: [obj1]
-        }), { a: [1], b: [77], c: [3] });
+        })]
+        assert.deepEqual(result.map(r => r[0]), ['a', 'b', 'c']);
+        assert.deepEqual(result.map(r => [...r[1]]), [[1], [77], [3] ]);
     });
 
     await it('Should resolve lazy (function) values', async t2 => {
         let obj1 = { a: 1, b: 2, c: 3 }, obj2 = { a: 18, b: 77, c: 83 };
-        assert.deepEqual(gets({
+        const result = [...gets({
             a: [obj1], b: [obj2], c: () => [obj1]
-        }), { a: [1], b: [77], c: [3] });
+        })]
+        assert.deepEqual(result.map(r => r[0]), ['a', 'b', 'c']);
+        assert.deepEqual(result.map(r => [...r[1]]), [[1], [77], [3] ]);
     });
 });
 

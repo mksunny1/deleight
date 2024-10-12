@@ -69,6 +69,14 @@ You will find many examples (still adding) that show the code in action. Beyond 
 
 ## Modules
 
+### [action](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.action.html)
+
+Exports an `Action` class that converts every iterable into a callable, providing they contain one or more `Step` objects. A `Step` provides the interpretations for the values in the iterable after it, up to the next step with equal or lower priority.
+
+Many simple steps have been implemented to do things like call functions with the same scope and arguments, chain functions, access properties on multiple objects, spread and compact values, etc. 
+
+Think of an Action as a function whose lines are as items in an array. We can manipulate them however we want. We can also define the meaning of all the keywords. Action is meant for generating and modifying code on the fly without using Function constructor. We can use it to setup reactivity and for more general declarative programming.
+
 ### [css](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.css.html)
 
 Primitives for loading and using stylesheets. Using **css**, you can 
@@ -109,12 +117,12 @@ Objects implementing an array-like mutation interface so they can be used togeth
 
 ### [object](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.object.html)
 
-Many important primitives for manipulating objects or getting stuff done with them. The `apply` and `process` functions of the **dom** module use the object versions under the hood. There are also **sharedmember** and **deepmember** sub-modules for respectively accessing members in multiple objects and members deep within an object. 
+Many important primitives for manipulating objects or getting stuff done with them. The `apply` and `process` functions of the **dom** module use the object versions under the hood. There are also **shared**/**sharedasync** and **deep** sub-modules for respectively accessing members in multiple objects and members deep within an object. 
 
-Uing **sharedmember**, you can add more structure and concision in your code by manipulating multiple objects with a single action. Using **deepmember**, you can trivially implement things like routing. Async deep member access can be used to access server data like other objects on the client.
+Uing **shared**, you can add more structure and concision in your code by manipulating multiple objects with a single action. Using **deep**, you can trivially implement things like routing. Async deep member access can be used to access server data like other objects on the client.
 
 ```js
-import { call } from 'deleight/object/deepmember'
+import { call } from 'deleight/object/deep'
 
 const routes = {
     blog: {
@@ -140,14 +148,6 @@ function router(newHash) {
 // Hey this router could be slow if poorly implemented. But you get the idea...
 
 ```
-
-### [process](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.process.html)
-
-Exports a `Process` class that converts every iterable into a callable, providing they contain one or more `Step` objects. A `Step` provides the interpretations for the values in the iterable after it, up to the next step with equal or lower priority.
-
-Many simple steps have been implemented to do things like call functions with the same scope and arguments, chain functions, access properties on multiple objects, spread and compact values, etc. 
-
-Think of a `Process` here as a function whose lines are as items in an array. We can manipulate them however we want. We can also define the meaning of all the keywords. Process is meant for generating and modifying code on the fly without using Function constructor. We can use it to setup reactivity and more general declarative programming.
 
 ### [proxy](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.Proxy.html)
 

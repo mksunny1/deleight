@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import { strict as assert } from 'node:assert'
-import { process, Process, Step, R, r, W, w, F, f, G, g, S, s, C, c, D, d, A, a, M, m, O, o, P, p, $ } from './process.js'
+import { action, Action, Step, R, r, W, w, F, f, G, g, S, s, C, c, D, d, A, a, M, m, O, o, P, p, $ } from './action.js'
 
 // isgenerator
 
@@ -8,7 +8,7 @@ import { process, Process, Step, R, r, W, w, F, f, G, g, S, s, C, c, D, d, A, a,
 // isAsyncGenerator
 
 
-// Process (constructor)
+// Action (constructor)
 
 
 // .getScope
