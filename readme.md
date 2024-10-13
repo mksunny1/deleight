@@ -2,7 +2,7 @@
 
 ![Logo](https://github.com/mksunny1/deleight/blob/main/docs/assets/logos/logo.png?raw=true)
 
-Deleight is a library now comprising 9 modules designed to improve expressiveness without compromising simplicity, performance, flexibility and sheer elegance of pure JavaScript. We achieve this by creating higher level functions, classes and objects which can get more done with less code than standard JavaScript primitives. These new utilities have been assembled into different modules based on functionality and dependency so that you can include only the parts you need in your projects. The whole architecture means you can benefit from more expressiveness without compromising the power and freedom of vanilla JavaScript.
+Deleight is a JavaScript library now comprising 9 modules designed to improve expressiveness without compromising simplicity, performance, flexibility and sheer elegance of pure JavaScript. We achieve this by creating higher level functions, classes and objects which can get more done with less code than standard JavaScript primitives. These new utilities have been assembled into different modules based on functionality and dependency so that you can include only the parts you need in your projects. The whole architecture means you can write your apps in vanilla JavaScript and still reap the same benefits as when you use a framework.
 
 
 ## Usage
@@ -21,12 +21,12 @@ apply({
 
 ```
 
-Deleight has been written in TypeScript. Using TypeScript helps to provide more guarantees about runtime perfornce because of the type enforcements and other helpful things at compile time. Also most of the primitives are well tested and have been further enhanced from earlier versions of Deleight. Deleight was already among the best performing frameworks in the [Krausest frameworks benchmark](https://github.com/krausest/js-framework-benchmark) before major work to restructure and improve the whole ibrary for *Deleight 5*.
+Deleight has been written in TypeScript. Using TypeScript helps to provide more guarantees about runtime perfornce because of the type enforcements and other helpful things at compile time. Also most of the primitives are well tested and have been further enhanced from earlier versions of Deleight. Deleight was already among the best performing frameworks in the [Krausest frameworks benchmark](https://github.com/krausest/js-framework-benchmark) before major work to restructure and improve the whole ibrary for V5.
 
 
 ## Installation
 
-Deleight has been compiled into ES modules and CommonJS so that many project structures can benefit from it. You can simply throw any deleight modules (or sub-modules) into your web page and they will load fast and work well. All of them are focused on particular tasks and have small file sizes, even unminified. 
+This is a dual module library with both ES modules and CommonJS packages so that many project structures can benefit from it. You can simply throw any deleight modules (or sub-modules) into your web page and they will load fast and work well. All of them are focused on particular tasks and have small file sizes, even unminified. 
 
 `npm install deleight` 
 
@@ -71,11 +71,18 @@ You will find many examples (still adding) that show the code in action. Beyond 
 
 ### [action](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.action.html)
 
-Exports an `Action` class that converts every iterable into a callable, providing they contain one or more `Step` objects. A `Step` provides the interpretations for the values in the iterable after it, up to the next step with equal or lower priority.
+Exports an `Action` class that converts every iterable into a callable, provided they contain one or more `Step` objects. A `Step` provides the interpretations for the values in the iterable after it, up to the next step with equal or lower priority.
 
-Many simple steps have been implemented to do things like call functions with the same scope and arguments, chain functions, access properties on multiple objects, spread and compact values, etc. 
+Many simple steps have been implemented to do things like:
+- calling functions with the same scope and arguments, 
+- chaining functions, 
+- accessing properties on multiple objects, 
+- spreading and compacting values, 
+- etc. 
 
-Think of an Action as a function whose lines are as items in an array. We can manipulate them however we want. We can also define the meaning of all the keywords. Action is meant for generating and modifying code on the fly without using Function constructor. We can use it to setup reactivity and for more general declarative programming.
+Think of an Action as a function whose lines are like items in an array. We can manipulate them however we want. We can also define the meaning of all the keywords. It is meant for generating and modifying code on the fly without using `Function` constructor. We can use it for setting up reactivity and for more general declarative programming.
+
+**Note**: This module has been renamed from **process** to avoid confusion with similarly named submodules in **deleight/object** and **deleight/dom**.
 
 ### [css](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.css.html)
 
@@ -88,21 +95,21 @@ Primitives for loading and using stylesheets. Using **css**, you can
 
 ### [dom](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.dom.html)
 
-Primitives for building and working with the DOM. Using **dom**, we can:
+Primitives for building and working with the DOM. Using **dom**, yoe can:
 - build elements from HTML text and files
 - build elements (or their HTML text) from objects
 - apply components to elements by matching with selectors
 - apply components to elements by specifying them with attributes
 
-Many standard components have been included for creating event handlers, setting attributes and setting and assigning properties (components).
+Many standard components have been included for creating event handlers, setting attributes and setting and assigning properties, etc.
 
 ### [function](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.function.html)
 
 Currently includes 4 submodules:
 
-1. **function/cache**: functions to wrap a function to cache and return the first result. `cache#reset` method can be used for reset. 
+1. **function/cache**: functions to wrap a function to cache results.
 
-2. **function/context**: a `setContext` function which wraps a function with another one to include the given `context` object in its scope. `setContext` can be called on multiple functions to effectively make them run mutually exclusively. This can be useful, for example, in event handlers that create network requests so they do not unnecessarily repeat the requests.
+2. **function/context**: a `setContext` function called on multiple functions to effectively make them run mutually exclusively. This can be useful, for example, in event handlers that create network requests so they do not unnecessarily repeat the requests.
 
 3. **function/dynamic**: a `dyn` function to effectively create dynamic 
 getters, setters and 'deleters'.
@@ -122,7 +129,9 @@ Objects implementing an array-like mutation interface so they can be used togeth
 
 Many important primitives for manipulating objects or getting stuff done with them. The `apply` and `process` functions of the **dom** module use the object versions under the hood. There are also **shared**/**sharedasync** and **deep** sub-modules for respectively accessing members in multiple objects and members deep within an object. 
 
-Uing **shared**, you can add more structure and concision in your code by manipulating multiple objects with a single action. Using **deep**, you can trivially implement things like routing. Async deep member access can be used to access server data like other objects on the client.
+Uing **shared** (and **sharedasync**), you can add more structure and concision in your code by manipulating multiple objects with a single action. **This is where reactivity is in Deleight**. 
+
+Using **deep**, you can trivially implement things like routing. Async deep member access can be used to access server data like other objects on the client.
 
 ```js
 import { call } from 'deleight/object/deep'
