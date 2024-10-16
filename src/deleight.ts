@@ -33,12 +33,12 @@
  * 
  */
 
+export * as action from './action/action.js'
 export * as css from './css/css.js'
 export * as dom from './dom/dom.js'
 export * as function from './function/function.js'
 export * as Generator from './generators/generators.js'
 export * as List from './lists/lists.js'
 export * as object from './object/object.js'
-export * as action from './action/action.js'
 export * as Proxy from './proxies/proxies.js'
 export * as template from './template/template.js'

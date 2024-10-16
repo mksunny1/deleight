@@ -361,7 +361,3 @@ export class StyleSheet {
 export function wrap(css: CSSStyleSheet) {
     return new StyleSheet(css);
 }
-
-/**
- * NB: Still add tests for `wrap` and `popAttrs`.
- */

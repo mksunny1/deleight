@@ -8,17 +8,37 @@ Deleight is a JavaScript library now comprising 9 modules designed to improve ex
 ## Usage
 
 ```js
-import { apply } from 'deleight/dom/apply';
-import { map, range, forEach, zip } from 'deleight/generators';
+import { addTo, attr, selectMembers } from 'deleight/dom/components'
+import { apply } from 'deleight/dom/apply'
+import { sets } from 'deleight/object/shared'
+import { range, map, chain } from 'deleight/generators';
 
-apply({
-    main: (main) => {
-        const newContent = map(range(101, 120), i => `My index is  now ${i}`);
-        const lastChildren = map(main.children, c => c.lastElementChild);
-        forEach(zip(lastChildren, newContent), ([el, c]) => el.textContent = c);
-    }
+document.body.innerHTML = `
+<div>I am a div</div>
+<p>I am a paragraph</p>
+<section>I am a section <button>Btn1</button></section>
+<aside m-ember="aside">I am a section <button>Btn1</button></aside>
+<article>I am an article <button>Btn2</button></article>
+`;
+
+const obj = { };    // a reactive object
+
+apply({ 
+    section: { button: addTo(obj, 'a', attr) }, 
+    aside: { button: addTo(obj, 'textContent') }, 
+    article: { button: addTo(obj, 'color', 'styles') } 
 });
+selectMembers()
 
+sets(obj, 'yellow');
+// document.querySelector('button').getAttribute('a');   // yellow
+// document.body.aside.textContent;   // yellow
+// document.body.lastElementChild.lastElementChild.style.color;  // yellow
+
+sets(obj, 'green');
+// document.querySelector('button').getAttribute('a');   // green
+// document.body.aside.textContent;   // green
+// document.body.lastElementChild.lastElementChild.style.color;  // green
 ```
 
 Deleight has been written in TypeScript. Using TypeScript helps to provide more guarantees about runtime perfornce because of the type enforcements and other helpful things at compile time. Also most of the primitives are well tested and have been further enhanced from earlier versions of Deleight. Deleight was already among the best performing frameworks in the [Krausest frameworks benchmark](https://github.com/krausest/js-framework-benchmark) before major work to restructure and improve the whole ibrary for V5.
@@ -127,9 +147,9 @@ Objects implementing an array-like mutation interface so they can be used togeth
 
 ### [object](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.object.html)
 
-Many important primitives for manipulating objects or getting stuff done with them. The `apply` and `process` functions of the **dom** module use the object versions under the hood. There are also **shared**/**sharedasync** and **deep** sub-modules for respectively accessing members in multiple objects and members deep within an object. 
+Many important primitives for manipulating objects or getting stuff done with them. The `apply` and `process` functions of the **dom** module use the object versions under the hood. There are also **shared** and **deep** sub-modules for respectively accessing members in multiple objects and members deep within an object. 
 
-Uing **shared** (and **sharedasync**), you can add more structure and concision in your code by manipulating multiple objects with a single action. **This is where reactivity is in Deleight**. 
+Using **shared**, you can add more structure and concision in your code by manipulating multiple objects with a single action. **This is where you find reactivity in Deleight**. 
 
 Using **deep**, you can trivially implement things like routing. Async deep member access can be used to access server data like other objects on the client.
 

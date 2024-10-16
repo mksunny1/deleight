@@ -42,3 +42,4 @@ export const ownKey = new Proxy({}, {
     }
 })
 export const ok = ownKey;
+

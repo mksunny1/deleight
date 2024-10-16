@@ -1,16 +1,67 @@
 /**
  * Functions form manipulating multiple objects at once.
+ * The functions let you perform object operations like `get`, `set`,
+ * `call method` and `delete` in bulk. 
+ * 
+ * They all support nested operations so that complex reactivity patterns 
+ * can be implemented.
+ * 
+ * Additionally, functions can be supplied in place of any objects (placed 
+ * inside the object arg) to perform more arbitrary operations.
+ * 
+ * The functions are async so we can pass in an iterable or async iterable 
+ * (or a function that returns either) as values in the object arg. Awaiting 
+ * the promise returned will ensure all the operations complete before  
+ * calling code continues.
  * 
  * @module
  */
 
-import { map } from "../../../generators/generators.js";
-import { IKey } from "../../../types.js";
-import { mapValues } from "../../operations/operations.js";
-import { forEach } from "../../process/process.js";
 import { ownKeys } from "../own/own.js";
-import { Mapper } from "./mapper.js";
-import { IMembers } from "./types.js";
+import { IKey, IReturns } from "../../../types";
+import { IObjectCallable } from "../../types";
+
+export type IMember = object | Function;
+
+/**
+ * An object mapping member keys to iterables of objects which can can be used as the `object` argument 
+ * to {@link gets}, {@link sets}, {@link calls}, {@link callsFor} or {@link dels}. 
+ * 
+ */
+export type IMembers = { [key: IKey]: Iterable<IMember> | AsyncIterable<IMember> | {[key: IKey]: IMembers} | IReturns<Iterable<IMember> | AsyncIterable<IMember> | {[key: IKey]: IMembers}> };
+
+export const I = Symbol();
+
+/**
+ * Used to transform property keys and existing values to replacement 
+ * values in the {@link sets} function.
+ */
+export class Mapper<T = any, U = any> {
+    value: IObjectCallable<T, U>;
+    constructor(value: IObjectCallable<T, U>) {
+        this.value = value
+    }
+}
+/**
+ * Returns a value that is interpreted as a mapper 
+ * (from the key, old value and object to the new value) in the  
+ * {@link sets} function.
+ * 
+ * @example
+ * import { set, M } from 'deleight/object/sharedmember'
+ * let obj1 = { a: 20, b: 2, c: 20}, obj2 = { a: 1, b: 20, c: 3};
+ * const objects = { a: [obj1], b: [obj2], c: [obj1] };
+ * 
+ * set(objects, M((obj, key) => obj[key] * 2));
+ * console.log(obj1);    // { a: 40, b: 2, c: 40}
+ * console.log(obj2);    // { a: 1, b: 40, c: 3}
+ * 
+ * @param value 
+ * @returns 
+ */
+export function M(value: IObjectCallable) {
+    return new Mapper(value);
+}
 
 /**
  * Gets specified properties from different objects.
@@ -25,37 +76,44 @@ import { IMembers } from "./types.js";
  * 
  * @param object 
  */
-export function* gets<T extends IMembers>(object: T) {
-    let targets: IMembers[IKey];
+export async function* gets<T extends IMembers>(object: T) {
+    let targets: IMembers[IKey], subKey: IKey, vals: any[];
     for (let key of ownKeys(object)) {
         targets = object[key];
         if (targets instanceof Function) targets = targets(object, key);
         if (Reflect.has(targets, Symbol.iterator)) {
-            yield [key, map(targets as Iterable<any>, target => target[key])];
+            for (let target of targets as Iterable<any>) {
+                if (target instanceof Function) {
+                    yield [key, target(key)]; 
+                } else yield [key, target[key]]; 
+            }
         } else if (Reflect.has(targets, Symbol.asyncIterator)) {
-            yield [key, getAllAsync(targets as AsyncIterable<any>, key)]
+            for await (let target of targets as AsyncIterable<any>) {
+                if (target instanceof Function) {
+                    yield [key, target(key)]; 
+                } else yield [key, target[key]]; 
+            }
         } else {
-            yield [key, mapValues(targets, (targets, subKey) => gets(targets[subKey]))];
+            for (subKey of ownKeys(targets)) {
+                if (subKey === I) {
+                    for await (vals of gets({ key: targets[subKey] })) {
+                        yield vals
+                    }
+                } else {
+                    for await (vals of gets(targets[subKey])) {
+                        yield [key, ...vals];
+                    }
+                }
+            }
         }
     }
 }
 
 /**
- * Gets the same property on multiple objects produced by the 
- * async iterable during iteration.
+ * Sets specified properties in different objects. 
  * 
- * @param targets 
- * @param key 
- * @returns 
- */
-async function* getAllAsync<T>(targets: AsyncIterable<any>, key: IKey) {
-    for await (let target of targets) {
-        yield (target as any)[key]; 
-    }
-}
-
-/**
- * Sets specified properties in different objects.
+ * Both simple and complex values can be set to implement any form of 
+ * reactivity we want. 
  * 
  * 
  * @example
@@ -69,41 +127,44 @@ async function* getAllAsync<T>(targets: AsyncIterable<any>, key: IKey) {
  * @param object 
  * @param value 
  */
-export function sets<T>(object: IMembers, value: T) {
+export async function sets<T>(object: IMembers, value: T) {
     let target: any, targets: IMembers[IKey], subKey: IKey;
+    const promises: Promise<any>[] = [];
+
     for (let key of ownKeys(object)) {
         targets = object[key];
         if (targets instanceof Function) targets = targets(object, key, value);
         if (Reflect.has(targets, Symbol.iterator)) {
             for (target of targets as Iterable<any>) {
-                if (value instanceof Mapper) (target as any)[key] = value.value(target, key);
-                else (target as any)[key] = value; 
+                if (target instanceof Function) {
+                    target(key, value); 
+                } else {
+                    if (value instanceof Mapper) target[key] = value.value(target, key);
+                    else target[key] = value; 
+                }
             }
         } else if (Reflect.has(targets, Symbol.asyncIterator)) {
             // async sets
-            setAllAsync(targets as AsyncIterable<any>, key, value)
+            for await (let target of targets as AsyncIterable<any>) {
+                if (target instanceof Function) {
+                    target(key, value); 
+                } else {
+                    if (value instanceof Mapper) target[key] = value.value(target, key);
+                    else target[key] = value; 
+                }
+            }
         } else { // nested `sets`
-            forEach(targets, (targets, subKey) => sets(targets[subKey], value[subKey]));
+            for (subKey of ownKeys(targets)) {
+                if (subKey === I) {
+                    promises.push(sets({ key: targets[subKey] }, value));
+                } else {
+                    promises.push(sets(targets[subKey], value[subKey]));
+                }
+            }
         }
-    }
-    return value;
-}
 
-/**
- * Sets the same property on multiple objects produced by the 
- * async iterable during iteration.
- * 
- * @param targets 
- * @param key 
- * @param value 
- * @returns 
- */
-async function setAllAsync<T>(targets: AsyncIterable<any>, key: IKey, value: T) {
-    for await (let target of targets) {
-        if (value instanceof Mapper) (target as any)[key] = value.value(target, key);
-        else (target as any)[key] = value; 
     }
-    return value;
+    await Promise.all(promises);
 }
 
 /**
@@ -121,61 +182,78 @@ async function setAllAsync<T>(targets: AsyncIterable<any>, key: IKey, value: T) 
  * @param object 
  * @param args 
  */
-export function calls(object: IMembers, ...args: any[]) {
-    let targets: IMembers[IKey], target: any;
+export async function calls(object: IMembers, ...args: any[]) {
+    let targets: IMembers[IKey], target: any, subKey: IKey;
+    const promises: Promise<any>[] = [];
+
     for (let key of ownKeys(object)) {
         targets = object[key];
         if (targets instanceof Function) targets = targets(object, key, ...args);
         if (Reflect.has(targets, Symbol.iterator)) {
-            for (target of targets as Iterable<any>) target[key](...args);
+            for (target of targets as Iterable<any>) {
+                if (target instanceof Function) target(...args);
+                else target[key](...args);
+            }
         } else if (Reflect.has(targets, Symbol.asyncIterator)) {
-            callAllAsync(targets as AsyncIterable<any>, key, ...args)
+            for await (let target of targets as AsyncIterable<any>) {
+                if (target instanceof Function) target(...args);
+                else target[key](...args); 
+            }
         } else {
-            forEach(targets, (targets, subKey) => calls(targets[subKey], ...args.map(arg => arg[subKey])));
+            for (subKey of ownKeys(targets)) {
+                if (subKey === I) {
+                    promises.push(calls({ key: targets[subKey] }, ...args));
+                } else {
+                    const subArgs = args.map(arg => arg[subKey]);
+                    promises.push(calls(targets[subKey], ...subArgs));
+                }
+            }
         }
     }
-}
-/**
- * Calls the same method on multiple objects produced by the 
- * async iterable during iteration.
- * 
- * @param targets 
- * @param key 
- * @param args 
- * @returns 
- */
-async function callAllAsync<T>(targets: AsyncIterable<any>, key: IKey, ...args: any[]) {
-    for await (let target of targets) {
-        (target as any)[key](...args); 
-    }
+    await Promise.all(promises);
 }
 
 /**
  * Calls specified methods in multiple objects to return results.
- * Pending tests
+ * Returns an async iterable of key-result pairs where each key 
+ * can be paired with multiple results, depending on the input map.
+ * 
+ * Nested calls will have multiple keys before their results.
  * 
  * @example
  * 
  * @param object 
  * @param args 
  */
-export function* callsFor(object: IMembers, ...args: any[]) {
-    let targets: IMembers[IKey], subKey: IKey;
+export async function* callsFor(object: IMembers, ...args: any[]) {
+    let targets: IMembers[IKey], subKey: IKey, vals: any[];
     for (let key of ownKeys(object)) {
         targets = object[key];
         if (targets instanceof Function) targets = targets(object, key, ...args);
         if (Reflect.has(targets, Symbol.iterator)) {
-            yield [key, map(targets as Iterable<any>, target => (target as any)[key](...args))];
+            for (let target of targets as Iterable<any>) {
+                if (target instanceof Function) yield [key, target(...args)];
+                else yield [key, target[key](...args)]; 
+            }
         } else if (Reflect.has(targets, Symbol.asyncIterator)) {
-            yield [key, callForAllAsync(targets as AsyncIterable<any>, key, ...args)]
+            for await (let target of targets as AsyncIterable<any>) {
+                if (target instanceof Function) yield [key, target(...args)];
+                else yield [key, (target as any)[key](...args)]; 
+            }
         } else {
-            yield [key, mapValues(targets, (targets, subKey) => callsFor(targets[subKey], ...args.map(arg => arg[subKey])))];
+            for (subKey of ownKeys(targets)) {
+                if (subKey === I) {
+                    for await (vals of callsFor({ key: targets[subKey] }, ...args)) {
+                        yield vals
+                    }
+                } else {
+                    const subArgs = args.map(arg => arg[subKey]);
+                    for await (vals of callsFor(targets[subKey], ...subArgs)) {
+                        yield [key, ...vals];
+                    }
+                }
+            }
         }
-    }
-}
-async function* callForAllAsync<T>(targets: AsyncIterable<any>, key: IKey, ...args: any[]) {
-    for await (let target of targets) {
-        yield (target as any)[key](...args); 
     }
 }
 
@@ -191,32 +269,31 @@ async function* callForAllAsync<T>(targets: AsyncIterable<any>, key: IKey, ...ar
  * 
  * @param object 
  */
-export function dels(object: IMembers) {
+export async function dels(object: IMembers) {
     let target: any, targets: IMembers[IKey], subKey: IKey;
+    const promises: Promise<any>[] = [];
     for (let key of ownKeys(object)) {
         targets = object[key];
         if (targets instanceof Function) targets = targets(object, key);
         if (Reflect.has(targets, Symbol.iterator)) {
-            for (target of targets as Iterable<any>) delete (target as any)[key];
+            for (target of targets as Iterable<any>) {
+                if (target instanceof Function) target(key);
+                else delete target[key];
+            }
         } else if (Reflect.has(targets, Symbol.asyncIterator)) {
-            delAllAsync(targets as AsyncIterable<any>, key)
+            for await (let target of targets as AsyncIterable<any>) {
+                if (target instanceof Function) target(key);
+                else delete (target as any)[key]; 
+            }
         } else {
-            forEach(targets, (targets, subKey) => dels(targets[subKey]));
+            for (subKey of ownKeys(targets)) {
+                if (subKey === I) {
+                    promises.push(dels({ key: targets[subKey] }));
+                } else {
+                    promises.push(dels(targets[subKey]));
+                }
+            }
         }
     }
+    await Promise.all(promises);
 }
-
-/**
- * Deletes the same property on multiple objects produced by the 
- * async iterable during iteration.
- * 
- * @param targets 
- * @param key 
- * @returns 
- */
-async function delAllAsync<T>(targets: AsyncIterable<any>, key: IKey) {
-    for await (let target of targets) {
-        delete (target as any)[key]; 
-    }
-}
-

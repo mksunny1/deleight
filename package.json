@@ -1,6 +1,6 @@
 {
   "name": "deleight",
-  "version": "5.3.3",
+  "version": "5.4.0",
   "description": "A library with 9 modules for writing more expressive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
   "exports": {
@@ -103,10 +103,6 @@
     "./object/shared": {
       "require": "./dist/cjs/object/member/shared/shared.js",
       "default": "./dist/esm/object/member/shared/shared.js"
-    },
-    "./object/sharedasync": {
-      "require": "./dist/cjs/object/member/shared/async.js",
-      "default": "./dist/esm/object/member/shared/async.js"
     },
     "./proxy": {
       "require": "./dist/cjs/proxies/proxies.js",

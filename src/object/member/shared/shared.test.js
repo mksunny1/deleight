@@ -2,26 +2,24 @@
 
 import { describe, it } from 'node:test'
 import { strict as assert } from 'node:assert'
-import { gets, sets, calls, dels } from './shared.js'
-import { M} from './mapper.js'
+import { gets, sets, calls, callsFor, dels, M } from './shared.js'
+import { forAwait } from '../../../generators/generators.js';
 
 describe('gets', async t1 => {
     await it('Should correctly get a simple map of properties', async t2 => {
         let obj1 = { a: 1, b: 2, c: 3 }, obj2 = { a: 18, b: 77, c: 83 };
-        const result = [...gets({
+        const result = gets({
             a: [obj1], b: [obj2], c: [obj1]
-        })]
-        assert.deepEqual(result.map(r => r[0]), ['a', 'b', 'c']);
-        assert.deepEqual(result.map(r => [...r[1]]), [[1], [77], [3] ]);
+        })
+        assert.deepEqual(await forAwait(result), [['a', 1], ['b', 77], ['c', 3]]);
     });
 
     await it('Should resolve lazy (function) values', async t2 => {
         let obj1 = { a: 1, b: 2, c: 3 }, obj2 = { a: 18, b: 77, c: 83 };
-        const result = [...gets({
+        const result = gets({
             a: [obj1], b: [obj2], c: () => [obj1]
-        })]
-        assert.deepEqual(result.map(r => r[0]), ['a', 'b', 'c']);
-        assert.deepEqual(result.map(r => [...r[1]]), [[1], [77], [3] ]);
+        })
+        assert.deepEqual(await forAwait(result), [['a', 1], ['b', 77], ['c', 3]]);
     });
 });
 
