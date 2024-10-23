@@ -113,7 +113,9 @@ export function build(iElement) {
                 element.textContent = children;
             for (let i = 2; i < content.length; i++) {
                 comp = content[i];
-                if (comp instanceof Function)
+                if (comp instanceof Element)
+                    comp.appendChild(element);
+                else if (comp instanceof Function)
                     comp(element);
                 else
                     Object.assign(element, comp);
