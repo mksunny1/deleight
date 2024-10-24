@@ -1,4 +1,8 @@
 
+export interface IRenderFunction {
+    (item: any, list: ElementList): Node
+}
+
 /**
  * An object which represents the `children` of an element as a list.
  * A list has a an array-like mutation API with a few extra methods.
@@ -18,9 +22,11 @@
 export class ElementList{
     element: Element;
     count: number;
-    constructor(element: Element, count = 1) {
+    renderer?: IRenderFunction;
+    constructor(element: Element, count = 1, renderer?: IRenderFunction) {
         this.element = element;
-        this.count = count
+        this.count = count;
+        if (renderer) this.renderer = renderer;
     }
     get length() {
         return this.element.children.length / this.count;
@@ -44,8 +50,9 @@ export class ElementList{
         }
         return value;
     };
-    render(item: any): Element {
-        throw new TypeError('You must implement the `render` method to use it.' );
+    render(item: any): Node {
+        if (!this.renderer) throw new TypeError('You must implement the `render` method to use it.' );
+        return this.renderer(item, this);
     }
     push(...items: any[]) {
         this.element.append(...items.map(item => this.render(item)));

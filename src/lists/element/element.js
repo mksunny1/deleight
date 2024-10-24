@@ -15,9 +15,11 @@
  * for (let list of lists) list.push(1, 2, 3, 4, 5);
  */
 export class ElementList {
-    constructor(element, count = 1) {
+    constructor(element, count = 1, renderer) {
         this.element = element;
         this.count = count;
+        if (renderer)
+            this.renderer = renderer;
     }
     get length() {
         return this.element.children.length / this.count;
@@ -48,7 +50,9 @@ export class ElementList {
     }
     ;
     render(item) {
-        throw new TypeError('You must implement the `render` method to use it.');
+        if (!this.renderer)
+            throw new TypeError('You must implement the `render` method to use it.');
+        return this.renderer(item, this);
     }
     push(...items) {
         this.element.append(...items.map(item => this.render(item)));
