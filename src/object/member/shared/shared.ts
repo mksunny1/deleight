@@ -80,6 +80,12 @@ export async function* gets<T extends IMembers>(object: T) {
     let targets: IMembers[IKey], subKey: IKey, vals: any[];
     for (let key of ownKeys(object)) {
         targets = object[key];
+
+        if (key === I) {
+            for await (let value of gets(targets as IMembers)) yield value;
+            continue;
+        }
+
         if (targets instanceof Function) targets = targets(object, key);
         if (Reflect.has(targets, Symbol.iterator)) {
             for (let target of targets as Iterable<any>) {
@@ -94,16 +100,8 @@ export async function* gets<T extends IMembers>(object: T) {
                 } else yield [key, target[key]]; 
             }
         } else {
-            for (subKey of ownKeys(targets)) {
-                if (subKey === I) {
-                    for await (vals of gets({ key: targets[subKey] })) {
-                        yield vals
-                    }
-                } else {
-                    for await (vals of gets(targets[subKey])) {
-                        yield [key, ...vals];
-                    }
-                }
+            for await (vals of gets(targets as IMembers)) {
+                yield [key, ...vals];
             }
         }
     }
@@ -133,6 +131,12 @@ export async function sets<T>(object: IMembers, value: T) {
 
     for (let key of ownKeys(object)) {
         targets = object[key];
+
+        if (key === I) {
+            promises.push(sets(targets as IMembers, value));
+            continue;
+        }
+
         if (targets instanceof Function) targets = targets(object, key, value);
         if (Reflect.has(targets, Symbol.iterator)) {
             for (target of targets as Iterable<any>) {
@@ -153,14 +157,8 @@ export async function sets<T>(object: IMembers, value: T) {
                     else target[key] = value; 
                 }
             }
-        } else { // nested `sets`
-            for (subKey of ownKeys(targets)) {
-                if (subKey === I) {
-                    promises.push(sets({ key: targets[subKey] }, value));
-                } else {
-                    promises.push(sets(targets[subKey], value[subKey]));
-                }
-            }
+        } else {  // nested `sets`
+            promises.push(sets(targets as IMembers, value[key]));
         }
 
     }
@@ -188,6 +186,12 @@ export async function calls(object: IMembers, ...args: any[]) {
 
     for (let key of ownKeys(object)) {
         targets = object[key];
+
+        if (key === I) {
+            promises.push(calls(targets as IMembers, ...args));
+            continue;
+        }
+
         if (targets instanceof Function) targets = targets(object, key, ...args);
         if (Reflect.has(targets, Symbol.iterator)) {
             for (target of targets as Iterable<any>) {
@@ -200,14 +204,8 @@ export async function calls(object: IMembers, ...args: any[]) {
                 else target[key](...args); 
             }
         } else {
-            for (subKey of ownKeys(targets)) {
-                if (subKey === I) {
-                    promises.push(calls({ key: targets[subKey] }, ...args));
-                } else {
-                    const subArgs = args.map(arg => arg[subKey]);
-                    promises.push(calls(targets[subKey], ...subArgs));
-                }
-            }
+            const subArgs = args.map(arg => arg[subKey]);
+            promises.push(calls(targets as IMembers, ...subArgs));
         }
     }
     await Promise.all(promises);
@@ -229,6 +227,12 @@ export async function* callsFor(object: IMembers, ...args: any[]) {
     let targets: IMembers[IKey], subKey: IKey, vals: any[];
     for (let key of ownKeys(object)) {
         targets = object[key];
+
+        if (key === I) {
+            for await (let value of callsFor(targets as IMembers, ...args)) yield value;
+            continue;
+        }
+
         if (targets instanceof Function) targets = targets(object, key, ...args);
         if (Reflect.has(targets, Symbol.iterator)) {
             for (let target of targets as Iterable<any>) {
@@ -241,17 +245,9 @@ export async function* callsFor(object: IMembers, ...args: any[]) {
                 else yield [key, (target as any)[key](...args)]; 
             }
         } else {
-            for (subKey of ownKeys(targets)) {
-                if (subKey === I) {
-                    for await (vals of callsFor({ key: targets[subKey] }, ...args)) {
-                        yield vals
-                    }
-                } else {
-                    const subArgs = args.map(arg => arg[subKey]);
-                    for await (vals of callsFor(targets[subKey], ...subArgs)) {
-                        yield [key, ...vals];
-                    }
-                }
+            const subArgs = args.map(arg => arg[subKey]);
+            for await (vals of callsFor(targets as IMembers, ...subArgs)) {
+                yield [key, ...vals];
             }
         }
     }
@@ -274,6 +270,12 @@ export async function dels(object: IMembers) {
     const promises: Promise<any>[] = [];
     for (let key of ownKeys(object)) {
         targets = object[key];
+
+        if (key === I) {
+            promises.push(dels(targets as IMembers));
+            continue;
+        }
+
         if (targets instanceof Function) targets = targets(object, key);
         if (Reflect.has(targets, Symbol.iterator)) {
             for (target of targets as Iterable<any>) {
@@ -286,13 +288,7 @@ export async function dels(object: IMembers) {
                 else delete (target as any)[key]; 
             }
         } else {
-            for (subKey of ownKeys(targets)) {
-                if (subKey === I) {
-                    promises.push(dels({ key: targets[subKey] }));
-                } else {
-                    promises.push(dels(targets[subKey]));
-                }
-            }
+            promises.push(dels(targets as IMembers));
         }
     }
     await Promise.all(promises);
