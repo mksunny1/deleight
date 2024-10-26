@@ -1,6 +1,6 @@
 {
   "name": "deleight",
-  "version": "5.5.1",
+  "version": "5.5.2",
   "description": "A library with 9 modules for writing more expressive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
   "exports": {
@@ -59,6 +59,10 @@
     "./function/return": {
       "require": "./dist/cjs/function/return/return.js",
       "default": "./dist/esm/function/return/return.js"
+    },
+    "./function/reversible": {
+      "require": "./dist/cjs/function/reversible/reversible.js",
+      "default": "./dist/esm/function/reversible/reversible.js"
     },
     "./generators": {
       "require": "./dist/cjs/generators/generators.js",

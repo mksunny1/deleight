@@ -26,7 +26,7 @@ const obj = { };    // a reactive object
 apply({ 
     section: { button: addTo(obj, 'a', attr) }, 
     aside: { button: addTo(obj, 'textContent') }, 
-    article: { button: addTo(obj, 'color', 'styles') } 
+    article: { button: addTo(obj, 'color', 'style') } 
 });
 selectMembers()
 
@@ -125,16 +125,17 @@ Many standard components have been included for creating event handlers, setting
 
 ### [function](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.function.html)
 
-Currently includes 4 submodules:
+Currently includes 5 functions/submodules:
 
-1. **function/cache**: functions to wrap a function to cache results.
+1. **function/cache**: Wrap functions to cache results.
 
-2. **function/context**: a `setContext` function called on multiple functions to effectively make them run mutually exclusively. This can be useful, for example, in event handlers that create network requests so they do not unnecessarily repeat the requests.
+2. **function/context**: Call `setContext` on multiple functions to make them run mutually exclusively. This can be useful, for example, in event handlers that create network requests so they do not unnecessarily repeat them.
 
-3. **function/dynamic**: a `dyn` function to effectively create dynamic 
-getters, setters and 'deleters'.
+3. **function/dynamic**: Create 'dynamic' getters, setters and 'deleters'.
 
-4. **function/return**: a `Return` function which creates an object that represents the return value of calling a function. Accessing members will first call the wrapped function to get the object which will be accessed instead.
+4. **function/return**: Create objects that represent function return values. Accessing members call the wrapped functions to get the values which are accessed instead.
+
+5. **function/reversible**: Cleanly implement things like tabs and item selection.
 
 ### [generators](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.Generator.html)
 
