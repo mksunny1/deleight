@@ -114,7 +114,7 @@ export function build(iElement) {
             for (let i = 2; i < content.length; i++) {
                 comp = content[i];
                 if (comp instanceof Element)
-                    comp.appendChild(element);
+                    (comp.shadowRoot || comp).appendChild(element);
                 else if (comp instanceof Function)
                     comp(element);
                 else

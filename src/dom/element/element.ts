@@ -123,7 +123,7 @@ export function build(iElement: IElement) {
 
             for (let i = 2; i < content.length; i++) {
                 comp = content[i] as any;
-                if (comp instanceof Element) comp.appendChild(element);
+                if (comp instanceof Element) (comp.shadowRoot || comp).appendChild(element);
                 else if (comp instanceof Function) comp(element);
                 else Object.assign(element, comp);
             }
