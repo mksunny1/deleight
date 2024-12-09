@@ -35,7 +35,7 @@ export function createFragment(html: string) {
  * @param init The request init used with `fetch`
  * @returns A promise that resolves to the document fragment.
  */
-export async function loadFragment(href: string, init: RequestInit) {
+export async function loadFragment(href: string, init?: RequestInit) {
     return fetch(href, init).then(r => r.text()).then(t => createFragment(t));
 }
 
