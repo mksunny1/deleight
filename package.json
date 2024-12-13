@@ -1,6 +1,6 @@
 {
   "name": "deleight",
-  "version": "5.5.6",
+  "version": "5.5.7",
   "description": "A library with 9 modules for writing more expressive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
   "exports": {
@@ -35,6 +35,10 @@
     "./dom/html": {
       "require": "./dist/cjs/dom/html/html.js",
       "default": "./dist/esm/dom/html/html.js"
+    },
+    "./dom/parent": {
+      "require": "./dist/cjs/dom/parent/parent.js",
+      "default": "./dist/esm/dom/parent/parent.js"
     },
     "./dom/process": {
       "require": "./dist/cjs/dom/process/process.js",
