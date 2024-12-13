@@ -19,14 +19,20 @@
  * @param action
  * @param reverseAction
  */
-export function reversible(action, reverseAction) {
+export function reversible(action, reverseAction, lateReverse) {
     let lastArg;
     return function (arg) {
-        if (lastArg)
+        if (lastArg === arg) {
             reverseAction.call(this, lastArg);
-        const result = action.call(this, arg);
-        lastArg = arg;
-        return result;
+            lastArg = null;
+        }
+        else {
+            if (lastArg)
+                reverseAction.call(this, lastArg);
+            const result = action.call(this, arg);
+            lastArg = arg;
+            return result;
+        }
     };
 }
 /**
