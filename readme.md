@@ -89,7 +89,7 @@ You will find many examples (still adding) that show the code in action. Beyond 
 
 ## Modules
 
-### action
+### Action
 [action](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.action.html)
 
 Exports an `Action` class that converts every iterable into a callable, provided they contain one or more `Step` objects. A `Step` provides the interpretations for the values in the iterable after it, up to the next step with equal or lower priority.
@@ -105,28 +105,30 @@ Think of an Action as a function whose lines are like items in an array. We can 
 
 **Note**: This module has been renamed from **process** to avoid confusion with similarly named submodules in **deleight/object** and **deleight/dom**.
 
-### css
+### CSS
 [css](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.css.html)
 
-Primitives for loading and using stylesheets. Using **css**, you can 
+Primitives for loading and using stylesheets. This module is most useful when developing reusable web components that need to be styled independently of the environment where they are used. With **css**, you can 
 
 - create `CSSStyleSheet` instances from CSS files or text
 - extract `CSSStyleSheet` objects from a document tree from `<style>` and `<link>` elements, optionally removing them from the tree
 - add or remove a `CSSStyleSheet` to/from multiple documents, fragments or elements (using shadow roots) at the same time.
 - locate and manipulate rules within a stylesheet with string (selector) keys. 
 
-### dom
+### DOM
 [dom](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.dom.html)
 
-Primitives for building and working with the DOM. Using **dom**, yoe can:
+Primitives for building and working with the DOM. With **dom**, yoe can:
 - build elements from HTML text and files
 - build elements (or their HTML text) from objects
 - apply components to elements by matching with selectors
 - apply components to elements by specifying them with attributes
+- escape text to make them safe for use in markup
+- etc
 
 Many standard components have been included for creating event handlers, setting attributes and setting and assigning properties, etc.
 
-### function
+### Function
 [function](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.function.html)
 
 Currently includes 5 functions/submodules:
@@ -152,7 +154,7 @@ Many powerful generators to minimize computations and memory use. Some are seen 
 Objects implementing an array-like mutation interface so they can be used together or, in the case of `ElementList`, provide a more 'array-like' usage pattern. 
 
 
-### object
+### Object
 [object](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.object.html)
 
 Many important primitives for manipulating objects or getting stuff done with them. The `apply` and `process` functions of the **dom** module use the object versions under the hood. There are also **shared** and **deep** sub-modules for respectively accessing members in multiple objects and members deep within an object. 
@@ -194,7 +196,7 @@ function router(newHash) {
 
 Many useful proxies including `Alias` and `Scope` which are virtual objects that behave like their names imply, `Selector` for treating descendant elements as simple properties and `Wrapper` to wrap any objects and perform pre- or post- processing during member access.
 
-### template
+### Template
 [template](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.template.html)
 
 Functions for creating template functions from pre-existing text, such as those loaded from files. This is important because JS template literals must be created 'immediately'. Created templates can be either sync or async, return a single rendered text or an iterable of rendered text or promises that resolve to rendered text.

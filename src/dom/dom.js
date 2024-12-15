@@ -5,6 +5,7 @@
 export * from './apply/apply.js';
 export * from './components/components.js';
 export * from './element/element.js';
+export * from './esc/esc.js';
 export * from './html/html.js';
 export * from './parent/parent.js';
 export * from './process/process.js';

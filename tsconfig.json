@@ -5,7 +5,8 @@
     "moduleResolution": "Bundler",
     "useDefineForClassFields": false,
     "outDir": "dist/esm",
-    "declaration": true
+    "declaration": true,
+    "declarationMap": true
   },
   "include": ["src/*.ts", "src/*/*.ts", "src/*/*/*.ts", "src/*/*/*/*.ts", "src/*/*/*/*/*.ts"]
 }
