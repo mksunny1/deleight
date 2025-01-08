@@ -7,17 +7,18 @@
  * Benefits:
  * 1. easily reuse `templates` (simple functions that return appropriate objects).
  * 2. more natural within js code.
- * 3. ITree objects can be created more dynamically.
+ * 3. IElement objects can be created more dynamically.
  */
 const ATTRS = 0;
 const CHILDREN = 1;
+const COMPS = 2;
 /**
  * Render the IElement to text. Use on the server.
  *
  * @example
  * import { render } from 'deleight/dom'
  * // create a template 1:
- * const items = it => it.map(num => ({li: [{}, num]}));
+ * const items = it => it.map(num => ({ li: num }));
  *
  * // create a template 2:
  * const footer = year => `<footer>&copy; ${year}</footer>`;
@@ -25,32 +26,46 @@ const CHILDREN = 1;
  * // use templates:
  * const ul = render({
  *     main: [
- *         {},              // attributes
- *         [                // children
- *             // object form:
- *             { ul: [{ class: 'list1' }, items([1,2,3,4,5,6,7,8,9])] },
+ *         // object form:
+ *         { ul: { 0: { class: 'list1' }, 1: items([1,2,3,4,5,6,7,8,9]) } },
  *
- *             // text form:
- *             footer(1991)
- *         ]
+ *         // text form:
+ *         footer(1991)
  *     ]
  *
  * });
  *
  * // reuse a template:
  * const ol = render({
- *     ol: [{ class: 'list2' }, items([1,2,3,4,5,6,7,8,9,10])]
+ *     ol: { 0: { class: 'list2' }, 1: items([1,2,3,4,5,6,7,8,9,10]) }
  * });
  *
  * @param iElement
  * @returns
  */
 export function render(iElement) {
-    let children;
-    return Object.entries(iElement).map(([tag, content]) => `
-<${tag} ${content instanceof Array ? Object.entries(content[ATTRS]).map(([name, val]) => `${name}="${val}"`).join(' ') : ''}>
-    ${content instanceof Array ? (!((children = content[CHILDREN]) instanceof Array)) ? children : children.map(item => (typeof item === 'object') ? render(item) : item).join('') : (typeof content === 'object') ? render(content) : content}
-</${tag}>`)[0] || '';
+    let attrs, children;
+    const [tag, content] = Object.entries(iElement)[0];
+    if (typeof content !== 'object') {
+        attrs = {};
+        children = [content];
+    }
+    else if (!(content instanceof Array)) {
+        attrs = content[ATTRS] || {};
+        children = content[CHILDREN] || [];
+        if (!(children instanceof Array))
+            children = [children];
+    }
+    else {
+        attrs = {};
+        children = content;
+        if (!(children instanceof Array))
+            children = [children];
+    }
+    return `
+<${tag} ${Object.entries(attrs).map(([name, val]) => `${name}="${val}"`).join(' ')}>
+    ${children.map(item => (typeof item === 'object') ? render(item) : `${item}`).join('')}
+</${tag}>`;
 }
 /**
  * Build an element from the IElement. Use in the browser.
@@ -66,26 +81,22 @@ export function render(iElement) {
  * // use templates:
  * const ul = build({
  *     main: [
- *         {},              // attributes
- *         [                // children
- *             // object form:
- *             { ul: [{ class: 'list1' }, items([1,2,3,4,5,6,7,8,9])] },
+ *         // object form:
+ *         { ul: [{ class: 'list1' }, items([1,2,3,4,5,6,7,8,9])] },
  *
- *             // text form:
- *             footer(1991)
- *         ]
+ *         // text form:
+ *         footer(1991)
  *     ]
  *
  * });
  *
  * // reuse a template:
  * const ol = build({
- *     ol: [
- *             { class: 'list2' },                              // attributes
- *             items([1,2,3,4,5,6,7,8,9,10]),                   // children
- *             ol => ol.onclick = console.log.bind(console),    // component
- *             // further components separated by comma...
- *     ]
+ *     ol: {
+ *         0: { class: 'list2' },                              // attributes
+ *         1: items([1,2,3,4,5,6,7,8,9,10]),                   // children
+ *         2: [ol => ol.onclick = console.log.bind(console)]   // components
+ *     }
  * });
  *
  *
@@ -95,24 +106,22 @@ export function render(iElement) {
 export function build(iElement) {
     for (let [tag, content] of Object.entries(iElement)) {
         const element = document.createElement(tag);
-        let comp;
+        let children, comp, comps;
         if (typeof content !== 'object') {
             element.textContent = content;
         }
         else if (!(content instanceof Array)) {
-            element.appendChild(build(content));
-        }
-        else {
-            for (let [name, value] of Object.entries(content[ATTRS])) {
-                element.setAttribute(name, value);
+            for (let [name, value] of Object.entries(content[ATTRS] || {})) {
+                element.setAttribute(name, `${value}`);
             }
-            const children = content[CHILDREN];
-            if (children instanceof Array)
-                element.append(...children.map(child => typeof child === 'object' ? build(child) : child));
-            else
-                element.textContent = children;
-            for (let i = 2; i < content.length; i++) {
-                comp = content[i];
+            children = content[CHILDREN] || [];
+            if (!(children instanceof Array))
+                children = [children];
+            element.append(...children.map(child => typeof child === 'object' ? build(child) : child));
+            comps = content[COMPS] || [];
+            if (!(comps instanceof Array))
+                comps = [comps];
+            for (comp of comps) {
                 if (comp instanceof Element)
                     (comp.shadowRoot || comp).appendChild(element);
                 else if (comp instanceof Function)
@@ -120,6 +129,9 @@ export function build(iElement) {
                 else
                     Object.assign(element, comp);
             }
+        }
+        else {
+            element.append(...content.map(child => typeof child === 'object' ? build(child) : child));
         }
         return element;
     }

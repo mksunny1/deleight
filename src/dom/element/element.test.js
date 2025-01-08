@@ -13,7 +13,7 @@ globalThis.CSSRule = window.CSSRule;
 describe("render", () => {
     it("Should render an element from an IElement", async (t) => {
         const rendered = render({
-            main: [{ class: 'right bg' }, 9]
+            main: { 0: { class: 'right bg' }, 1: 9 }
         });
         assert.equal(rendered.trim(), `<main class="right bg">
     9
@@ -24,16 +24,16 @@ describe("render", () => {
 describe("build", () => {
     it("Should build an element from an IElement", async (t) => {
         // create a template:
-        const items = it => it.map(num => ({li: num}));
+        const items = it => it.map(num => ({ li: num }));
 
         // use a template (1):
         const built1 = build({
-            ul: [{ class: 'list1' }, items([1,2,3,4,5,6,7,8,9])]
+            ul: { 0: { class: 'list1' }, 1: items([1,2,3,4,5,6,7,8,9]) }
         });
 
         // use a template (2):
         const built2 = build({
-            ol: [{ class: 'list2' }, items([1,2,3,4,5,6,7,8,9,10])]
+            ol: { 0: { class: 'list2' }, 1: items([1,2,3,4,5,6,7,8,9,10]) }
         });
         assert.equal(built1.tagName, "UL");
         assert.equal(built2.tagName, "OL");
