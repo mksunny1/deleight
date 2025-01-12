@@ -14,7 +14,7 @@
  * 
  * @param {*} object 
  */
-export function escObject<T extends object>(object: T) {
+export function escObject<T extends object>(object: T): T {
     return new Proxy(object, new EscTrap()) as T;
 }
 
