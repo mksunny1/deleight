@@ -12,10 +12,10 @@
  * console.log(escObj.d.e);     // &lt;p&gt;&quot;esc&quot; will still work here&lt;/p&gt;
  *
  *
- * @param {*} rawObject
+ * @param {*} object
  */
-export function escObject(rawObject) {
-    return new Proxy(rawObject, new EscTrap());
+export function escObject(object) {
+    return new Proxy(object, new EscTrap());
 }
 /**
  * Escapes special HTML characters in the input (unsafe) string.

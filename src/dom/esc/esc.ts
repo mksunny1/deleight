@@ -12,10 +12,10 @@
  * console.log(escObj.d.e);     // &lt;p&gt;&quot;esc&quot; will still work here&lt;/p&gt;
  * 
  * 
- * @param {*} rawObject 
+ * @param {*} object 
  */
-export function escObject(rawObject: any) {
-    return new Proxy(rawObject, new EscTrap());
+export function escObject<T extends object>(object: T) {
+    return new Proxy(object, new EscTrap()) as T;
 }
 
 /**
