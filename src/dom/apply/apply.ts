@@ -102,8 +102,8 @@ export function apply<T>(components: T, target?: Element | DocumentFragment, opt
  * @example
  * import { applyAll } from 'deleight/dom/apply';
  * import { map, range, forEach, zip } from 'deleight/generators';
- * apply({
- *     applyAll: ([main]) => {
+ * applyAll({
+ *     main: ([main]) => {
  *         const newContent = map(range(101, 120), i => `My index is  now ${i}`);
  *         const lastChildren = map(main.children, c => c.lastElementChild);
  *         forEach(zip(lastChildren, newContent), ([el, c]) => el.textContent = c);

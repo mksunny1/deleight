@@ -1,4 +1,4 @@
-# Deleight
+# Deleight (v5.6.3)
 
 ![Logo](https://github.com/mksunny1/deleight/blob/main/docs/assets/logos/logo.png?raw=true)
 
