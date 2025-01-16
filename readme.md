@@ -1,4 +1,4 @@
-# Deleight (v5.6.3)
+# Deleight (v5.7.0)
 
 ![Logo](https://github.com/mksunny1/deleight/blob/main/docs/assets/logos/logo.png?raw=true)
 
@@ -78,6 +78,10 @@ const apply = dom.apply;
 const { range, map, chain } = Generator;
 
 ```
+
+## New in v5.7.0
+
+Added `deleight/dom/builder` submodule which provides a better DX, more safety and more versatility than both `deleight/dom/element` and `deleight/dom/html` for building elements or rendering their text representations.
 
 
 ## Documentation

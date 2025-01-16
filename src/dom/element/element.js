@@ -82,7 +82,7 @@ export function render(iElement) {
  * const ul = build({
  *     main: [
  *         // object form:
- *         { ul: [{ class: 'list1' }, items([1,2,3,4,5,6,7,8,9])] },
+ *         { ul: { 0: { class: 'list1' }, 1: items([1,2,3,4,5,6,7,8,9]) } },
  *
  *         // text form:
  *         footer(1991)

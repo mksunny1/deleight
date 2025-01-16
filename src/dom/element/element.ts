@@ -16,9 +16,20 @@ export interface IAttrs {
     [key: string]: string
 }
 
-export type IElement = string | number | {
+/* export type IElement = string | number | {
     [key in keyof HTMLElementTagNameMap]?: string | number | IElement[] | { 0?: IAttrs, 1?: IElement | IElement[], 2?: IComponent | object | (IComponent | object)[] }
+} */
+
+export type IElementContent = 
+{ 
+    0?: IAttrs, 
+    1?: IElement | IElement[], 
+    2?: IComponent | object | (IComponent | object)[] 
 }
+export type IElement = {
+    [key in keyof HTMLElementTagNameMap]?: IElementContent | IElement[] | string | number
+} | string | number;
+
 
 const ATTRS = 0;
 const CHILDREN = 1
@@ -94,7 +105,7 @@ export function render(iElement: IElement): string {
  * const ul = build({
  *     main: [
  *         // object form:
- *         { ul: [{ class: 'list1' }, items([1,2,3,4,5,6,7,8,9])] },
+ *         { ul: { 0: { class: 'list1' }, 1: items([1,2,3,4,5,6,7,8,9]) } },
  *         
  *         // text form:
  *         footer(1991)

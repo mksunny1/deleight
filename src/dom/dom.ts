@@ -4,6 +4,7 @@
  */
 
 export * from './apply/apply.js'
+export * from './builder/builder.js'
 export * from './components/components.js'
 export * from './element/element.js'
 export * from './esc/esc.js'

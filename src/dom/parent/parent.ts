@@ -35,4 +35,3 @@ export function selectParent(element: Element, selector: string) {
     while (eParent && !eParent.matches(selector)) eParent = parent(eParent);
     return eParent;
 }
-
