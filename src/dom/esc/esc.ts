@@ -18,6 +18,17 @@ export function escObject<T extends object>(object: T): T {
     return new Proxy(object, new EscTrap()) as T;
 }
 
+class EscTrap {
+    children = {};
+    get(target, p) {
+        if (this.children.hasOwnProperty(p)) return this.children[p];
+        const result = target[p];
+        if (typeof result === 'string') return this.children[p] = escString(result);
+        else if (typeof result === 'object') return this.children[p] = escObject(result);
+        else return this.children[p] = result;
+    }
+}
+
 /**
  * Escapes special HTML characters in the input (unsafe) string.
  * 
@@ -35,13 +46,30 @@ export function escString(unsafe: string) {
          .replace(/'/g, "&#039;");
  }
 
-class EscTrap {
-    children = {};
-    get(target, p) {
-        if (this.children.hasOwnProperty(p)) return this.children[p];
-        const result = target[p];
-        if (typeof result === 'string') return this.children[p] = escString(result);
-        else if (typeof result === 'object') return this.children[p] = escObject(result);
-        else return this.children[p] = result;
-    }
-}
+ /**
+  * Unified form of {@link escString} and {@link escObject}. 
+  * 
+  * @param value 
+  * @returns 
+  */
+ export function esc<T extends string | object>(value: T): T {
+    if (typeof value === 'string') return escString(value) as T;
+    else return escObject(value) as T;
+ }
+
+ /**
+  * The reverse process to escString. This can be important to 
+  * get back a value that was previously escaped to allow transport 
+  * within markup, for example as data attributes.
+  * 
+  * @param unsafe 
+  * @returns 
+  */
+ export function unEsc(unsafe: string) {
+    return unsafe
+         .replace(/&amp;/g, "&")
+         .replace(/&lt;/g, "<")
+         .replace(/&gt;/g, ">")
+         .replace(/&quot;/g, '"')
+         .replace(/&#039;/g, "'");
+ }
