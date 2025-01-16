@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import { strict as assert } from "node:assert";
 import { JSDOM } from "jsdom";
-import { html } from "./builder.js";
+import { html, h } from "./builder.js";
 const window = new JSDOM(`<!DOCTYPE html><body></body>`).window;
 const document = window.document;
 globalThis.document = document;
@@ -22,7 +22,7 @@ describe("builder.build", () => {
     it("Should build an element", async (t) => {
         // create a template:
         const items = (it) => it.map(num => html('li').append(num));
-        const built1 = html('ul').set({ class: 'list1' }).append(...items([1,2,3,4,5,6,7,8,9])).build();
+        const built1 = h.ul.set({ class: 'list1' }).append(...items([1,2,3,4,5,6,7,8,9])).build();
         const built2 = html('ol').set({ class: 'list2' }).append(...items([1,2,3,4,5,6,7,8,9,10])).build();
 
         assert.equal(built1.tagName, "UL");

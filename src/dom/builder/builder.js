@@ -198,8 +198,9 @@ export class HTMLElementBuilder extends Builder {
  * (with `build` method) or their text representations (with `render` method).
  *
  * @example
- * import { html } from 'deleight/dom/builder'
- * const builder = html('main').set({ class: 'right bg' }).append(9);
+ * import { html, h } from 'deleight/dom/builder'
+ * // const verboseBuilder = html('main').set({ class: 'right bg' }).append(9);
+ * const builder = h.main.set({ class: 'right bg' }).append(9);
  *
  * const markup = builder.render();
  * console.log(markup === `
@@ -217,6 +218,11 @@ export class HTMLElementBuilder extends Builder {
 export function html(tag) {
     return new HTMLElementBuilder(tag);
 }
+export const h = new Proxy(html, {
+    get(target, p) {
+        return html(p);
+    }
+});
 export class SVGElementBuilder extends Builder {
     create() {
         return document.createElementNS('http://www.w3.org/2000/svg', this.tag);
@@ -231,6 +237,11 @@ export class SVGElementBuilder extends Builder {
 export function svg(tag) {
     return new SVGElementBuilder(tag);
 }
+export const s = new Proxy(svg, {
+    get(target, p) {
+        return svg(p);
+    }
+});
 export class MathMLElementBuilder extends Builder {
     create() {
         return document.createElementNS('http://www.w3.org/1998/Math/MathML', this.tag);
@@ -245,3 +256,8 @@ export class MathMLElementBuilder extends Builder {
 export function math(tag) {
     return new MathMLElementBuilder(tag);
 }
+export const m = new Proxy(math, {
+    get(target, p) {
+        return math(p);
+    }
+});

@@ -1,9 +1,12 @@
-# Deleight (v5.7.1)
+# Deleight (v5.7.2)
 
 ![Logo](https://github.com/mksunny1/deleight/blob/main/docs/assets/logos/logo.png?raw=true)
 
 Deleight is a JavaScript library now comprising 9 modules designed to improve expressiveness without compromising simplicity, performance, flexibility and sheer elegance of pure JavaScript. We achieve this by creating higher level functions, classes and objects which can get more done with less code than standard JavaScript primitives. These new utilities have been assembled into different modules based on functionality and dependency so that you can include only the parts you need in your projects. The whole architecture means you can write your apps in vanilla JavaScript and still reap the same benefits as when you use a framework.
 
+## New in v5.7
+
+Added `deleight/dom/builder` submodule which provides a better DX, more safety and more versatility than both `deleight/dom/element` and `deleight/dom/html` for building elements or rendering their text representations.
 
 ## Usage
 
@@ -78,11 +81,6 @@ const apply = dom.apply;
 const { range, map, chain } = Generator;
 
 ```
-
-## New in v5.7.0
-
-Added `deleight/dom/builder` submodule which provides a better DX, more safety and more versatility than both `deleight/dom/element` and `deleight/dom/html` for building elements or rendering their text representations.
-
 
 ## Documentation
 

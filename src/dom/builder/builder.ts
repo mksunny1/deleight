@@ -204,8 +204,9 @@ export class HTMLElementBuilder<T extends string & keyof HTMLElementTagNameMap> 
  * (with `build` method) or their text representations (with `render` method).
  * 
  * @example
- * import { html } from 'deleight/dom/builder'
- * const builder = html('main').set({ class: 'right bg' }).append(9);
+ * import { html, h } from 'deleight/dom/builder'
+ * // const verboseBuilder = html('main').set({ class: 'right bg' }).append(9);
+ * const builder = h.main.set({ class: 'right bg' }).append(9);
  * 
  * const markup = builder.render();
  * console.log(markup === `
@@ -224,6 +225,14 @@ export function html<T extends string & keyof HTMLElementTagNameMap>(tag: T) {
     return new HTMLElementBuilder(tag);
 }
 
+export type IHtml = typeof html & { [key in keyof HTMLElementTagNameMap]: HTMLElementBuilder<key> };
+
+export const h: IHtml = new Proxy(html, {
+    get(target: IHtml, p: keyof HTMLElementTagNameMap) {
+        return html(p);
+    }
+}) as any;
+
 export class SVGElementBuilder<T extends string & keyof SVGElementTagNameMap> extends Builder<T, IConstructor<SVGElementTagNameMap[T]>> {
     create(): SVGElementTagNameMap[T] {
         return document.createElementNS<T>('http://www.w3.org/2000/svg', this.tag);
@@ -240,6 +249,14 @@ export function svg<T extends string & keyof SVGElementTagNameMap>(tag: T) {
     return new SVGElementBuilder(tag);
 }
 
+export type ISvg = typeof svg & { [key in keyof SVGElementTagNameMap]: SVGElementBuilder<key> };
+
+export const s: ISvg = new Proxy(svg, {
+    get(target: ISvg, p: keyof SVGElementTagNameMap) {
+        return svg(p);
+    }
+}) as any;
+
 export class MathMLElementBuilder<T extends string & keyof MathMLElementTagNameMap> extends Builder<T, IConstructor<MathMLElementTagNameMap[T]>> {
     create(): MathMLElementTagNameMap[T] {
         return document.createElementNS<T>('http://www.w3.org/1998/Math/MathML', this.tag);
@@ -255,3 +272,12 @@ export class MathMLElementBuilder<T extends string & keyof MathMLElementTagNameM
 export function math<T extends string & keyof MathMLElementTagNameMap>(tag: T) {
     return new MathMLElementBuilder(tag);
 }
+
+export type IMath = typeof math & { [key in keyof MathMLElementTagNameMap]: MathMLElementBuilder<key> };
+
+export const m: IMath = new Proxy(math, {
+    get(target: IMath, p: keyof MathMLElementTagNameMap) {
+        return math(p);
+    }
+}) as any;
+
