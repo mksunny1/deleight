@@ -53,8 +53,9 @@ export class Builder<T extends string, U extends typeof Element> {
     components: IComponent[] = [];
     parents?: Set<IBuilder> = new Set();
 
-    constructor(tag: T) {
+    constructor(tag: T, ...children: IElementChild[]) {
         this.tag = tag;
+        this.append(...children);
     }
     set(attrs: { [key: string]: any }) {
         Object.assign(this.attrs, attrs);
@@ -97,16 +98,14 @@ export class Builder<T extends string, U extends typeof Element> {
         this.apply(...components);
         return this;
     }
-    render(): string {
+    render(indent = 0): string {
         const attrs = Object.entries(this.attrs);
         const nsAttrs = Object.entries(this.nsAttrs);
+        const pad = new Array(indent).fill(' ').join('');
 
-        return `
-<${this.tag}${attrs.length? ` ${attrs.map(([k, v]) => `${k}="${v.replaceAll('"', '&quot;')}"`).join(' ')}`: ``}${nsAttrs.length? ` ${nsAttrs.map(([ns, attrs]) => attrs.map(([k, v]) => `${ns}:${k}="${v.replaceAll('"', '&quot;')}"`).join(' ')).join(' ')}`: ``}>
-    ${this.children.map(c => c instanceof Builder? c.render: `${c}`.replaceAll('<', '&lt;').replaceAll('>', '&gt;')).join(`
-    `)}
-</${this.tag}>
-        `;
+        return `${pad}<${this.tag}${attrs.length? ` ${attrs.map(([k, v]) => `${k}="${v.replaceAll('"', '&quot;')}"`).join(' ')}`: ``}${nsAttrs.length? ` ${nsAttrs.map(([ns, attrs]) => attrs.map(([k, v]) => `${ns}:${k}="${v.replaceAll('"', '&quot;')}"`).join(' ')).join(' ')}`: ``}>
+${this.children.map(c => c instanceof Builder? c.render(indent + 4): `${pad}    ${c}`.replaceAll('<', '&lt;').replaceAll('>', '&gt;')).join(`\n${pad}`)}
+${pad}</${this.tag}>`;
     }
     build(): InstanceType<U> {
         return this.setup(this.create());
@@ -192,6 +191,37 @@ export class Builder<T extends string, U extends typeof Element> {
     }
 }
 
+export type IBuilderMethods = IMethods<IBuilder>
+
+export type IBuilders = {
+    builders: Iterable<IBuilder>;
+    self?: IBuilders;
+} & {
+    [key in keyof IBuilderMethods]: (...args: Parameters<IBuilderMethods[key]>) => ReturnType<IBuilderMethods[key]> extends IBuilder? IBuilders: ReturnType<IBuilderMethods[key]>[]
+}
+
+export type ICallable = (...args: any[]) => any;
+
+export type IMethods<T> = {
+    [key in keyof T]: T[key] extends ICallable? T[key]: never;
+}
+
+const IBuildersProxy = {
+    get(target: IBuilders, p: keyof Builder<string, typeof Element>) {
+        return ((...args: any[]) => {
+            const result: any[] = [];
+            for (let builder of target.builders) result.push((builder[p] as any)(...args));
+            if (result.length && !(result[0] instanceof Builder)) return result;
+            else return target.self || (target.self = new Proxy(target, IBuildersProxy));
+        })
+    }
+}
+
+export function builders(...builders: Builder<string, typeof Element>[]) {
+    return new Proxy({ builders } as any as IBuilders, IBuildersProxy);
+}
+export const b = builders;
+
 export class HTMLElementBuilder<T extends string & keyof HTMLElementTagNameMap> extends Builder<T, IConstructor<HTMLElementTagNameMap[T]>> {
     create(): HTMLElementTagNameMap[T] {
         return document.createElement(this.tag);
@@ -221,8 +251,8 @@ export class HTMLElementBuilder<T extends string & keyof HTMLElementTagNameMap> 
  * @param tag 
  * @returns 
  */
-export function html<T extends string & keyof HTMLElementTagNameMap>(tag: T) {
-    return new HTMLElementBuilder(tag);
+export function html<T extends string & keyof HTMLElementTagNameMap>(tag: T, ...children: IElementChild[]) {
+    return new HTMLElementBuilder(tag, ...children);
 }
 
 export type IHtml = typeof html & { [key in keyof HTMLElementTagNameMap]: HTMLElementBuilder<key> };
@@ -230,6 +260,14 @@ export type IHtml = typeof html & { [key in keyof HTMLElementTagNameMap]: HTMLEl
 export const h: IHtml = new Proxy(html, {
     get(target: IHtml, p: keyof HTMLElementTagNameMap) {
         return html(p);
+    }
+}) as any;
+
+export type IHtml2 = typeof html & { [key in keyof HTMLElementTagNameMap]: (...children: IElementChild[]) => HTMLElementBuilder<key> };
+
+export const hh: IHtml2 = new Proxy(html, {
+    get(target: IHtml2, p: keyof HTMLElementTagNameMap) {
+        return (...children: IElementChild[]) => html(p, ...children);
     }
 }) as any;
 
@@ -245,8 +283,8 @@ export class SVGElementBuilder<T extends string & keyof SVGElementTagNameMap> ex
  * @param tag 
  * @returns 
  */
-export function svg<T extends string & keyof SVGElementTagNameMap>(tag: T) {
-    return new SVGElementBuilder(tag);
+export function svg<T extends string & keyof SVGElementTagNameMap>(tag: T, ...children: IElementChild[]) {
+    return new SVGElementBuilder(tag, ...children);
 }
 
 export type ISvg = typeof svg & { [key in keyof SVGElementTagNameMap]: SVGElementBuilder<key> };
@@ -254,6 +292,15 @@ export type ISvg = typeof svg & { [key in keyof SVGElementTagNameMap]: SVGElemen
 export const s: ISvg = new Proxy(svg, {
     get(target: ISvg, p: keyof SVGElementTagNameMap) {
         return svg(p);
+    }
+}) as any;
+
+
+export type ISvg2 = typeof svg & { [key in keyof SVGElementTagNameMap]: (...children: IElementChild[]) => SVGElementBuilder<key> };
+
+export const ss: ISvg2 = new Proxy(svg, {
+    get(target: ISvg2, p: keyof SVGElementTagNameMap) {
+        return (...children: IElementChild[]) => svg(p, ...children);
     }
 }) as any;
 
@@ -269,8 +316,8 @@ export class MathMLElementBuilder<T extends string & keyof MathMLElementTagNameM
  * @param tag 
  * @returns 
  */
-export function math<T extends string & keyof MathMLElementTagNameMap>(tag: T) {
-    return new MathMLElementBuilder(tag);
+export function math<T extends string & keyof MathMLElementTagNameMap>(tag: T, ...children: IElementChild[]) {
+    return new MathMLElementBuilder(tag, ...children);
 }
 
 export type IMath = typeof math & { [key in keyof MathMLElementTagNameMap]: MathMLElementBuilder<key> };
@@ -281,3 +328,10 @@ export const m: IMath = new Proxy(math, {
     }
 }) as any;
 
+export type IMath2 = typeof math & { [key in keyof MathMLElementTagNameMap]: (...children: IElementChild[]) => MathMLElementBuilder<key> };
+
+export const mm: IMath2 = new Proxy(math, {
+    get(target: IMath2, p: keyof MathMLElementTagNameMap) {
+        return (...children: IElementChild[]) => math(p, ...children);
+    }
+}) as any;

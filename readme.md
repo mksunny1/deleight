@@ -1,21 +1,17 @@
-# Deleight (v5.7.2)
+# Deleight (v5.8.0)
 
 ![Logo](https://github.com/mksunny1/deleight/blob/main/docs/assets/logos/logo.png?raw=true)
 
 Deleight is a JavaScript library now comprising 9 modules designed to improve expressiveness without compromising simplicity, performance, flexibility and sheer elegance of pure JavaScript. We achieve this by creating higher level functions, classes and objects which can get more done with less code than standard JavaScript primitives. These new utilities have been assembled into different modules based on functionality and dependency so that you can include only the parts you need in your projects. The whole architecture means you can write your apps in vanilla JavaScript and still reap the same benefits as when you use a framework.
 
-## New in v5.7
-
-Added `deleight/dom/builder` submodule which provides a better DX, more safety and more versatility than both `deleight/dom/element` and `deleight/dom/html` for building elements or rendering their text representations.
-
 ## Usage
 
 ```js
-import { addTo, attr, selectMembers } from 'deleight/dom/components'
+import { addTo, attr } from 'deleight/dom/components'
 import { apply } from 'deleight/dom/apply'
 import { sets } from 'deleight/object/shared'
-import { range, map, chain } from 'deleight/generators';
 
+/* Add behavior to elements created on the server. */
 document.body.innerHTML = `
 <div>I am a div</div>
 <p>I am a paragraph</p>
@@ -23,25 +19,30 @@ document.body.innerHTML = `
 <aside m-ember="aside">I am a section <button>Btn1</button></aside>
 <article>I am an article <button>Btn2</button></article>
 `;
-
-const obj = { };    // a reactive object
-
+const obj = {};
 apply({ 
     section: { button: addTo(obj, 'a', attr) }, 
     aside: { button: addTo(obj, 'textContent') }, 
     article: { button: addTo(obj, 'color', 'style') } 
 });
-selectMembers()
-
 sets(obj, 'yellow');
-// document.querySelector('button').getAttribute('a');   // yellow
-// document.body.aside.textContent;   // yellow
-// document.body.lastElementChild.lastElementChild.style.color;  // yellow
-
 sets(obj, 'green');
-// document.querySelector('button').getAttribute('a');   // green
-// document.body.aside.textContent;   // green
-// document.body.lastElementChild.lastElementChild.style.color;  // green
+
+// Build the elements directly:
+import { b, hh } from "deleight/dom/builder.js";
+b(
+    hh.div('I am a div'),
+    hh.p('I am a paragraph'),
+    hh.section('I am a section ', hh.button('Btn1').apply(addTo(obj, 'a', attr))),
+    hh.aside('I am a section ', hh.button('Btn1').apply(addTo(obj, 'textContent')))
+      .set({'m-ember':'aside'}),
+    hh.article('I am an article ', hh.button('Btn2').apply(addTo(obj, 'color', 'style')))
+).appendTo(document.body);
+
+// dom/builder is also very effective for server renedeing where you just call 
+// `render` instead of `build`...
+
+*/
 ```
 
 Deleight has been written in TypeScript. Using TypeScript helps to provide more guarantees about runtime perfornce because of the type enforcements and other helpful things at compile time. Also most of the primitives are well tested and have been further enhanced from earlier versions of Deleight. Deleight was already among the best performing frameworks in the [Krausest frameworks benchmark](https://github.com/krausest/js-framework-benchmark) before major work to restructure and improve the whole ibrary for V5.

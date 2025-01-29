@@ -37,7 +37,7 @@
  * indicate that you want the string treated as innerHTML.
  */
 export class Builder {
-    constructor(tag) {
+    constructor(tag, ...children) {
         this.attrs = {};
         this.nsAttrs = {};
         this.props = {};
@@ -45,6 +45,7 @@ export class Builder {
         this.components = [];
         this.parents = new Set();
         this.tag = tag;
+        this.append(...children);
     }
     set(attrs) {
         Object.assign(this.attrs, attrs);
@@ -90,15 +91,13 @@ export class Builder {
         this.apply(...components);
         return this;
     }
-    render() {
+    render(indent = 0) {
         const attrs = Object.entries(this.attrs);
         const nsAttrs = Object.entries(this.nsAttrs);
-        return `
-<${this.tag}${attrs.length ? ` ${attrs.map(([k, v]) => `${k}="${v.replaceAll('"', '&quot;')}"`).join(' ')}` : ``}${nsAttrs.length ? ` ${nsAttrs.map(([ns, attrs]) => attrs.map(([k, v]) => `${ns}:${k}="${v.replaceAll('"', '&quot;')}"`).join(' ')).join(' ')}` : ``}>
-    ${this.children.map(c => c instanceof Builder ? c.render : `${c}`.replaceAll('<', '&lt;').replaceAll('>', '&gt;')).join(`
-    `)}
-</${this.tag}>
-        `;
+        const pad = new Array(indent).fill(' ').join('');
+        return `${pad}<${this.tag}${attrs.length ? ` ${attrs.map(([k, v]) => `${k}="${v.replaceAll('"', '&quot;')}"`).join(' ')}` : ``}${nsAttrs.length ? ` ${nsAttrs.map(([ns, attrs]) => attrs.map(([k, v]) => `${ns}:${k}="${v.replaceAll('"', '&quot;')}"`).join(' ')).join(' ')}` : ``}>
+${this.children.map(c => c instanceof Builder ? c.render(indent + 4) : `${pad}    ${c}`.replaceAll('<', '&lt;').replaceAll('>', '&gt;')).join(`\n${pad}`)}
+${pad}</${this.tag}>`;
     }
     build() {
         return this.setup(this.create());
@@ -187,6 +186,23 @@ export class Builder {
         return this;
     }
 }
+const IBuildersProxy = {
+    get(target, p) {
+        return ((...args) => {
+            const result = [];
+            for (let builder of target.builders)
+                result.push(builder[p](...args));
+            if (result.length && !(result[0] instanceof Builder))
+                return result;
+            else
+                return target.self || (target.self = new Proxy(target, IBuildersProxy));
+        });
+    }
+};
+export function builders(...builders) {
+    return new Proxy({ builders }, IBuildersProxy);
+}
+export const b = builders;
 export class HTMLElementBuilder extends Builder {
     create() {
         return document.createElement(this.tag);
@@ -215,12 +231,17 @@ export class HTMLElementBuilder extends Builder {
  * @param tag
  * @returns
  */
-export function html(tag) {
-    return new HTMLElementBuilder(tag);
+export function html(tag, ...children) {
+    return new HTMLElementBuilder(tag, ...children);
 }
 export const h = new Proxy(html, {
     get(target, p) {
         return html(p);
+    }
+});
+export const hh = new Proxy(html, {
+    get(target, p) {
+        return (...children) => html(p, ...children);
     }
 });
 export class SVGElementBuilder extends Builder {
@@ -234,12 +255,17 @@ export class SVGElementBuilder extends Builder {
  * @param tag
  * @returns
  */
-export function svg(tag) {
-    return new SVGElementBuilder(tag);
+export function svg(tag, ...children) {
+    return new SVGElementBuilder(tag, ...children);
 }
 export const s = new Proxy(svg, {
     get(target, p) {
         return svg(p);
+    }
+});
+export const ss = new Proxy(svg, {
+    get(target, p) {
+        return (...children) => svg(p, ...children);
     }
 });
 export class MathMLElementBuilder extends Builder {
@@ -253,11 +279,16 @@ export class MathMLElementBuilder extends Builder {
  * @param tag
  * @returns
  */
-export function math(tag) {
-    return new MathMLElementBuilder(tag);
+export function math(tag, ...children) {
+    return new MathMLElementBuilder(tag, ...children);
 }
 export const m = new Proxy(math, {
     get(target, p) {
         return math(p);
+    }
+});
+export const mm = new Proxy(math, {
+    get(target, p) {
+        return (...children) => math(p, ...children);
     }
 });
