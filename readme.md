@@ -28,7 +28,7 @@ apply({
 sets(obj, 'yellow');
 sets(obj, 'green');
 
-// Build the elements directly:
+// Build the elements directly. `h` for HTML, `s` for SVG...
 import { b, hh } from "deleight/dom/builder.js";
 b(
     hh.div('I am a div'),
