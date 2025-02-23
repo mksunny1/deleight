@@ -4,6 +4,12 @@
 
 Deleight is a JavaScript library now comprising 9 modules designed to improve expressiveness without compromising simplicity, performance, flexibility and sheer elegance of pure JavaScript. We achieve this by creating higher level functions, classes and objects which can get more done with less code than standard JavaScript primitives. These new utilities have been assembled into different modules based on functionality and dependency so that you can include only the parts you need in your projects. The whole architecture means you can write your apps in vanilla JavaScript and still reap the same benefits as when you use a framework.
 
+
+## Demos
+
+A very simple page showing how Deleight is used in practice can bee found [here](https://mksunny1.github.io/cafe-menu/). You can also checkout the Deleight implementations in the [Krausest Benchmarks](https://github.com/krausest/js-framework-benchmark).
+
+
 ## Usage
 
 ```js
