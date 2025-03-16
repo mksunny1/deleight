@@ -285,6 +285,8 @@ export function selectMembers(element, selectorAttr = 'm-ember') {
  * @returns
  */
 export function addTo(object, key, wrapper) {
+    if (!key)
+        key = 'textContent';
     return (elements) => {
         if (elements instanceof Element)
             elements = [elements];

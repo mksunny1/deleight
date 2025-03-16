@@ -288,6 +288,7 @@ export function selectMembers<T extends object>(element?: Element, selectorAttr 
  * @returns 
  */
 export function addTo<T extends object, U = any>(object: T, key: IKey, wrapper?: IKey | ((element: Element, matcher?: IKey | Attr, ...args: any[]) => U)) {
+    if (!key) key = 'textContent';
     return (elements: Element | Iterable<Element>) => {
         if (elements instanceof Element) elements = [elements];
         if (wrapper && !(wrapper instanceof Function)) {
