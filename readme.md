@@ -120,16 +120,7 @@ document.body.append(decrementButton, counterElement, incrementButton);
 
 In this version, you have complete control over the state updates and DOM bindings, which is especially useful for more complex use cases where you need full control over the behavior of your application.
 
-
-## Documentation
-
-That sounds like a perfect spot to add the link! Placing the link to the tutorials in the documentation section makes it easy for users to quickly find both the API docs and the practical tutorials. It creates a more user-friendly navigation experience.
-
-If you want, I can help with the wording or make sure the section flows well. Here's a quick suggestion for how you might phrase it:
-
----
-
-### 📚 Documentation
+## 📚 Documentation
 
 - **[Deleight Tutorials](./tutorials.md)**  
   Step-by-step guides and practical examples to help you get started with Deleight.
