@@ -138,6 +138,12 @@ In this version, you have complete control over the state updates and DOM bindin
 
 ---
 
+ ## Demo
+
+ Check out Deleight in action in one of my projects. This is a simple page for creating the daily menu for a cafeteria.
+
+ [daily menu](https://mksunny1.github.io/cafe-menu/)
+
 ## Contributing
 
 We welcome contributions! Please feel free to submit issues or pull requests for bug fixes, improvements, or additional features.
