@@ -2,6 +2,19 @@
 
 Deleight is a minimalistic yet powerful JavaScript framework that enables reactive user interfaces with fine-grained control and flexible state management. It focuses on simplicity and idiomatic JavaScript without the need for complex abstractions or magic.
 
+## Performance Benchmarks
+
+Deleight performs exceptionally well in terms of speed and efficiency. It is one of the top-performing frameworks in the Krausest JS Framework Benchmarks.
+
+Check out the benchmark results:
+
+* [Krausest JS Benchmark](https://github.com/krausest/js-framework-benchmark)
+Deleight currently ranks:
+
+* 3rd (non-keyed)
+* 4th (keyed)
+You can explore how it compares to other frameworks and the detailed benchmarks on the Krausest page.
+
 ## Key Features
 
 - **No Magic**: Full control over reactivity and state management without the hidden magic often found in other frameworks.
@@ -107,11 +120,24 @@ document.body.append(decrementButton, counterElement, incrementButton);
 
 In this version, you have complete control over the state updates and DOM bindings, which is especially useful for more complex use cases where you need full control over the behavior of your application.
 
+
 ## Documentation
 
-For more detailed information on each module and function in Deleight, please check the official documentation at:
+That sounds like a perfect spot to add the link! Placing the link to the tutorials in the documentation section makes it easy for users to quickly find both the API docs and the practical tutorials. It creates a more user-friendly navigation experience.
 
-[Deleight Documentation](https://github.com/yourusername/deleight)
+If you want, I can help with the wording or make sure the section flows well. Here's a quick suggestion for how you might phrase it:
+
+---
+
+### 📚 Documentation
+
+- **[Deleight Tutorials](./tutorials.md)**  
+  Step-by-step guides and practical examples to help you get started with Deleight.
+
+- **[API Documentation](https://github.com/yourusername/deleight)**  
+  Detailed reference for using Deleight's features and API.
+
+---
 
 ## Contributing
 

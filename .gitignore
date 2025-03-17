@@ -132,6 +132,7 @@ out
 
 # project-specific
 docs/api
+docs/tutorials
 src-old
 dist
 
