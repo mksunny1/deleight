@@ -1,5 +1,7 @@
 # **Deleight: A Lightweight, Reactive UI Framework**
 
+![Logo](https://github.com/mksunny1/deleight/blob/main/docs/assets/logos/logo.png?raw=true)
+
 Deleight is a minimalistic yet powerful JavaScript framework that enables reactive user interfaces with fine-grained control and flexible state management. It focuses on simplicity and idiomatic JavaScript without the need for complex abstractions or magic.
 
 ## Performance Benchmarks
@@ -125,7 +127,7 @@ In this version, you have complete control over the state updates and DOM bindin
 - **[Deleight Tutorials](./tutorials.md)**  
   Step-by-step guides and practical examples to help you get started with Deleight.
 
-- **[API Documentation](https://github.com/yourusername/deleight)**  
+- **[API Documentation](https://mksunny1.github.io/deleight-api-docs/main/modules/deleight.html)**  
   Detailed reference for using Deleight's features and API.
 
 ---
