@@ -8,14 +8,7 @@ Deleight is a minimalistic yet powerful JavaScript framework that enables reacti
 
 Deleight performs exceptionally well in terms of speed and efficiency. It is one of the top-performing frameworks in the Krausest JS Framework Benchmarks.
 
-Check out the benchmark results:
-
-* [Krausest JS Benchmark](https://github.com/krausest/js-framework-benchmark)
-Deleight currently ranks:
-
-* 3rd (non-keyed)
-* 4th (keyed)
-You can explore how it compares to other frameworks and the detailed benchmarks on the Krausest page.
+As of latest benchmark results, Deleight ranks among the top-performing frameworks. [Check the most recent standings](https://github.com/krausest/js-framework-benchmark) to see how it compares!
 
 ## Key Features
 
@@ -24,6 +17,10 @@ You can explore how it compares to other frameworks and the detailed benchmarks 
 - **Declarative UI**: Build your UI in a declarative style with DOM builders like `hh` for defining elements and their structure.
 - **Modular and Lightweight**: Only include the necessary modules, making it a lightweight framework ideal for performance-critical applications.
 - **No Virtual DOM**: Direct manipulation of DOM elements allows for faster updates, reducing overhead and improving performance.
+- **Platform-agnostic Components**: Many parts of Deleight work naturally on both the frontend and backend of your applications.
+- **First-class TypeScript Support**: Write your whole app in pure TypeScript and benefit from the strong tooling support that entails.
+- **Works with Anything on the Backend**: Deleight has facilities like `apply` and `process` for associating components to DOM elements in a simple and extremely concise way.
+- **Advanced Tools**: Deleight also includes components that support advanced techniques such as function chaining, artificial scopes, and decentralized function composition. You can use these techniques when needed or experiment with new ways of structuring your code.
 
 ## Comparison with Other Frameworks
 
@@ -140,10 +137,11 @@ In this version, you have complete control over the state updates and DOM bindin
 
  ## Demo
 
- Check out Deleight in action in one of my projects. This is a simple page for creating the daily menu for a cafeteria.
+ Check out Deleight in action in one of my projects. This is a simple page for creating the daily menu for a cafeteria. This demo showcases how Deleight enables simple and efficient DOM building and dynamic UI updates.
 
  [daily menu](https://mksunny1.github.io/cafe-menu/)
 
 ## Contributing
 
-We welcome contributions! Please feel free to submit issues or pull requests for bug fixes, improvements, or additional features.
+Want to make Deleight even better? Contributions are welcome! Submit issues, feature suggestions, or pull requests to help improve the framework.
+
