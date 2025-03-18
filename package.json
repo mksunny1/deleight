@@ -1,6 +1,6 @@
 {
   "name": "deleight",
-  "version": "5.10.6",
+  "version": "5.11.0",
   "description": "A library with 9 modules for writing more expressive web applications with traditional HTML, CSS and JavaScript.",
   "type": "module",
   "exports": {
@@ -158,7 +158,7 @@
     "type": "git",
     "url": "https://github.com/mksunny1/deleight"
   },
-  "homepage": "https://mksunny1.github.io/deleight-api-docs/main",
+  "homepage": "https://deleightjs.com",
   "keywords": [
     "frontend",
     "html",

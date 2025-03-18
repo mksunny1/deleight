@@ -19,7 +19,7 @@ As of latest benchmark results, Deleight ranks among the top-performing framewor
 - **No Virtual DOM**: Direct manipulation of DOM elements allows for faster updates, reducing overhead and improving performance.
 - **Platform-agnostic Components**: Many parts of Deleight work naturally on both the frontend and backend of your applications.
 - **First-class TypeScript Support**: Write your whole app in pure TypeScript and benefit from the strong tooling support that entails.
-- **Works with Anything on the Backend**: Deleight has facilities like `apply` and `process` for associating components to DOM elements in a simple and extremely concise way.
+- **Works with Anything on the Backend**: Deleight has facilities like `apply` and `process` for associating components with DOM elements in a simple and extremely concise way.
 - **Advanced Tools**: Deleight also includes components that support advanced techniques such as function chaining, artificial scopes, and decentralized function composition. You can use these techniques when needed or experiment with new ways of structuring your code.
 
 ## Comparison with Other Frameworks
@@ -57,18 +57,22 @@ import { sets } from "deleight/object/shared";
 import { addTo } from "deleight/dom/components";
 
 // Define the state
-const state = { count: [{ count: 0 }] };
+const state = { count: 0 };
 
-// Create the counter element, binding state to textContent
-const counterElement = hh.div(0).apply(addTo(state, '')).build();
+// Define the reactive state
+const reactiveState = { count: [state] };
+
+// Create the counter element, binding state.count to counterElement.textContent
+const counterElement = hh.div(0).apply(addTo(reactiveState, '')).build();
+// reactive State becomes { count: [state], textContent: [counterElement] }. 
 
 // Create increment and decrement buttons
 const incrementButton = hh.button('Increment').assign({
-    onclick() { sets(state, state.count[0].count + 1); }
+    onclick() { sets(reactiveState, state.count + 1); }
 }).build();
 
 const decrementButton = hh.button('Decrement').assign({
-    onclick() { sets(state, state.count[0].count - 1); }
+    onclick() { sets(reactiveState, state.count - 1); }
 }).build();
 
 // Append the elements to the document
@@ -77,16 +81,16 @@ document.body.append(decrementButton, counterElement, incrementButton);
 
 ### How It Works:
 
-1. **State Management**: The `state` object holds a counter value. You can use the `sets` function to update the state and trigger DOM updates.
-2. **UI Binding**: The `addTo` function binds the `state.count[0].count` property to the `textContent` of the `counterElement`. 
+1. **State Management**: The `state` object holds a counter value. You can use the `sets` function with `reactiveState` to update the state and trigger DOM updates.
+2. **UI Binding**: The `addTo` function binds the `state.count` property to the `counterElement.textContent` property. '' is just a shorthand for 'textContent' in the `addTo` function. We can bind any properties and any number of objects. 
 3. **Declarative UI**: `hh.div` and `hh.button` allow you to define the UI structure declaratively, while still providing full control over the DOM elements.
-4. **Reactivity**: When you click the increment or decrement button, the `sets` function updates the state, which automatically updates the DOM because of the reactive binding.
+4. **Reactivity**: When you click the increment or decrement button, the `sets` function updates the bound properties on both the state and the counterElement.
 
 ## Advanced Usage
 
 ### Low-Level Example: Fine-Grained Control
 
-Deleight gives you fine-grained control over the UI and state, enabling full flexibility in your application. Here’s an example of how to use the lower-level features, without relying on higher-level abstractions like `addTo`.
+Deleight gives you fine-grained control over the UI and state, enabling full flexibility in your application. Here’s an example that creates the reactive binding explicitly, without relying on higher-level abstractions like `addTo`.
 
 ```javascript
 import { hh } from "deleight/dom/builder";
@@ -99,18 +103,18 @@ const state = { count: 0 };
 const counterElement = hh.div(state.count).build();
 
 // Define the reactive object for updating state and DOM
-const reactiveObject = {
+const reactiveState = {
     count: [state],
     textContent: [counterElement]
 };
 
 // Create increment and decrement buttons
 const incrementButton = hh.button('Increment').assign({
-    onclick() { sets(reactiveObject, state.count + 1); }
+    onclick() { sets(reactiveState, state.count + 1); }
 }).build();
 
 const decrementButton = hh.button('Decrement').assign({
-    onclick() { sets(reactiveObject, state.count - 1); }
+    onclick() { sets(reactiveState, state.count - 1); }
 }).build();
 
 // Append the elements to the document
@@ -120,10 +124,10 @@ document.body.append(decrementButton, counterElement, incrementButton);
 ### How It Works:
 
 1. **State Management**: The `state` object directly holds the `count` property, and `sets` is used to update it. 
-2. **Fine-Grained Binding**: The `reactiveObject` explicitly links the `state.count` and `counterElement`. This gives you full control over which DOM elements are updated when state changes.
-3. **Manual Updates**: Unlike higher-level abstractions, you manually define how and when the state is updated, making this approach more explicit.
+2. **Fine-Grained Binding**: The `reactiveState` explicitly links the `state.count` and `counterElement.textContent`.
+3. **Rectivity**: The call to `sets` works in exactly the same way as the earlier example.
 
-In this version, you have complete control over the state updates and DOM bindings, which is especially useful for more complex use cases where you need full control over the behavior of your application.
+In this version, you have complete control over the DOM bindings, which is especially useful for more complex use cases where you need full control over the behavior of your application.
 
 ## 📚 Documentation
 
